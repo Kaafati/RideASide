@@ -69,7 +69,6 @@
         [textField setLeftView:paddingView];
         [textField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
         
-        
     }];
     
     
@@ -86,8 +85,8 @@
          [textFieldSignUp[1] setUserInteractionEnabled:NO];
         
         
-        
-        [profileImage setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+        [profileImage sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
+//        [profileImage setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
         [profileImage setSelected:YES];
        // [profileImage setTitle:@"Change" forState:UIControlStateSelected];
         [profileImage addTarget:self action:@selector(profileImageButtonAction) forControlEvents:UIControlEventTouchUpInside];
@@ -171,6 +170,9 @@
     user.emailId=[textFieldSignUp[1] text];
     user.phoneNumber=[textFieldSignUp[2] text];
     user.password=[textFieldSignUp[3] text];
+    
+    
+    
     user.profile_Image=[profileImage.currentBackgroundImage fixOrientation];
     [user signUpwithCompletionBlock:^(BOOL success, NSError *error) {
         [SVProgressHUD dismiss];

@@ -115,7 +115,7 @@
     self.tableView.tableHeaderView = headerView;
     
     
-    [SVProgressHUD showWithStatus:@"Fetching Posts..." maskType:SVProgressHUDMaskTypeBlack];
+//    [SVProgressHUD showWithStatus:@"Fetching Posts..." maskType:SVProgressHUDMaskTypeBlack];
     [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:@"" WithrideIndex:segmentIndex];
     
     
@@ -139,7 +139,7 @@
     }
     CATrip *trip=[[CATrip alloc]init];
    
-    
+    [SVProgressHUD showWithStatus:@"Fetching Posts..." maskType:SVProgressHUDMaskTypeBlack];
     [trip getTripDetailswithPath:pathName withSearchString:[searchText isKindOfClass:[NSNull class]]?@"":searchText withIndex:startCount withOptionForTripDetailIndex:rideIndex withCompletionBlock:^(BOOL success, id result, NSError *error) {
         [SVProgressHUD dismiss];
         [_activityIndicatorView stopAnimating];
@@ -198,7 +198,9 @@
     CATrip *trip=tableArray[indexPath.row];
     cell.backgroundColor=[UIColor clearColor];
     cell.labelTrip.textColor=[UIColor whiteColor];
-    [cell.imageUserPicture setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] placeholderImage:[UIImage imageNamed:@"placeholder"] ];
+    [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"] ];
+    
+//    [cell.imageUserPicture setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] placeholderImage:[UIImage imageNamed:@"placeholder"] ];
 //    [cell.imageUserPicture setImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]]];
     cell.imageUserPicture.layer.cornerRadius = 25.0f;
     cell.imageUserPicture.clipsToBounds=YES;

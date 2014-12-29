@@ -131,7 +131,8 @@
     CAUser *user=tripUsers[indexPath.row];
     cell.backgroundColor=[UIColor clearColor];
     cell.labelTrip.textColor=[UIColor whiteColor];
-    [cell.imageUserPicture setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+    [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
+//    [cell.imageUserPicture setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
 //    [cell.imageUserPicture setImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
 
     cell.imageUserPicture.layer.cornerRadius = 25.0f;

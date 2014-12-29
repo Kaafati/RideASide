@@ -159,7 +159,7 @@
         headerView = [[UIView alloc] init];
         imageView= [[UIImageView alloc] initWithFrame:CGRectMake(110, 0, 100, 100)];
     }
-    [imageView setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+    [imageView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
     imageView.layer.cornerRadius = 50.0f;
     imageView.clipsToBounds=YES;
     [imageView.layer setBorderColor:[UIColor whiteColor].CGColor];

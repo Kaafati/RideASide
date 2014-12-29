@@ -230,7 +230,9 @@
     cell.labelTrip.textColor=[UIColor whiteColor];
     cell.imageUserPicture.layer.cornerRadius = 25.0f;
     cell.imageUserPicture.clipsToBounds=YES;
-    [cell.imageUserPicture setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] placeholderImage:[UIImage imageNamed:@"placeholder"] ];
+    [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
+    
+//    [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] placeholderImage:[UIImage imageNamed:@"placeholder"] ];
     cell.labelTrip.text=[NSString stringWithFormat:@"%@ posted %@.",trip.name,trip.tripName];
     cell.labelTrip.font=[UIFont fontWithName:@"Arial" size:12];
     [cell.imageUserPicture.layer setBorderColor:[UIColor whiteColor].CGColor];
@@ -245,7 +247,8 @@
     cell.labelTrip.textColor=[UIColor whiteColor];
     cell.imageUserPicture.layer.cornerRadius = 25.0f;
     cell.imageUserPicture.clipsToBounds=YES;
-    [cell.imageUserPicture setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"] ];
+    [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
+//    [cell.imageUserPicture setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"] ];
     cell.labelTrip.text=user.reviewNote;
     [cell.imageUserPicture.layer setBorderColor:[UIColor whiteColor].CGColor];
     cell.imageUserPicture.layer.borderWidth=2;

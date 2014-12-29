@@ -187,7 +187,7 @@
     NSMutableData *body=[NSMutableData postData];
     [body addValue:trip.tripId forKey:@"tripid"];
     [body addValue:[CAUser sharedUser].userId forKey:@"joineeid"];
-     [body addValue:status forKey:@"status"];
+    [body addValue:status forKey:@"status"];
     
     
     [CAServiceManager fetchDataFromService:@"accept_trip.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)

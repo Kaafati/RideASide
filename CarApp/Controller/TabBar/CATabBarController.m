@@ -32,6 +32,7 @@
         self.view.backgroundColor=[UIColor clearColor];
         
         [self.tabBar setBackgroundImage:[UIImage imageNamed:@"tabBarBg"]];
+//        [self.tabBar setBarTintColor:[UIColor blueColor]];
         
         
         UIStoryboard*  storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];

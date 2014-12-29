@@ -31,6 +31,7 @@
     NSString *dateOfTrip,*dateForPushNotification;
     UITextField *activeTextField;
     IBOutlet UIButton *addTripOrViewJoiness;
+    IBOutlet UIButton *acceptTrip;
     IBOutlet UIStepper *stepper;
     IBOutlet UISegmentedControl *segmentControl;
     NSInteger milegae;
@@ -149,12 +150,12 @@
         [textFieldTripDetails[5] setText:_trip.TotalKilometer];
         [textFieldTripDetails[6] setText:_trip.Vehicle];
         [textFieldTripDetails[7] setText:_trip.vehicleNumber];
-        NSLog(@"%.02f",costPerHead);
-//      [textFieldTripDetails[8] setText:[NSString stringWithFormat:@"%@ per seat",_trip.cost]];
+        [textFieldTripDetails[8] setText:[NSString stringWithFormat:@"%@ per seat",_trip.cost]];
         [textFieldTripDetails[9] setText:_trip.SeatsAvailable];
         [textFieldTripDetails[10] setText:_trip.date];
         [stepper setHidden:YES];
         [segmentControl setHidden:YES];
+        [acceptTrip setEnabled:YES];
         
         if(_trip.tripPostedById.length>0){
             [cellArray[0] setHidden:YES];
@@ -276,7 +277,8 @@
     trip.tripName=[textFieldTripDetails[0] text];
     trip.StartingPlace=[textFieldTripDetails[1] text];
     trip.EndPlace=[textFieldTripDetails[2] text];
-    trip.FuelExpenses=[NSString stringWithFormat:@"%d",milegae];
+//   trip.FuelExpenses=[NSString stringWithFormat:@"%d",milegae];
+    trip.FuelExpenses=[textFieldTripDetails[3] text];
     trip.TollBooth=[textFieldTripDetails[4] text];
     trip.TotalKilometer=[textFieldTripDetails[5] text];
     trip.Vehicle=[textFieldTripDetails[6] text];
@@ -370,7 +372,8 @@
 -(IBAction)acceptTrip:(UIButton *)sender{
   switch (sender.tag) {
       case 1001:
-          [self parseAcceptTrip:@"Accept"];
+//          [self parseAcceptTrip:@"Accept"];
+          [self parseAcceptTrip:@"Pending"];
           break;
       case 1002:
           [self parseAcceptTrip:@"Reject"];
@@ -383,15 +386,15 @@
 -(void)parseAcceptTrip:(NSString *)status{
     [CATrip acceptOrRejectTrip:_trip withStatus:status CompletionBlock:^(BOOL success, NSError *error) {
         if(success){
-            if([status isEqualToString:@"Accept"]){
+            if([status isEqualToString:@"Pending"]){
                 
-                NSLog(@"Accepted");
-                 [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request accepted" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
+                [acceptTrip setEnabled:NO];
+//                 [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request accepted" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
                 [self performPaymentPage];
             }
             else{
                 if(_isFromRequestPage){
-                      [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
+                       [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
                        [self.navigationController popViewControllerAnimated:YES];
                 }
                 else{
@@ -446,7 +449,6 @@
     _payPalConfig.merchantUserAgreementURL = [NSURL URLWithString:@"https://www.paypal.com/webapps/mpp/ua/useragreement-full"];
     _payPalConfig.languageOrLocale = [NSLocale preferredLanguages][0];
     
-    
     NSLog(@"PayPal iOS SDK version: %@", [PayPalMobile libraryVersion]);
     [self goToPayPalPage];
 
@@ -459,7 +461,6 @@
                                           withPrice:[NSDecimalNumber decimalNumberWithString:_trip.cost]
                                        withCurrency:@"USD"
                                             withSku:@""];
-    
     
     NSArray *items = @[item];
     NSDecimalNumber *subtotal = [PayPalItem totalPriceForItems:items];
@@ -494,14 +495,15 @@
                                                                                                 configuration:self.payPalConfig
                                                                                                      delegate:self];
     [self presentViewController:paymentViewController animated:YES completion:nil];
-    
 }
+
 #pragma mark PayPalPaymentDelegate methods
 
 - (void)payPalPaymentViewController:(PayPalPaymentViewController *)paymentViewController didCompletePayment:(PayPalPayment *)completedPayment {
     NSLog(@"PayPal Payment Success!");
     
     [self sendCompletedPaymentToServer:completedPayment]; // Payment was processed successfully; send to server for verification and fulfillment
+    [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
     [self dismissViewControllerAnimated:YES completion:nil];
     
 }
@@ -527,7 +529,7 @@
         [SVProgressHUD dismiss];
         if(success){
                       if(_isFromRequestPage){
-                            [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
+                          [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
                           [self.navigationController popViewControllerAnimated:YES];
        
                       }
@@ -568,7 +570,6 @@
             }
         }
         [self getTheDistanceBetweenStartAndEndPointWith:startLat and:startLng and:destLat and:destLng];
-        [SVProgressHUD dismiss];
     }];
 }
 
@@ -614,8 +615,10 @@
     }else if (totalMiles >= 200){
         costPerHead = totalMiles * .15;
     }
-
+    
+    
     [textFieldTripDetails[8] setText:[NSString stringWithFormat:@"%.02f per seat",costPerHead]];
+    [SVProgressHUD dismiss];
    
 }
 

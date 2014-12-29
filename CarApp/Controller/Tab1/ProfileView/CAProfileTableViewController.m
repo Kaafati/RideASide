@@ -162,7 +162,8 @@
    labelReview.numberOfLines = 0;
 
     
-    [profileImage setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+//    [profileImage setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+    [profileImage sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
     if(![_userId isEqualToString:[CAUser sharedUser].userId]){
         DYRateView *rateView= [[DYRateView alloc] initWithFrame:CGRectMake(0, 5, self.view.bounds.size.width, 40)];
         rateView.rate =user.rateValue.integerValue ;

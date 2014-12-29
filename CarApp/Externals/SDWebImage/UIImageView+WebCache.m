@@ -7,113 +7,126 @@
  */
 
 #import "UIImageView+WebCache.h"
+#import "objc/runtime.h"
+#import "UIView+WebCacheOperation.h"
 
-#import "UIColor+ColorWithHex.h"
+static char imageURLKey;
 
 @implementation UIImageView (WebCache)
 
-- (void)setImageWithURL:(NSURL *)url
-{
-    [self setImageWithURL:url withSpinner:YES];
+- (void)sd_setImageWithURL:(NSURL *)url {
+    [self sd_setImageWithURL:url placeholderImage:nil options:0 progress:nil completed:nil];
 }
 
-- (void)setImageWithURL:(NSURL *)url withSpinner:(BOOL)spinnerNeeded{
-     if (spinnerNeeded) {
-        UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        activityIndicator.alpha = 1.0;
-        activityIndicator.hidesWhenStopped = NO;
-         [activityIndicator setColor:[UIColor colorWithHexString:@"#CCCCCC" andAlpha:1.0]];
-        [self addSubview:activityIndicator];
-        activityIndicator.center = CGPointMake(CGRectGetMidX(self.bounds)-23, CGRectGetMidY(self.bounds));
-        [activityIndicator startAnimating];
-        
+- (void)sd_setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder {
+    [self sd_setImageWithURL:url placeholderImage:placeholder options:0 progress:nil completed:nil];
+}
 
+- (void)sd_setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options {
+    [self sd_setImageWithURL:url placeholderImage:placeholder options:options progress:nil completed:nil];
+}
+
+- (void)sd_setImageWithURL:(NSURL *)url completed:(SDWebImageCompletionBlock)completedBlock {
+    [self sd_setImageWithURL:url placeholderImage:nil options:0 progress:nil completed:completedBlock];
+}
+
+- (void)sd_setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder completed:(SDWebImageCompletionBlock)completedBlock {
+    [self sd_setImageWithURL:url placeholderImage:placeholder options:0 progress:nil completed:completedBlock];
+}
+
+- (void)sd_setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options completed:(SDWebImageCompletionBlock)completedBlock {
+    [self sd_setImageWithURL:url placeholderImage:placeholder options:options progress:nil completed:completedBlock];
+}
+
+- (void)sd_setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options progress:(SDWebImageDownloaderProgressBlock)progressBlock completed:(SDWebImageCompletionBlock)completedBlock {
+    [self sd_cancelCurrentImageLoad];
+    objc_setAssociatedObject(self, &imageURLKey, url, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
+    if (!(options & SDWebImageDelayPlaceholder)) {
+        dispatch_main_async_safe(^{
+            self.image = placeholder;
+        });
     }
-    [self setImageWithURL:url placeholderImage:nil];
-    self.backgroundColor = [UIColor whiteColor];
-}
-
-- (void)setImageWithURL:(NSURL *)url withHud:(BOOL)needHud{
-   
-    [self setImageWithURL:url placeholderImage:nil options:SDWebImageProgressiveDownload];
-}
-
-
-- (void)setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder
-{
-    [self setImageWithURL:url placeholderImage:placeholder options:0];
-}
-
-- (void)setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options
-{
-    SDWebImageManager *manager = [SDWebImageManager sharedManager];
-
-    // Remove in progress downloader from queue
-    [manager cancelForDelegate:self];
-
-    self.image = placeholder;
-
-    if (url)
-    {
-        [manager downloadWithURL:url delegate:self options:options];
-    }
-}
-
-#if NS_BLOCKS_AVAILABLE
-- (void)setImageWithURL:(NSURL *)url success:(void (^)(UIImage *image))success failure:(void (^)(NSError *error))failure;
-{
-    [self setImageWithURL:url placeholderImage:nil success:success failure:failure];
-}
-
-- (void)setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder success:(void (^)(UIImage *image))success failure:(void (^)(NSError *error))failure;
-{
-    [self setImageWithURL:url placeholderImage:placeholder options:0 success:success failure:failure];
-}
-
-- (void)setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options success:(void (^)(UIImage *image))success failure:(void (^)(NSError *error))failure;
-{
-    SDWebImageManager *manager = [SDWebImageManager sharedManager];
-
-    // Remove in progress downloader from queue
-    [manager cancelForDelegate:self];
-
-    self.image = placeholder;
-
-    if (url)
-    {
-        [manager downloadWithURL:url delegate:self options:options success:success failure:failure];
+    
+    if (url) {
+        __weak UIImageView *wself = self;
+        id <SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadImageWithURL:url options:options progress:progressBlock completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+            if (!wself) return;
+            dispatch_main_sync_safe(^{
+                if (!wself) return;
+                if (image) {
+                    wself.image = image;
+                    [wself setNeedsLayout];
+                } else {
+                    if ((options & SDWebImageDelayPlaceholder)) {
+                        wself.image = placeholder;
+                        [wself setNeedsLayout];
+                    }
+                }
+                if (completedBlock && finished) {
+                    completedBlock(image, error, cacheType, url);
+                }
+            });
+        }];
+        [self sd_setImageLoadOperation:operation forKey:@"UIImageViewImageLoad"];
+    } else {
+        dispatch_main_async_safe(^{
+            NSError *error = [NSError errorWithDomain:@"SDWebImageErrorDomain" code:-1 userInfo:@{NSLocalizedDescriptionKey : @"Trying to load a nil url"}];
+            if (completedBlock) {
+                completedBlock(nil, error, SDImageCacheTypeNone, url);
+            }
+        });
     }
 }
-#endif
 
-- (void)cancelCurrentImageLoad
-{
-    [[SDWebImageManager sharedManager] cancelForDelegate:self];
-}
-- (void)webImageManager:(SDWebImageManager *)imageManager didProgressWithPartialImage:(UIImage *)image forURL:(NSURL *)url userInfo:(NSDictionary *)info{
-  
-   
+- (void)sd_setImageWithPreviousCachedImageWithURL:(NSURL *)url andPlaceholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options progress:(SDWebImageDownloaderProgressBlock)progressBlock completed:(SDWebImageCompletionBlock)completedBlock {
+    NSString *key = [[SDWebImageManager sharedManager] cacheKeyForURL:url];
+    UIImage *lastPreviousCachedImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:key];
+    
+    [self sd_setImageWithURL:url placeholderImage:lastPreviousCachedImage ?: placeholder options:options progress:progressBlock completed:completedBlock];    
 }
 
-- (void)webImageManager:(SDWebImageManager *)imageManager didProgressWithPartialImage:(UIImage *)image forURL:(NSURL *)url
-{
-//    self.image = image;
+- (NSURL *)sd_imageURL {
+    return objc_getAssociatedObject(self, &imageURLKey);
 }
 
-- (void)webImageManager:(SDWebImageManager *)imageManager didFinishWithImage:(UIImage *)image
-{
-   
-    for (UIView *aView in [self subviews]) {
-        if ([aView isKindOfClass:[UIActivityIndicatorView class]]) {
-            [(UIActivityIndicatorView*)aView stopAnimating];
-             [aView removeFromSuperview];
-        }
-       
+- (void)sd_setAnimationImagesWithURLs:(NSArray *)arrayOfURLs {
+    [self sd_cancelCurrentAnimationImagesLoad];
+    __weak UIImageView *wself = self;
+
+    NSMutableArray *operationsArray = [[NSMutableArray alloc] init];
+
+    for (NSURL *logoImageURL in arrayOfURLs) {
+        id <SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadImageWithURL:logoImageURL options:0 progress:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+            if (!wself) return;
+            dispatch_main_sync_safe(^{
+                __strong UIImageView *sself = wself;
+                [sself stopAnimating];
+                if (sself && image) {
+                    NSMutableArray *currentImages = [[sself animationImages] mutableCopy];
+                    if (!currentImages) {
+                        currentImages = [[NSMutableArray alloc] init];
+                    }
+                    [currentImages addObject:image];
+
+                    sself.animationImages = currentImages;
+                    [sself setNeedsLayout];
+                }
+                [sself startAnimating];
+            });
+        }];
+        [operationsArray addObject:operation];
     }
-//    [UIView transitionWithView:self duration:2.0f options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
-         self.image = image;
-//    } completion:nil];
-   
+
+    [self sd_setImageLoadOperation:[NSArray arrayWithArray:operationsArray] forKey:@"UIImageViewAnimationImages"];
+}
+
+- (void)sd_cancelCurrentImageLoad {
+    [self sd_cancelImageLoadOperationWithKey:@"UIImageViewImageLoad"];
+}
+
+- (void)sd_cancelCurrentAnimationImagesLoad {
+    [self sd_cancelImageLoadOperationWithKey:@"UIImageViewAnimationImages"];
 }
 
 @end

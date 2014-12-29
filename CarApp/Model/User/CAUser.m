@@ -134,6 +134,7 @@ static CAUser *_user = nil;
         
     }];
 }
+
 -(NSData *)getPropertiesAsData{
     NSMutableData *body = [NSMutableData postData];
     [body addValue:self.userName forKey:@"name"];
@@ -144,6 +145,7 @@ static CAUser *_user = nil;
     NSString *deviceToken=[[NSUserDefaults standardUserDefaults]valueForKey:@"DeviceToken"] ;
     [body addValue:deviceToken.length>0?deviceToken:@"428f838e3f724b24a17f8f50f91e85138cb32d25a3c417792249f0f22fc92fae" forKey:@"device_token"];
     
+//    UIImage *image=[UIImage imageNamed:@"back-arrow"];
     NSString *fileName = [self makeFileName];
     [body addValue:UIImageJPEGRepresentation(self.profile_Image, 0.5) forKey:@"file" withFileName:fileName];
     
@@ -154,7 +156,6 @@ static CAUser *_user = nil;
     [CAServiceManager fetchDataFromService:@"edit_profile.php" withParameters:[self getPropertiesAsData] withCompletionBlock:^(BOOL success, id result, NSError *error)
      {
          if (success) {
-             
              if ([result[@"status"] isEqualToString:@"success"])
              {
                  [self updateValues:result[@"result"]];
@@ -163,17 +164,13 @@ static CAUser *_user = nil;
              }
              else
              {
-                 
                  completionBlock(NO,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"error"]}]);
-                 
              }
          }
          else{
              
              completionBlock(NO,error);
          }
-         
-         
      }];
     
 }

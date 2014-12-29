@@ -1092,6 +1092,7 @@
                         </connections>
                     </tableView>
                     <connections>
+                        <outlet property="acceptTrip" destination="LHk-v2-IGX" id="BBJ-ar-WJf"/>
                         <outlet property="addTripOrViewJoiness" destination="PSf-yO-d5i" id="jRl-mW-RDa"/>
                         <outlet property="datePicker" destination="9OQ-ZA-JCR" id="h1D-fn-USB"/>
                         <outlet property="segmentControl" destination="H8N-Kx-oTZ" id="sfA-TJ-ZLs"/>
