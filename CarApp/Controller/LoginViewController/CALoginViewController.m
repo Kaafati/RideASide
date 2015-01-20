@@ -11,6 +11,7 @@
 #import "CAUser.h"
 #import "CAServiceManager.h"
 #import "CAAppDelegate.h"
+#import <FacebookSDK/FacebookSDK.h>
 
 
 
@@ -86,7 +87,7 @@
 }
 -(void)parseLogin
 {
-     [SVProgressHUD showWithStatus:@"Logging in..." maskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD showWithStatus:@"Logging in..." maskType:SVProgressHUDMaskTypeBlack];
     [CAUser loginWithUsername:[textFieldLogin[0] text] password:[textFieldLogin[1] text] withCompletionBlock:^(BOOL success, CAUser *user, NSError *error) {
         [SVProgressHUD dismiss];
         if(success)
@@ -111,6 +112,40 @@
     CASignUpViewController *signInViewController=[self.storyboard instantiateViewControllerWithIdentifier:@"signUpView"];
     [self.navigationController pushViewController:signInViewController animated:YES];
 }
+
+- (IBAction)facebookLogin:(id)sender {
+    FBSession *session = [[FBSession alloc] initWithPermissions:@[@"public_profile", @"email"]];
+    [FBSession setActiveSession:session];
+    [session openWithBehavior:FBSessionLoginBehaviorForcingWebView
+            completionHandler:^(FBSession *session,
+                                FBSessionState status,
+                                NSError *error) {
+                if (FBSession.activeSession.isOpen) {
+                    [[FBRequest requestForMe] startWithCompletionHandler:
+                     ^(FBRequestConnection *connection, NSDictionary<FBGraphUser> *user, NSError *error) {
+                         if (!error) {
+                             NSString *userImageURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large", [user objectID]];
+                             [SVProgressHUD showWithStatus:@"Signing up..." maskType:SVProgressHUDMaskTypeBlack];
+                             [CAUser signUpWithFB:user.objectID email:[user objectForKey:@"email"] name:user.name profileImg:userImageURL withCompletionBlock:^(BOOL success, CAUser *signUpUser, NSError *error) {
+                                 [SVProgressHUD dismiss];
+                                 if (success) {
+                                     
+                                     CAAppDelegate * appDelegate = (CAAppDelegate*)[UIApplication sharedApplication].delegate;
+                                     [appDelegate setHomePage];
+                                     
+                                 }
+                                 else{
+                                     [CAServiceManager handleError:error];
+                                 }
+                             }];
+                             
+                         }
+                     }];
+                }
+            }];
+}
+
+
 
 #pragma mark Textfield Delegates
 -(void)textFieldDidBeginEditing:(UITextField *)textField{

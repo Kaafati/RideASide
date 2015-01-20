@@ -20,6 +20,8 @@
 @property(nonatomic,strong)NSString *longitude;
 @property(nonatomic,strong)NSString *rateValue;
 @property(nonatomic,strong)NSString *reviewNote;
+@property(nonatomic,strong)NSString *facebook_id;
+@property(nonatomic,strong)NSString *about_me;
 
 
 +(CAUser *)sharedUser;
@@ -35,6 +37,8 @@
 +(void)parsePaymentDetailsToBackEndWithTripId:(NSString *)tripId andTripName:(NSString *)tripName andAmount:(NSString *)tripAmount  WithCompletionBlock:(void (^)(BOOL, NSError*))completionBlock;
 +(void)parseReviewingadRaringOfUseriD:(NSString *)userId withReview:(NSString *)review withRateValue:(NSString *)rateValue WithCompletionBlock:(void (^)(BOOL, NSError*))completionBlock;
 -(void)viewRatingHistoryWithCompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock;
++(void)signUpWithFB:(NSString *)facebookId email:(NSString *)email name:(NSString *)name profileImg:(NSString *)profileImg withCompletionBlock:(void (^)(BOOL, CAUser *, NSError*))completionBlock;
+-(void)fetchRatingAndReviewWithUserId:(NSString *)userId WithCompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock;
 
 +(CAUser *)userWithDetails:(NSDictionary *) userDetails;
 
@@ -53,6 +57,7 @@
 ////http://sicsglobal.com/projects/WebT1/roadtripapp/userdetails.php?user_id=53&rate_user=54-Profile Details
 //http://sicsglobal.com/projects/WebT1/roadtripapp/rating.php?user_id=53&rate_user=54&rating=4&review=good Adding review and rating
 //http://sicsglobal.com/projects/WebT1/roadtripapp/view_rating.php?user_id=54  View Ratingg
+//http://sicsglobal.com/projects/WebT1/roadtripapp/facebooklogin.php?facebook_id=43546&email=reref@gg.com&name=redft&file= SignUp with facebook
 
 
 @end

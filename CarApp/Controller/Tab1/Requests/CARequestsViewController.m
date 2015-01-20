@@ -135,6 +135,7 @@
                 [tableArray addObject:obj];
             }];
         }
+        
         isLoadMoreData=(arrayDataList.count%10==0)?YES:NO;
         ISPullToRefresh=NO;
         [refreshControl endRefreshing];

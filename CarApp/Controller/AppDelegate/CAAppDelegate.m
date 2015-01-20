@@ -16,6 +16,7 @@
 #import "CAUser.h"
 #import "PayPalMobile.h"
 
+
 @implementation CAAppDelegate
 
 @synthesize managedObjectContext = _managedObjectContext;
@@ -112,13 +113,22 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
      [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+     [[FBSession activeSession] handleDidBecomeActive];
+
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Saves changes in the application's managed object context before the application terminates.
+    [[FBSession activeSession] close];
     [self saveContext];
+}
+
+
+-(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
+    
+    return [[FBSession activeSession] handleOpenURL:url];
 }
 
 - (void)saveContext

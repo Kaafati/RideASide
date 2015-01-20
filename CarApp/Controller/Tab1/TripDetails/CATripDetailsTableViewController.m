@@ -21,8 +21,9 @@
 #import "PayPalMobile.h"
 #import <CoreLocation/CoreLocation.h>
 
+
 #define kPayPalEnvironment PayPalEnvironmentNoNetwork
-@interface CATripDetailsTableViewController ()<UITextFieldDelegate,UIAlertViewDelegate,searchLocationDelegate,PayPalPaymentDelegate>
+@interface CATripDetailsTableViewController ()<UITextFieldDelegate,UIAlertViewDelegate,searchLocationDelegate,PayPalPaymentDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
 {
     IBOutletCollection(UITextField) NSArray *textFieldTripDetails;
        IBOutletCollection(UITableViewCell) NSArray *cellArray;
@@ -36,9 +37,10 @@
     IBOutlet UISegmentedControl *segmentControl;
     NSInteger milegae;
     float startLat, startLng, destLat, destLng ,costPerHead;;
-    
-    
-    
+    NSArray *arraycarMakes,*arraycarModels;
+    UIPickerView *pickerViewVehicle ;
+    NSString *stringCarMakes,*stringCarModels;
+
 }
 @property(nonatomic, strong, readwrite) PayPalConfiguration *payPalConfig;
 @end
@@ -56,6 +58,12 @@
 
 - (void)viewDidLoad
 {
+   
+    
+    [self pickerUI];
+    
+   
+
     [super viewDidLoad];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tap];
@@ -87,6 +95,7 @@
                                            action:@selector(backButtonPressed:)];
 }
 
+
 #pragma mark -
 #pragma mark - UIBarButtonItem Callbacks
 
@@ -99,7 +108,25 @@
         [self setupMenuBarButtonItems];
     }];
 }
-
+-(void)pickerUI
+{
+    NSDictionary * dict = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Cars" ofType:@"plist"]];
+    arraycarMakes  = [[[dict valueForKey:@"CarMakes"] allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    arraycarModels =    [dict valueForKeyPath:[NSString stringWithFormat:@"CarMakes.%@",arraycarMakes[0]]];
+    
+    
+    pickerViewVehicle  = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.width)];
+    pickerViewVehicle.delegate = self;
+    
+    UILabel *labelCarMakes = [[UILabel alloc]initWithFrame:CGRectMake(0, 15, self.view.frame.size.width/2, 30)];
+    labelCarMakes.text =@"Car Makes";
+    labelCarMakes.textAlignment = NSTextAlignmentCenter;
+    [pickerViewVehicle addSubview:labelCarMakes];
+    UILabel *labelCarModels = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(labelCarMakes.frame)+5, 15, self.view.frame.size.width/2, 30)];
+    labelCarModels.text =@"Car Models";
+    labelCarModels.textAlignment = NSTextAlignmentCenter;
+    [pickerViewVehicle addSubview:labelCarModels];
+}
 -(void)setUI{
     
     milegae=0;
@@ -255,7 +282,7 @@
     
 }
 -(void)addTripDetails{
-    if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].length>0&&[textFieldTripDetails[2] text].length>0&&[textFieldTripDetails[3] text].length>0&&[textFieldTripDetails[4] text].length>0&&[textFieldTripDetails[5] text].length>0&&[textFieldTripDetails[6] text].length>0&&[textFieldTripDetails[7] text].length>0&&[textFieldTripDetails[8] text].length>0&&[textFieldTripDetails[9] text].length>0&&[textFieldTripDetails[10] text].length>0)
+    if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].length>0&&[textFieldTripDetails[2] text].length>0&&[textFieldTripDetails[3] text].length>0&&[textFieldTripDetails[4] text].length>0&&[textFieldTripDetails[6] text].length>0&&[textFieldTripDetails[7] text].length>0&&[textFieldTripDetails[8] text].length>0&&[textFieldTripDetails[9] text].length>0&&[textFieldTripDetails[10] text].length>0)
     {
         [SVProgressHUD showWithStatus:@"Adding Trip Details..."];
         [self parseAddTrip];
@@ -330,6 +357,9 @@
         textField.text=@"";
     }
     activeTextField=textField;
+    if (activeTextField.tag==777) {
+        activeTextField.inputView = pickerViewVehicle;
+    }
     if(activeTextField.tag==1001||activeTextField.tag==1002){
         [self presentSearchViewControllerWithTag:activeTextField.tag withText:activeTextField.text];
         [activeTextField resignFirstResponder];
@@ -351,9 +381,9 @@
         [self getLocationLatLong:[textFieldTripDetails[2] text]];
     }
     
-    else if(textField.tag==1001){
-        [self getLocationLatLong:textField.text];
-    }
+//    else if(textField.tag==1001){
+//        [self getLocationLatLong:textField.text];
+//    }
     
     return YES;
 }
@@ -389,7 +419,7 @@
             if([status isEqualToString:@"Pending"]){
                 
                 [acceptTrip setEnabled:NO];
-//                 [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request accepted" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
+//              [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request accepted" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
                 [self performPaymentPage];
             }
             else{
@@ -621,5 +651,71 @@
     [SVProgressHUD dismiss];
    
 }
+
+#pragma mark - Table View Delegate
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell* cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
+    
+    if(cell.tag == 500)
+    {
+        [cell setHidden:YES];
+        return 0; //HIDE MILEAGE CELL SESSION as per CLIENT;
+    }
+    else
+    {
+        return [super tableView:tableView heightForRowAtIndexPath:indexPath];
+    }
+}
+
+
+
+#pragma mark pickerDelegate
+
+-(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+   
+    if (component==0) {
+        stringCarMakes = arraycarMakes[row];
+        
+    }
+    else
+    {
+        stringCarModels =arraycarModels[row];
+        
+    }
+    
+   activeTextField.text = [NSString stringWithFormat:@"%@-%@",stringCarMakes,stringCarModels] ;
+    return component==0 ? arraycarMakes[row] : arraycarModels[row];
+
+}
+
+-(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+        return component == 0 ? arraycarMakes.count : arraycarModels.count;
+
+}
+
+-(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+   
+        if (component==0) {
+            arraycarModels  =[[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Cars" ofType:@"plist"]] valueForKeyPath:[NSString stringWithFormat:@"CarMakes.%@",arraycarMakes[row]]];
+            [pickerView reloadAllComponents];
+        }
+        
+   
+
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    
+    return 2;
+}
+
+
+
+
 
 @end

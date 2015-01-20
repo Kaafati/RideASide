@@ -38,11 +38,10 @@ static CAUser *_user = nil;
     self.latitude=dictionary[@"latitude"];
     self.longitude=dictionary[@"longitude"];
     self.rateValue=dictionary[@"rating"];
+    self.about_me =dictionary[@"about_me"];
     
     NSString *reviewNote=dictionary[@"review"];
    self.reviewNote=reviewNote.length>0?reviewNote:@"";
-    
-    
     
 }
 -(void)updateValues:(NSDictionary *)dictionary{
@@ -58,6 +57,7 @@ static CAUser *_user = nil;
     [CAUser sharedUser].profile_Image=dictionary[@"Image__Name"];
     [CAUser sharedUser].profile_ImageName=dictionary[@"image"]?dictionary[@"image"]:dictionary[@"Image"];
     [CAUser sharedUser].password=dictionary[@"password"];
+    [CAUser sharedUser].about_me =dictionary[@"about_me"];
 }
 +(CAUser*)sharedUser{
     
@@ -89,12 +89,47 @@ static CAUser *_user = nil;
     
     [CAServiceManager fetchDataFromService:@"signin.php?" withParameters:body withCompletionBlock:^(BOOL success, id result, NSError *error)
      {
-         
          success ? [result[@"Result"] isEqualToString:@"Success"] ? completionBlock(YES,[self userWithDetails:result[@"Details"][0]],nil) : completionBlock(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Incorrect username or password or account not activated"}]) : completionBlock(NO,nil,error);
-         
      }];
     
 }
+
++(void)signUpWithFB:(NSString *)facebookId email:(NSString *)email name:(NSString *)name profileImg:(NSString *)profileImg withCompletionBlock:(void (^)(BOOL, CAUser *, NSError *))completionBlock{
+    
+    NSMutableData *body = [NSMutableData postData];
+    [body addValue:facebookId forKey:@"facebook_id"];
+    [body addValue:email forKey:@"email"];
+    [body addValue:name forKey:@"name"];
+    [body addValue:UIImageJPEGRepresentation([self convertProfileImage:profileImg] , 0.4) forKey:@"file" withFileName:[self makeFileName ]];
+
+     [CAServiceManager fetchDataFromService:@"facebooklogin.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error) {
+        
+        if (success) {
+            if ([result[@"status"] isEqualToString:@"success"]) {
+                completionBlock(YES,[self userWithDetails:result[@"result"]],nil);
+            }
+            else{
+                completionBlock(NO,nil,error);
+            }
+        }
+    }];
+}
+
++(UIImage *)convertProfileImage:(NSString *)imageURL{
+    NSData *profileImgData = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: imageURL]];
+    return [UIImage imageWithData:profileImgData];
+}
+
+//-(NSData *)getFBDetailsAsData{
+//    NSMutableData *body = [NSMutableData postData];
+//    [body addValue:self.facebook_id forKey:@"facebook_id"];
+//    [body addValue:self.emailId forKey:@"email"];
+//    [body addValue:self.userName forKey:@"name"];
+//    [body addValue:self.profile_ImageName forKey:@"file"];
+//    return body;
+//    
+//}
+
 -(void)signUpwithCompletionBlock:(void (^)(BOOL, NSError*))completionBlock{
     [CAServiceManager fetchDataFromService:@"signup.php?" withParameters:[self getPropertiesAsData] withCompletionBlock:^(BOOL success, id result, NSError *error)
      {
@@ -141,12 +176,13 @@ static CAUser *_user = nil;
     [body addValue:self.emailId forKey:@"email"];
     [body addValue:self.phoneNumber forKey:@"phone"];
     [body addValue:self.password forKey:@"password"];
+    [body addValue:self.about_me forKey:@"about_me"];
     [body addValue:[CAUser sharedUser].userId forKey:@"id"];
     NSString *deviceToken=[[NSUserDefaults standardUserDefaults]valueForKey:@"DeviceToken"] ;
     [body addValue:deviceToken.length>0?deviceToken:@"428f838e3f724b24a17f8f50f91e85138cb32d25a3c417792249f0f22fc92fae" forKey:@"device_token"];
     
 //    UIImage *image=[UIImage imageNamed:@"back-arrow"];
-    NSString *fileName = [self makeFileName];
+    NSString *fileName = [CAUser makeFileName];
     [body addValue:UIImageJPEGRepresentation(self.profile_Image, 0.5) forKey:@"file" withFileName:fileName];
     
     return body;
@@ -251,6 +287,33 @@ static CAUser *_user = nil;
 
      }];
 }
+
+
+-(void)fetchRatingAndReviewWithUserId:(NSString *)userId WithCompletionBlock:(void (^)(BOOL, id, NSError *))completionBlock{
+        NSMutableData *body=[NSMutableData postData];
+       [body addValue:userId  forKey:@"user_id"];
+    [CAServiceManager fetchDataFromService:@"view_rating.php?" withParameters:body withCompletionBlock:^(BOOL success, id result, NSError *error)
+     {
+         if(success)
+         {
+             if ([result[@"status"] isEqualToString:@"success"])
+             {
+                 completionBlock(success,result[@"details"],error);
+             }
+             else
+             {
+                 completionBlock(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Users  Not Available"}]);
+             }
+         }
+         else{
+             
+             completionBlock(success,nil,error);
+         }
+         
+     }];
+}
+
+
 -(void)fetchProfileDetailsWithUserId:(NSString *)userId WithCompletionBlock:(void (^)(BOOL, id, NSError *))completionBlock{
     NSMutableData *body=[NSMutableData postData];
     [body addValue:userId  forKey:@"rate_user"];
@@ -279,7 +342,7 @@ static CAUser *_user = nil;
     
 }
 #pragma mark making FileName For Attachments
--(NSString *)makeFileName
++(NSString *)makeFileName
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     

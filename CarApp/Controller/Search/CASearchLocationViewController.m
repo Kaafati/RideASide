@@ -42,8 +42,7 @@
     searchBars.tintColor=[UIColor whiteColor];
     searchBars.searchBarStyle = UISearchBarStyleMinimal;
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
-
-
+    searchBars.placeholder = @"street/city/state/zip code";
     searchQuery = [[SPGooglePlacesAutocompleteQuery alloc] init];
 }
 

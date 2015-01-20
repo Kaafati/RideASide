@@ -94,9 +94,15 @@
 		9BA5494019E008F5006D43B2 /* StarFull@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493719E008F5006D43B2 /* StarFull@2x.png */; };
 		9BA5494119E008F5006D43B2 /* StarFullLarge.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493819E008F5006D43B2 /* StarFullLarge.png */; };
 		9BA5494219E008F5006D43B2 /* StarFullLarge@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493919E008F5006D43B2 /* StarFullLarge@2x.png */; };
+		9BBB860C1A5180E600EFC1EE /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BBB860B1A5180E600EFC1EE /* FacebookSDK.framework */; };
 		9BDDCBA119DFAABA0010B66A /* NSDate+TimeZone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDCBA019DFAABA0010B66A /* NSDate+TimeZone.m */; };
 		9BDDCBA519DFAFC20010B66A /* CAViewJoineesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDCBA419DFAFC20010B66A /* CAViewJoineesViewController.m */; };
 		9BDDCBA919DFB8290010B66A /* CAProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDCBA819DFB8290010B66A /* CAProfileTableViewController.m */; };
+		9BE1A7901A54163F00FCBFB7 /* CAProfileAndRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE1A78F1A54163F00FCBFB7 /* CAProfileAndRatingViewController.m */; };
+		9BE1A7941A542CAA00FCBFB7 /* CARatingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */; };
+		D86F4F031A63C7E40064C3C4 /* Cars.plist in Resources */ = {isa = PBXBuildFile; fileRef = D86F4F021A63C7E40064C3C4 /* Cars.plist */; };
+		D8CEDD991A5A6BA4007FA2F2 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CEDD981A5A6BA4007FA2F2 /* FacebookSDK.framework */; };
+		D8CEDD9E1A5ABAE7007FA2F2 /* NIDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -266,12 +272,21 @@
 		9BA5493719E008F5006D43B2 /* StarFull@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "StarFull@2x.png"; sourceTree = "<group>"; };
 		9BA5493819E008F5006D43B2 /* StarFullLarge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = StarFullLarge.png; sourceTree = "<group>"; };
 		9BA5493919E008F5006D43B2 /* StarFullLarge@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "StarFullLarge@2x.png"; sourceTree = "<group>"; };
+		9BBB860B1A5180E600EFC1EE /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		9BDDCB9F19DFAABA0010B66A /* NSDate+TimeZone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+TimeZone.h"; sourceTree = "<group>"; };
 		9BDDCBA019DFAABA0010B66A /* NSDate+TimeZone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+TimeZone.m"; sourceTree = "<group>"; };
 		9BDDCBA319DFAFC20010B66A /* CAViewJoineesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAViewJoineesViewController.h; sourceTree = "<group>"; };
 		9BDDCBA419DFAFC20010B66A /* CAViewJoineesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAViewJoineesViewController.m; sourceTree = "<group>"; };
 		9BDDCBA719DFB8290010B66A /* CAProfileTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAProfileTableViewController.h; sourceTree = "<group>"; };
 		9BDDCBA819DFB8290010B66A /* CAProfileTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAProfileTableViewController.m; sourceTree = "<group>"; };
+		9BE1A78E1A54163F00FCBFB7 /* CAProfileAndRatingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAProfileAndRatingViewController.h; sourceTree = "<group>"; };
+		9BE1A78F1A54163F00FCBFB7 /* CAProfileAndRatingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAProfileAndRatingViewController.m; sourceTree = "<group>"; };
+		9BE1A7921A542CAA00FCBFB7 /* CARatingTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARatingTableViewCell.h; sourceTree = "<group>"; };
+		9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CARatingTableViewCell.m; sourceTree = "<group>"; };
+		D86F4F021A63C7E40064C3C4 /* Cars.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Cars.plist; path = "Parsing Classes/Cars.plist"; sourceTree = "<group>"; };
+		D8CEDD981A5A6BA4007FA2F2 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		D8CEDD9C1A5ABAE7007FA2F2 /* NIDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NIDropDown.h; sourceTree = "<group>"; };
+		D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NIDropDown.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -287,10 +302,12 @@
 				4D5D93691A0212DD00187A52 /* AVFoundation.framework in Frameworks */,
 				4D5D93671A0212D500187A52 /* AudioToolbox.framework in Frameworks */,
 				12FEC284199F422700C76A71 /* CoreGraphics.framework in Frameworks */,
+				9BBB860C1A5180E600EFC1EE /* FacebookSDK.framework in Frameworks */,
 				12FEC288199F422700C76A71 /* CoreData.framework in Frameworks */,
 				12FEC286199F422700C76A71 /* UIKit.framework in Frameworks */,
 				4D5D93651A01F9E200187A52 /* libPayPalMobile.a in Frameworks */,
 				12FEC282199F422700C76A71 /* Foundation.framework in Frameworks */,
+				D8CEDD991A5A6BA4007FA2F2 /* FacebookSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +328,7 @@
 		1205737C19CFE96F0077D2A0 /* Tab1 */ = {
 			isa = PBXGroup;
 			children = (
+				9BE1A78D1A5415FC00FCBFB7 /* ProfileAndRating */,
 				4D5D93781A0256CE00187A52 /* RatePage */,
 				4D36DD2419FF665600EE8809 /* Requests */,
 				4DF53C6519EE615F00CCDEBE /* Container */,
@@ -394,6 +412,7 @@
 				1216666319A32992001DE9C8 /* Trip */,
 				1216665719A306B0001DE9C8 /* User */,
 				1216664619A3054A001DE9C8 /* Parsing Classes */,
+				D86F4F021A63C7E40064C3C4 /* Cars.plist */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -457,6 +476,7 @@
 			isa = PBXGroup;
 			children = (
 				12FEC2BD199F42B000C76A71 /* MainStoryboard.storyboard */,
+				9BE1A7911A542C7D00FCBFB7 /* RatingCell */,
 				121873EF19D1646F000924EB /* TripCell */,
 			);
 			name = View;
@@ -534,6 +554,7 @@
 		12913AC819C989C4000FCE92 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				D8CEDD9F1A5ABAEC007FA2F2 /* NIDropDown */,
 				9B603A331A49688A0048DD48 /* SDWebImage */,
 				4D5D935C1A01F9E200187A52 /* PayPalMobile */,
 				4DF53C5719EE285200CCDEBE /* Googlesdk */,
@@ -639,6 +660,8 @@
 		12FEC280199F422700C76A71 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D8CEDD981A5A6BA4007FA2F2 /* FacebookSDK.framework */,
+				9BBB860B1A5180E600EFC1EE /* FacebookSDK.framework */,
 				4D5D93721A0212FF00187A52 /* SystemConfiguration.framework */,
 				4D5D93701A0212F900187A52 /* MobileCoreServices.framework */,
 				4D5D936E1A0212F200187A52 /* MessageUI.framework */,
@@ -862,6 +885,33 @@
 			path = ProfileView;
 			sourceTree = "<group>";
 		};
+		9BE1A78D1A5415FC00FCBFB7 /* ProfileAndRating */ = {
+			isa = PBXGroup;
+			children = (
+				9BE1A78E1A54163F00FCBFB7 /* CAProfileAndRatingViewController.h */,
+				9BE1A78F1A54163F00FCBFB7 /* CAProfileAndRatingViewController.m */,
+			);
+			name = ProfileAndRating;
+			sourceTree = "<group>";
+		};
+		9BE1A7911A542C7D00FCBFB7 /* RatingCell */ = {
+			isa = PBXGroup;
+			children = (
+				9BE1A7921A542CAA00FCBFB7 /* CARatingTableViewCell.h */,
+				9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */,
+			);
+			name = RatingCell;
+			sourceTree = "<group>";
+		};
+		D8CEDD9F1A5ABAEC007FA2F2 /* NIDropDown */ = {
+			isa = PBXGroup;
+			children = (
+				D8CEDD9C1A5ABAE7007FA2F2 /* NIDropDown.h */,
+				D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */,
+			);
+			name = NIDropDown;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -949,6 +999,7 @@
 				9BA5494219E008F5006D43B2 /* StarFullLarge@2x.png in Resources */,
 				9BA5494019E008F5006D43B2 /* StarFull@2x.png in Resources */,
 				4D4143D619ED090900998FAD /* SVProgressHUD.bundle in Resources */,
+				D86F4F031A63C7E40064C3C4 /* Cars.plist in Resources */,
 				9BA5494119E008F5006D43B2 /* StarFullLarge.png in Resources */,
 				9BA5493F19E008F5006D43B2 /* StarFull.png in Resources */,
 				12FEC299199F422700C76A71 /* Images.xcassets in Resources */,
@@ -973,15 +1024,18 @@
 			files = (
 				12253B7119D02A3500014796 /* SideMenuViewController.m in Sources */,
 				12253B6919D0175D00014796 /* PlaceMark.m in Sources */,
+				9BE1A7901A54163F00FCBFB7 /* CAProfileAndRatingViewController.m in Sources */,
 				12253B5419D00C2400014796 /* GeoCoder.m in Sources */,
 				121873F219D16484000924EB /* CATripCell.m in Sources */,
 				4DF53C6419EE285E00CCDEBE /* SPGooglePlacesPlaceDetailQuery.m in Sources */,
 				9B603A5C1A49688A0048DD48 /* SDWebImageManager.m in Sources */,
 				1216665419A305B9001DE9C8 /* NSObject+PropertyDictionaryAddition.m in Sources */,
+				9BE1A7941A542CAA00FCBFB7 /* CARatingTableViewCell.m in Sources */,
 				1216664919A3054A001DE9C8 /* CAServiceManager.m in Sources */,
 				9B603A591A49688A0048DD48 /* SDWebImageDecoder.m in Sources */,
 				1216665519A305B9001DE9C8 /* UITableView+TextFieldAdditions.m in Sources */,
 				9B603A611A49688A0048DD48 /* UIImage+WebP.m in Sources */,
+				D8CEDD9E1A5ABAE7007FA2F2 /* NIDropDown.m in Sources */,
 				9B603A551A49688A0048DD48 /* MKAnnotationView+WebCache.m in Sources */,
 				4D36DD2719FF666D00EE8809 /* CARequestsViewController.m in Sources */,
 				12FEC297199F422700C76A71 /* CarApp.xcdatamodeld in Sources */,
@@ -1156,6 +1210,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CarApp/SVProgressHUD/Pinterest.embeddedframework",
+					/Users/srishtiinnovative/Documents/FacebookSDK,
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
@@ -1186,6 +1242,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CarApp/SVProgressHUD/Pinterest.embeddedframework",
+					/Users/srishtiinnovative/Documents/FacebookSDK,
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";

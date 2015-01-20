@@ -12,9 +12,11 @@
 #import "CAServiceManager.h"
 #import "SVProgressHUD.h"
 
-@interface CARateViewController ()<DYRateViewDelegate>{
+@interface CARateViewController ()<DYRateViewDelegate,UITextViewDelegate>
+{
     IBOutlet UITextView *textView;
     NSInteger starRate;
+    CGPoint originalCenter;
 }
 
 @end
@@ -25,6 +27,8 @@
     [super viewDidLoad];
     [self setUpUi];
     // Do any additional setup after loading the view.
+    
+    originalCenter = self.view.center;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -51,8 +55,29 @@
 - (BOOL) textViewShouldBeginEditing:(UITextView *)text_View
 {
     textView.text=@"";
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     return YES;
 }
+
+-(BOOL) textViewShouldEndEditing:(UITextView *)text_View{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
+    return YES;
+}
+
+
+- (void)keyboardDidShow:(NSNotification *)notification
+{
+    // Assign new frame to your view
+    [self.view setFrame:CGRectMake(0,-110,320,460)]; //here taken -20 for example i.e. your view will be scrolled to -20. change its value according to your requirement.
+    
+}
+
+-(void)keyboardDidHide:(NSNotification *)notification
+{
+    [self.view setFrame:CGRectMake(0,0,320,460)];
+}
+
+
 -(BOOL)textView:(UITextView *)text_View shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
        if([text isEqualToString:@"\n"])
     {

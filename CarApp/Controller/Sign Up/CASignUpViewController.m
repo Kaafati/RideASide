@@ -14,12 +14,13 @@
 #import "UIImage+Utilities.h"
 #import "CAAppDelegate.h"
 
-@interface CASignUpViewController ()<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIActionSheetDelegate>
+@interface CASignUpViewController ()<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIActionSheetDelegate, UITextViewDelegate>
 {
     IBOutletCollection(UITextField) NSArray *textFieldSignUp;
     UITextField *textFiledActive;
     IBOutlet UIButton *signUpButton;
     IBOutlet UIButton *profileImage;
+    IBOutlet UITextView *textViewAboutMe;
     
 }
 
@@ -68,9 +69,10 @@
         [textField setLeftViewMode:UITextFieldViewModeAlways];
         [textField setLeftView:paddingView];
         [textField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
-        
-    }];
+       }];
     
+    
+   
     
     self.tableView.backgroundView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]];
     if([CAUser sharedUser].userId.length>0){//Edit Profile
@@ -81,6 +83,7 @@
         [textFieldSignUp[1] setText:[CAUser sharedUser].emailId];
         [textFieldSignUp[2] setText:[CAUser sharedUser].phoneNumber];
         [textFieldSignUp[3] setText:[CAUser sharedUser].password];
+        [textViewAboutMe setText:[[[CAUser sharedUser] about_me] length] ? [[CAUser sharedUser] about_me] :@"Bio" ];
         [textFieldSignUp[0] setUserInteractionEnabled:NO];
          [textFieldSignUp[1] setUserInteractionEnabled:NO];
         
@@ -90,23 +93,27 @@
         [profileImage setSelected:YES];
        // [profileImage setTitle:@"Change" forState:UIControlStateSelected];
         [profileImage addTarget:self action:@selector(profileImageButtonAction) forControlEvents:UIControlEventTouchUpInside];
-        
+        textViewAboutMe.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"textField_bg"]];
+        [textViewAboutMe setTextAlignment:NSTextAlignmentJustified];
+        [textViewAboutMe setTextColor:[UIColor whiteColor]];
+        [self ressignKeyboardForTextView];
         
     }
     else{ //Sign Up
         self.title = @"Register";
         [profileImage setBackgroundImage:[UIImage imageNamed:@"placeholder"] forState:UIControlStateNormal];
         [profileImage setBackgroundImage:[UIImage imageNamed:@"placeholder"] forState:UIControlStateSelected];
-//        [profileImage setTitle:@"Add" forState:UIControlStateNormal];
-//        [profileImage setTitle:@"Change" forState:UIControlStateSelected];
+        //        [profileImage setTitle:@"Add" forState:UIControlStateNormal];
+        //        [profileImage setTitle:@"Change" forState:UIControlStateSelected];
         [profileImage addTarget:self action:@selector(profileImageButtonAction) forControlEvents:UIControlEventTouchUpInside];
         [profileImage setContentMode:UIViewContentModeScaleAspectFit];
     }
-     [profileImage setTitleEdgeInsets:UIEdgeInsetsMake(70, 0, 0, 0)];
+    [profileImage setTitleEdgeInsets:UIEdgeInsetsMake(70, 0, 0, 0)];
     [profileImage.layer setCornerRadius:50.0f];
     [profileImage setClipsToBounds:YES];
-
+    
 }
+
 - (void)setupMenuBarButtonItems {
     if(self.menuContainerViewController.menuState == MFSideMenuStateClosed &&
        ![[self.navigationController.viewControllers objectAtIndex:0] isEqual:self]) {
@@ -170,8 +177,7 @@
     user.emailId=[textFieldSignUp[1] text];
     user.phoneNumber=[textFieldSignUp[2] text];
     user.password=[textFieldSignUp[3] text];
-    
-    
+    user.about_me = [textViewAboutMe.text isEqualToString:@"Bio"]?@"":textViewAboutMe.text;
     
     user.profile_Image=[profileImage.currentBackgroundImage fixOrientation];
     [user signUpwithCompletionBlock:^(BOOL success, NSError *error) {
@@ -184,8 +190,9 @@
         else
             [CAServiceManager handleError:error];
     }];
-    
 }
+
+
 -(void)parseUpdateProfile{
     [SVProgressHUD showWithStatus:@"Updating profile..." maskType:SVProgressHUDMaskTypeClear];
     CAUser *user=[[CAUser alloc]init];
@@ -193,6 +200,7 @@
     user.emailId=[textFieldSignUp[1] text];
     user.phoneNumber=[textFieldSignUp[2] text];
     user.password=[textFieldSignUp[3] text];
+    user.about_me=[textViewAboutMe.text isEqualToString:@"Bio"]?@"":textViewAboutMe.text;
     user.profile_Image=[profileImage.currentBackgroundImage fixOrientation];
     [user updateUserProfileWithCompletionBlock:^(BOOL success, NSError *error){
         if(success)
@@ -200,15 +208,14 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:@"updateProfileImage"
                                                                 object:self
                                                               userInfo:nil];
-
+            
             [SVProgressHUD showSuccessWithStatus:@"Updated Successfully"];
         }
         else
             [SVProgressHUD showErrorWithStatus:error.localizedDescription];
-            
-
     }];
 }
+
 #pragma mark Textfield Delegates
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
@@ -222,6 +229,37 @@
 {
     [[[UIAlertView alloc]initWithTitle:@"Message" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil]show];
 }
+
+- (void)textViewDidBeginEditing:(UITextView *)textView{
+    if ([textViewAboutMe.text isEqualToString:@"Bio"]) {
+        [textViewAboutMe setText: @""];
+    }
+    
+}
+-(void)textViewDidEndEditing:(UITextView *)textView{
+    if ([textViewAboutMe.text isEqualToString:@""]) {
+        [textViewAboutMe setText: @"Bio"];
+    }
+    
+}
+
+
+-(void)ressignKeyboardForTextView{
+    UIToolbar* keyboardDoneButtonView = [[UIToolbar alloc] init];
+    [keyboardDoneButtonView sizeToFit];
+    UIBarButtonItem* doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                   style:UIBarButtonItemStyleBordered target:self
+                                                                  action:@selector(doneClicked:)];
+    [keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];
+    textViewAboutMe.inputAccessoryView = keyboardDoneButtonView;
+
+}
+
+- (IBAction)doneClicked:(id)sender
+{
+    [self.view endEditing:YES];
+}
+
 #pragma mark - header view creation and actions
 
 -(void)profileImageButtonAction{

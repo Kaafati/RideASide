@@ -19,6 +19,7 @@
 #import "CAUser.h"
 #import "UIButton+WebCache.h"
 #import "CAProfileTableViewController.h"
+#import "CAProfileAndRatingViewController.h"
 
 @interface CATripsViewController ()<UISearchBarDelegate>{
     NSMutableArray *tableArray;
@@ -238,7 +239,8 @@
 #pragma mark-Actions
 -(void)goToProfilePage:(UIButton *)sender{
     CATrip *trip=tableArray[sender .tag];
-    CAProfileTableViewController *profile=[self.storyboard instantiateViewControllerWithIdentifier:@"profileView"];
+//    CAProfileTableViewController *profile=[self.storyboard instantiateViewControllerWithIdentifier:@"profileView"];
+    CAProfileAndRatingViewController *profile=[self.storyboard instantiateViewControllerWithIdentifier:@"profileAndRatingView"];
     [profile setUserId:trip.UserId];
     [self.navigationController pushViewController:profile animated:YES];
 }
