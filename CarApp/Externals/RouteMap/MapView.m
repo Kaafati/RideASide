@@ -121,7 +121,6 @@
 	
 	if(routes) {
 		[mapView removeAnnotations:[mapView annotations]];
-		
 	}
 	
 	PlaceMark* from = [[PlaceMark alloc] initWithPlace:f] ;

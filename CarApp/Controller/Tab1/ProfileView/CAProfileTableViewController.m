@@ -20,6 +20,8 @@
     NSArray *profileDetails;
     IBOutlet UITableViewCell *cellForStarView;
     CAUser *userDetails;
+    __weak IBOutlet UITableViewCell *cellAcceptDriver;
+    NSNumber *average;
 
 }
 @property(nonatomic,strong) IBOutletCollection(UITextField) NSArray *textFieldProfileDetails;
@@ -38,10 +40,20 @@
 
 - (void)viewDidLoad
 {
+
     [super viewDidLoad];
+    [self fetchTotalRating];
     [self setUpUi];
     [self setupMenuBarButtonItems];
     
+    if ([_trip.category isEqualToString:@"Passenger"]) {
+        UIButton *btnAcceptDriver = [[UIButton alloc]initWithFrame:CGRectMake(CGRectGetMinX(self.view.frame)+CGRectGetWidth(self.view.frame)/4,CGRectGetMidY(cellAcceptDriver.frame) ,CGRectGetWidth(self.view.frame)/2, 40)];
+        [btnAcceptDriver.titleLabel setFont:[UIFont systemFontOfSize:15]];
+        [btnAcceptDriver addTarget:self action:@selector(acceptDriverAction:) forControlEvents:UIControlEventTouchUpInside];
+        [btnAcceptDriver setBackgroundColor:[UIColor colorWithRed:25/255.0 green:124/255.0 blue:204/255.0 alpha:1]];
+        [btnAcceptDriver setTitle:@"Accept driver" forState:UIControlStateNormal];
+        [cellAcceptDriver addSubview:btnAcceptDriver];
+    }
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -60,7 +72,7 @@
 - (UIBarButtonItem *)leftMenuBarButtonItem {
     
     return [[UIBarButtonItem alloc]
-            initWithImage:[UIImage imageNamed:@"menu-icon"] style:UIBarButtonItemStyleBordered
+            initWithImage:[UIImage imageNamed:@"menu-icon"] style:UIBarButtonItemStylePlain
             target:self
             action:@selector(leftSideMenuButtonPressed:)];
 }
@@ -68,7 +80,7 @@
 - (UIBarButtonItem *)backBarButtonItem {
     
     return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back-arrow"]
-                                            style:UIBarButtonItemStyleBordered
+                                            style:UIBarButtonItemStylePlain
                                            target:self
                                            action:@selector(backButtonPressed:)];
 }
@@ -84,6 +96,16 @@
     [self.menuContainerViewController toggleLeftSideMenuCompletion:^{
         [self setupMenuBarButtonItems];
     }];
+}
+
+-(void)acceptDriverAction:(UIButton *)sender{
+
+    [CATrip selectDriverForTrip:_trip completion:^(BOOL success, NSError *error) {
+        if (success) {
+            [[[UIAlertView alloc]initWithTitle:@"Message" message:@"You have successfully added this driver" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil]show];
+        }
+     }];
+    
 }
 
 -(void)setUpUi{
@@ -129,12 +151,54 @@
     [user fetchProfileDetailsWithUserId:_userId WithCompletionBlock:^(BOOL success, id result, NSError *error) {
         [SVProgressHUD dismiss];
         CAUser *user_Detail=(CAUser *)result[0];
+        //[self calculateAndSetAvgRating];
         [self setUserDetails:user_Detail];
     }];
     
 }
 
+-(void)fetchTotalRating{
+    [CAUser fetchUsersTotalRatingCountWithCompletion:^(bool success, id result, NSError *error) {
+        if (success) {
+            NSString *strCount = result;
+            strCount ? [self calculateAndSetAvgRating:strCount] : nil;
 
+        }
+    }];
+}
+
+-(void)updateRatingCount:(NSString *)rateValue{
+    
+    if(![_userId isEqualToString:[CAUser sharedUser].userId]){
+        DYRateView *rateView= [[DYRateView alloc] initWithFrame:CGRectMake(0, 5, self.view.bounds.size.width, 40)];
+        rateView.rate = rateValue.integerValue;
+        rateView.alignment = RateViewAlignmentCenter;
+        [cellForStarView  addSubview:rateView];
+    }
+    else
+    {
+        
+    }
+}
+
+-(void)calculateAndSetAvgRating:(NSString *)rateValue{
+    NSMutableArray *myArray = [NSMutableArray new];
+    [myArray addObject:[NSNumber numberWithInt:rateValue.intValue]];
+   
+    average = [myArray valueForKeyPath:@"@avg.self"];
+    
+    if(![_userId isEqualToString:[CAUser sharedUser].userId]){
+        DYRateView *rateView= [[DYRateView alloc] initWithFrame:CGRectMake(0, 5, self.view.bounds.size.width, 40)];
+        rateView.rate = [average integerValue];
+        rateView.alignment = RateViewAlignmentCenter;
+        [cellForStarView addSubview:rateView];
+    }
+    [self.tableView reloadData];
+}
+- (IBAction)callUser:(UIButton *)sender {
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[[[_textFieldProfileDetails objectAtIndex:2] textLabel] text]]];
+}
 
 -(void)setUserDetails:(CAUser *)user{
     userDetails=user;
@@ -162,17 +226,19 @@
 //    labelReview.lineBreakMode = NSLineBreakByWordWrapping;
 //   labelReview.numberOfLines = 0;
 
+      ////////////////////////////////////////////////////////////
+//    if(![_userId isEqualToString:[CAUser sharedUser].userId]){
+//        DYRateView *rateView= [[DYRateView alloc] initWithFrame:CGRectMake(0, 5, self.view.bounds.size.width, 40)];
+//        rateView.rate =user.rateValue.integerValue;
+//        rateView.alignment = RateViewAlignmentCenter;
+//        [cellForStarView  addSubview:rateView];
+//    }
+//    else
+//    {
+//        
+//    }
+    ////////////////////////////////////////////////////////////
 
-    if(![_userId isEqualToString:[CAUser sharedUser].userId]){
-        DYRateView *rateView= [[DYRateView alloc] initWithFrame:CGRectMake(0, 5, self.view.bounds.size.width, 40)];
-        rateView.rate =user.rateValue.integerValue;
-        rateView.alignment = RateViewAlignmentCenter;
-        [cellForStarView  addSubview:rateView];
-    }
-    else
-    {
-        
-    }
     [self.tableView reloadData];
 }
 
@@ -216,11 +282,10 @@
 //}
 
 
-
-
 #pragma mark-delegate
 -(void)updateUserDetails{
     [self fetchProfileDetails];
+    [self fetchTotalRating];
 }
 
 

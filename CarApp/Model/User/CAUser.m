@@ -12,9 +12,11 @@
 static CAUser *_user = nil;
 
 @implementation CAUser
+
 +(void)logout{
     _user = nil;
 }
+
 -(id)initWithUserDetails:(NSDictionary *)userDetails{
     
     self = [super init];
@@ -26,6 +28,7 @@ static CAUser *_user = nil;
     }
     return self;
 }
+
 -(void)setValueInObject:(NSDictionary *)dictionary
 {
     self.userId=dictionary[@"UserId"]?dictionary[@"UserId"]:self.userId;
@@ -39,18 +42,17 @@ static CAUser *_user = nil;
     self.longitude=dictionary[@"longitude"];
     self.rateValue=dictionary[@"rating"];
     self.about_me =dictionary[@"about_me"];
-    
+    self.category =dictionary[@"category"];
+    self.othersLocation =dictionary[@"others"];
     NSString *reviewNote=dictionary[@"review"];
-   self.reviewNote=reviewNote.length>0?reviewNote:@"";
-    
+    self.reviewNote=reviewNote.length>0?reviewNote:@"";
 }
+
 -(void)updateValues:(NSDictionary *)dictionary{
     NSMutableDictionary *dictionary_Modified=[[NSMutableDictionary alloc]initWithDictionary:dictionary];
     [dictionary_Modified setValue:[CAUser sharedUser].userId forKeyPath:@"UserId"];
     
     [CAUser saveLoggedUser:dictionary_Modified];
-    
-    
     [CAUser sharedUser].userName=dictionary[@"Name"];
     [CAUser sharedUser].emailId=dictionary[@"EmailId"];
     [CAUser sharedUser].phoneNumber=dictionary[@"MobieNo"]?dictionary[@"MobieNo"]:dictionary[@"MobileNo"];
@@ -58,7 +60,9 @@ static CAUser *_user = nil;
     [CAUser sharedUser].profile_ImageName=dictionary[@"image"]?dictionary[@"image"]:dictionary[@"Image"];
     [CAUser sharedUser].password=dictionary[@"password"];
     [CAUser sharedUser].about_me =dictionary[@"about_me"];
+    [CAUser sharedUser].category = dictionary[@"category"];
 }
+
 +(CAUser*)sharedUser{
     
     @synchronized([CAUser class]) {
@@ -68,6 +72,7 @@ static CAUser *_user = nil;
     }
     return nil;
 }
+
 +(CAUser *)userWithDetails:(NSDictionary *) userDetails{
     
     @synchronized([CAUser class]) {
@@ -89,20 +94,19 @@ static CAUser *_user = nil;
     
     [CAServiceManager fetchDataFromService:@"signin.php?" withParameters:body withCompletionBlock:^(BOOL success, id result, NSError *error)
      {
+         NSLog(@"Result %@",result);
          success ? [result[@"Result"] isEqualToString:@"Success"] ? completionBlock(YES,[self userWithDetails:result[@"Details"][0]],nil) : completionBlock(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Incorrect username or password or account not activated"}]) : completionBlock(NO,nil,error);
      }];
-    
 }
 
 +(void)signUpWithFB:(NSString *)facebookId email:(NSString *)email name:(NSString *)name profileImg:(NSString *)profileImg withCompletionBlock:(void (^)(BOOL, CAUser *, NSError *))completionBlock{
-    
     NSMutableData *body = [NSMutableData postData];
     [body addValue:facebookId forKey:@"facebook_id"];
     [body addValue:email forKey:@"email"];
     [body addValue:name forKey:@"name"];
     [body addValue:UIImageJPEGRepresentation([self convertProfileImage:profileImg] , 0.4) forKey:@"file" withFileName:[self makeFileName ]];
 
-     [CAServiceManager fetchDataFromService:@"facebooklogin.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error) {
+    [CAServiceManager fetchDataFromService:@"facebooklogin.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error) {
         
         if (success) {
             if ([result[@"status"] isEqualToString:@"success"]) {
@@ -142,31 +146,42 @@ static CAUser *_user = nil;
                  //                 [CAUser saveLoggedUser:result[@"result"]];
                  _user = self;
                  completionBlock(YES,nil);
-                 
+                
+ 
              }
              else
              {
-                 
                  completionBlock(NO,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"error"]}]);
                  _user = nil;
-                 
              }
          }
          else{
-             
              completionBlock(NO,error);
              _user = nil;
-             
-             
-         }
+        }
      }];
-    
 }
-#pragma mark-sign up
++(void)forgotPasswordWithEmailId:(NSString *)emialId withCompletionBlock:(void (^)(bool, id, NSError *))completion
+{       //http://sicsglobal.com/projects/WebT1/rideaside/forgotpassword.php?user_id=25&email_id=dorad686@yahoo.com
+    NSMutableData *data = [NSMutableData postData];
+    [data addValue:emialId forKey:@"email_id"];
+    [CAServiceManager fetchDataFromService:@"forgotpassword.php?" withParameters:data withCompletionBlock:^(BOOL success, id result, NSError *error){
+        if (success)
+        {
+            [result[@"result"] isEqualToString:@"success"] ? completion(true,result,error) : completion(false,result,error);
+        }
+        else
+        {
+            completion(false,result,error);
+        }
+        NSLog(@"Result %@",result);
+        
+    }];
+}
+#pragma mark - Sign up
 +(void)addUserLocationWithData:(NSData *)data withCompletionBlock:(void (^)(BOOL, NSError*))completionBlock{
     [CAServiceManager fetchDataFromService:@"add_location.php?" withParameters:data withCompletionBlock:^(BOOL success, id result, NSError *error){
         NSLog(@"Result %@",result);
-        
     }];
 }
 
@@ -177,6 +192,8 @@ static CAUser *_user = nil;
     [body addValue:self.phoneNumber forKey:@"phone"];
     [body addValue:self.password forKey:@"password"];
     [body addValue:self.about_me forKey:@"about_me"];
+    [body addValue:self.category forKey:@"category"];
+
     [body addValue:[CAUser sharedUser].userId forKey:@"id"];
     NSString *deviceToken=[[NSUserDefaults standardUserDefaults]valueForKey:@"DeviceToken"] ;
     [body addValue:deviceToken.length>0?deviceToken:@"428f838e3f724b24a17f8f50f91e85138cb32d25a3c417792249f0f22fc92fae" forKey:@"device_token"];
@@ -187,6 +204,7 @@ static CAUser *_user = nil;
     
     return body;
 }
+
 -(void)updateUserProfileWithCompletionBlock:(void (^)(BOOL, NSError*))completionBlock{
     
     [CAServiceManager fetchDataFromService:@"edit_profile.php" withParameters:[self getPropertiesAsData] withCompletionBlock:^(BOOL success, id result, NSError *error)
@@ -210,6 +228,7 @@ static CAUser *_user = nil;
      }];
     
 }
+
 -(void)fetchUsersAroundTripwithTripId:(NSString *)tripId  WithCompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock{
     NSMutableData *body=[NSMutableData postData];
     [body addValue:tripId forKey:@"tripid"];
@@ -231,11 +250,9 @@ static CAUser *_user = nil;
              
              completionBlock(success,nil,error);
          }
-         
-         
      }];
-    
 }
+
 -(void)fetchJoineesListInTripWithTripId:(NSString *)tripId WithCompletionBlock:(void (^)(BOOL, id, NSError *))completionBlock{
     NSMutableData *body=[NSMutableData postData];
     [body addValue:tripId forKey:@"tripid"];
@@ -254,16 +271,37 @@ static CAUser *_user = nil;
              }
          }
          else{
-             
-             
-             completionBlock(success,nil,error);
+                completionBlock(success,nil,error);
          }
-         
-         
      }];
-    
-    
 }
+
+
+-(void)fetchDriverListAccepted:(NSString *)tripid withCategory:(NSString *)category withCompletion:(void(^)(bool success,id result,NSError*err))completion{
+    NSMutableData *body=[NSMutableData postData];
+    [body addValue:tripid forKey:@"tripid"];
+    [body addValue:category forKey:@"category"];
+    [body addValue:[CAUser sharedUser].userId forKey:@"user_id"];
+    [CAServiceManager fetchDataFromService:@"list_drivers.php?" withParameters:body withCompletionBlock:^(BOOL success, id result, NSError *err) {
+        if(success)
+        {
+            NSLog(@"The result listDrivers %@",result);
+            if ([result[@"Result"] isEqualToString:@"success"])
+            {
+                completion(success,[self gettTripUsersArray:result[@"Details"]],err);
+            }
+            else
+            {
+                completion(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Users  Not Available"}]);
+            }
+        }
+        else{
+            completion(success,nil,err);
+        }
+
+    }];
+}
+
 -(void)viewRatingHistoryWithCompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock{
     NSMutableData *body=[NSMutableData postData];
     [body addValue:[CAUser sharedUser].userId forKey:@"user_id"];
@@ -287,7 +325,6 @@ static CAUser *_user = nil;
 
      }];
 }
-
 
 -(void)fetchRatingAndReviewWithUserId:(NSString *)userId WithCompletionBlock:(void (^)(BOOL, id, NSError *))completionBlock{
         NSMutableData *body=[NSMutableData postData];
@@ -336,11 +373,28 @@ static CAUser *_user = nil;
              
              completionBlock(success,nil,error);
          }
-         
-         
-     }];
+    }];
     
 }
+
++(void)fetchUsersTotalRatingCountWithCompletion:(void(^)(bool success,id result,NSError *error))completion{
+    
+    NSMutableData *body = [NSMutableData postData];
+    [body addValue:[CAUser sharedUser].userId forKey:@"user_id"];
+    
+    [CAServiceManager fetchDataFromService:@"sum_rating.php?" withParameters:body withCompletionBlock:^(BOOL success, id result, NSError *error) {
+       
+        if (success) {
+            if ([result[@"status"] isEqualToString:@"success"]) {
+                completion(YES,result[@"count"],nil);
+            }else{
+                completion(YES,nil,nil);
+            }
+        }
+        
+    }];
+}
+
 #pragma mark making FileName For Attachments
 +(NSString *)makeFileName
 {
@@ -356,6 +410,7 @@ static CAUser *_user = nil;
     
     return fileName;
 }
+
 -(NSMutableArray*)gettTripUsersArray:(NSMutableArray *)arraydata
 {
     NSMutableArray *tripArrayList=[[NSMutableArray alloc]init];
@@ -366,6 +421,8 @@ static CAUser *_user = nil;
     }];
     return tripArrayList;
 }
+
+
 +(void)parseLogoutwithCompletionBlock:(void (^)(BOOL, NSError*))completionBlock{
     NSMutableData *body=[NSMutableData postData];
     [body addValue:[CAUser sharedUser].userId forKey:@"userid"];
@@ -374,6 +431,7 @@ static CAUser *_user = nil;
         
     }];
 }
+
 +(void)parsePaymentDetailsToBackEndWithTripId:(NSString *)tripId andTripName:(NSString *)tripName andAmount:(NSString *)tripAmount  WithCompletionBlock:(void (^)(BOOL, NSError*))completionBlock{
     NSMutableData *body=[NSMutableData postData];
     [body addValue:[CAUser sharedUser].userId forKey:@"user_id"];
@@ -400,7 +458,6 @@ static CAUser *_user = nil;
     
 }
 
-
 #pragma mark saveLoggedUserAutoLogin
 + (void)saveLoggedUser:(NSDictionary *)dictionary
 {
@@ -408,6 +465,5 @@ static CAUser *_user = nil;
     [[NSUserDefaults standardUserDefaults] setObject:data forKey:kLoggeduserdetails];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
-
 
 @end

@@ -63,12 +63,27 @@
 		4D5D93711A0212F900187A52 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5D93701A0212F900187A52 /* MobileCoreServices.framework */; };
 		4D5D93731A0212FF00187A52 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5D93721A0212FF00187A52 /* SystemConfiguration.framework */; };
 		4D5D937B1A0256DC00187A52 /* CARateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D5D937A1A0256DC00187A52 /* CARateViewController.m */; };
+		4D6020111A7A1886009F5539 /* CAInitialMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6020101A7A1886009F5539 /* CAInitialMapViewController.m */; };
+		4D72D2E31A88F21A00998B94 /* CATermsAndConditionVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D72D2E21A88F21A00998B94 /* CATermsAndConditionVC.m */; };
+		4DBE9C671A8252E600C46CC7 /* ZSAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DBE9C661A8252E600C46CC7 /* ZSAnnotation.m */; };
+		4DBE9C6A1A8253A300C46CC7 /* ZSPinAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DBE9C691A8253A300C46CC7 /* ZSPinAnnotation.m */; };
 		4DF53C5619EE27EA00CCDEBE /* CASearchLocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C5519EE27EA00CCDEBE /* CASearchLocationViewController.m */; };
 		4DF53C6119EE285E00CCDEBE /* SPGooglePlacesAutocompletePlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C5A19EE285E00CCDEBE /* SPGooglePlacesAutocompletePlace.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4DF53C6219EE285E00CCDEBE /* SPGooglePlacesAutocompleteQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C5C19EE285E00CCDEBE /* SPGooglePlacesAutocompleteQuery.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4DF53C6319EE285E00CCDEBE /* SPGooglePlacesAutocompleteUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C5E19EE285E00CCDEBE /* SPGooglePlacesAutocompleteUtilities.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4DF53C6419EE285E00CCDEBE /* SPGooglePlacesPlaceDetailQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C6019EE285E00CCDEBE /* SPGooglePlacesPlaceDetailQuery.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4DF53C6819EE617500CCDEBE /* CAContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C6719EE617500CCDEBE /* CAContainerViewController.m */; };
+		9B1317CE1AF9D6A0002BAC6D /* CAMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317CB1AF9D6A0002BAC6D /* CAMessage.m */; };
+		9B1317CF1AF9D6A0002BAC6D /* CAChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317CD1AF9D6A0002BAC6D /* CAChatCell.m */; };
+		9B1317D31AF9D6D6002BAC6D /* CAChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317D21AF9D6D6002BAC6D /* CAChatViewController.m */; };
+		9B1317D81AF9D79D002BAC6D /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317D51AF9D79D002BAC6D /* HPGrowingTextView.m */; };
+		9B1317D91AF9D79D002BAC6D /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317D71AF9D79D002BAC6D /* HPTextViewInternal.m */; };
+		9B367D7D1B2AB6EA0012F9F7 /* CAContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B367D7C1B2AB6EA0012F9F7 /* CAContacts.m */; };
+		9B367D841B2AE3FC0012F9F7 /* CAFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B367D831B2AE3FC0012F9F7 /* CAFriendsViewController.m */; };
+		9B4387FD1AFC972A002B8D47 /* Terms and Conditions.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9B4387FC1AFC972A002B8D47 /* Terms and Conditions.pdf */; };
+		9B4D2EFF1B2814B1003A399E /* license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9B4D2EFD1B2814B1003A399E /* license.txt */; };
+		9B4D2F031B282A0A003A399E /* KGModal.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B4D2F021B282A0A003A399E /* KGModal.m */; };
+		9B4E737F1B32A4F300A19EA6 /* CATripSelectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B4E737E1B32A4F300A19EA6 /* CATripSelectionCell.m */; };
 		9B603A551A49688A0048DD48 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A351A49688A0048DD48 /* MKAnnotationView+WebCache.m */; };
 		9B603A561A49688A0048DD48 /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A371A49688A0048DD48 /* NSData+ImageContentType.m */; };
 		9B603A571A49688A0048DD48 /* SDImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A391A49688A0048DD48 /* SDImageCache.m */; };
@@ -216,6 +231,14 @@
 		4D5D93721A0212FF00187A52 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		4D5D93791A0256DC00187A52 /* CARateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARateViewController.h; sourceTree = "<group>"; };
 		4D5D937A1A0256DC00187A52 /* CARateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CARateViewController.m; sourceTree = "<group>"; };
+		4D60200F1A7A1886009F5539 /* CAInitialMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAInitialMapViewController.h; sourceTree = "<group>"; };
+		4D6020101A7A1886009F5539 /* CAInitialMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAInitialMapViewController.m; sourceTree = "<group>"; };
+		4D72D2E11A88F21A00998B94 /* CATermsAndConditionVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATermsAndConditionVC.h; sourceTree = "<group>"; };
+		4D72D2E21A88F21A00998B94 /* CATermsAndConditionVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATermsAndConditionVC.m; sourceTree = "<group>"; };
+		4DBE9C651A8252E600C46CC7 /* ZSAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSAnnotation.h; sourceTree = "<group>"; };
+		4DBE9C661A8252E600C46CC7 /* ZSAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZSAnnotation.m; sourceTree = "<group>"; };
+		4DBE9C681A8253A300C46CC7 /* ZSPinAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSPinAnnotation.h; sourceTree = "<group>"; };
+		4DBE9C691A8253A300C46CC7 /* ZSPinAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZSPinAnnotation.m; sourceTree = "<group>"; };
 		4DF53C5419EE27EA00CCDEBE /* CASearchLocationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CASearchLocationViewController.h; sourceTree = "<group>"; };
 		4DF53C5519EE27EA00CCDEBE /* CASearchLocationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CASearchLocationViewController.m; sourceTree = "<group>"; };
 		4DF53C5819EE285E00CCDEBE /* SPGooglePlacesAutocomplete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPGooglePlacesAutocomplete.h; sourceTree = "<group>"; };
@@ -229,6 +252,26 @@
 		4DF53C6019EE285E00CCDEBE /* SPGooglePlacesPlaceDetailQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPGooglePlacesPlaceDetailQuery.m; sourceTree = "<group>"; };
 		4DF53C6619EE617500CCDEBE /* CAContainerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAContainerViewController.h; sourceTree = "<group>"; };
 		4DF53C6719EE617500CCDEBE /* CAContainerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAContainerViewController.m; sourceTree = "<group>"; };
+		9B1317CA1AF9D6A0002BAC6D /* CAMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAMessage.h; sourceTree = "<group>"; };
+		9B1317CB1AF9D6A0002BAC6D /* CAMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAMessage.m; sourceTree = "<group>"; };
+		9B1317CC1AF9D6A0002BAC6D /* CAChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAChatCell.h; sourceTree = "<group>"; };
+		9B1317CD1AF9D6A0002BAC6D /* CAChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAChatCell.m; sourceTree = "<group>"; };
+		9B1317D11AF9D6D6002BAC6D /* CAChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAChatViewController.h; sourceTree = "<group>"; };
+		9B1317D21AF9D6D6002BAC6D /* CAChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAChatViewController.m; sourceTree = "<group>"; };
+		9B1317D41AF9D79D002BAC6D /* HPGrowingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPGrowingTextView.h; sourceTree = "<group>"; };
+		9B1317D51AF9D79D002BAC6D /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
+		9B1317D61AF9D79D002BAC6D /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
+		9B1317D71AF9D79D002BAC6D /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
+		9B367D7B1B2AB6EA0012F9F7 /* CAContacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAContacts.h; sourceTree = "<group>"; };
+		9B367D7C1B2AB6EA0012F9F7 /* CAContacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAContacts.m; sourceTree = "<group>"; };
+		9B367D821B2AE3FC0012F9F7 /* CAFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAFriendsViewController.h; sourceTree = "<group>"; };
+		9B367D831B2AE3FC0012F9F7 /* CAFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAFriendsViewController.m; sourceTree = "<group>"; };
+		9B4387FC1AFC972A002B8D47 /* Terms and Conditions.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Terms and Conditions.pdf"; sourceTree = "<group>"; };
+		9B4D2EFD1B2814B1003A399E /* license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = license.txt; path = ../Controller/Trips/license.txt; sourceTree = "<group>"; };
+		9B4D2F011B282A0A003A399E /* KGModal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGModal.h; sourceTree = "<group>"; };
+		9B4D2F021B282A0A003A399E /* KGModal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGModal.m; sourceTree = "<group>"; };
+		9B4E737D1B32A4F300A19EA6 /* CATripSelectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATripSelectionCell.h; sourceTree = "<group>"; };
+		9B4E737E1B32A4F300A19EA6 /* CATripSelectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATripSelectionCell.m; sourceTree = "<group>"; };
 		9B603A341A49688A0048DD48 /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKAnnotationView+WebCache.h"; sourceTree = "<group>"; };
 		9B603A351A49688A0048DD48 /* MKAnnotationView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKAnnotationView+WebCache.m"; sourceTree = "<group>"; };
 		9B603A361A49688A0048DD48 /* NSData+ImageContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ImageContentType.h"; sourceTree = "<group>"; };
@@ -352,6 +395,8 @@
 		1216662719A303EC001DE9C8 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				9B1317D01AF9D6A7002BAC6D /* Chat */,
+				4D72D2E01A88F1EC00998B94 /* TermsAndCondition */,
 				4DF53C5319EE27E200CCDEBE /* Search */,
 				12253B6E19D02A3500014796 /* Sidemenu */,
 				1216662819A303EC001DE9C8 /* AppDelegate */,
@@ -363,6 +408,7 @@
 				1216662B19A303EC001DE9C8 /* LoginViewController */,
 				1216663119A303EC001DE9C8 /* Sign Up */,
 				12913AE619C98EF0000FCE92 /* Trips */,
+				9B367D811B2AD77C0012F9F7 /* Friends */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -381,6 +427,7 @@
 			children = (
 				1216662C19A303EC001DE9C8 /* CALoginViewController.h */,
 				1216662D19A303EC001DE9C8 /* CALoginViewController.m */,
+				4D60200E1A7A1660009F5539 /* MapVC */,
 			);
 			path = LoginViewController;
 			sourceTree = "<group>";
@@ -413,6 +460,8 @@
 				1216665719A306B0001DE9C8 /* User */,
 				1216664619A3054A001DE9C8 /* Parsing Classes */,
 				D86F4F021A63C7E40064C3C4 /* Cars.plist */,
+				9B367D7B1B2AB6EA0012F9F7 /* CAContacts.h */,
+				9B367D7C1B2AB6EA0012F9F7 /* CAContacts.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -488,6 +537,8 @@
 			children = (
 				121873F019D16484000924EB /* CATripCell.h */,
 				121873F119D16484000924EB /* CATripCell.m */,
+				9B4E737D1B32A4F300A19EA6 /* CATripSelectionCell.h */,
+				9B4E737E1B32A4F300A19EA6 /* CATripSelectionCell.m */,
 			);
 			path = TripCell;
 			sourceTree = "<group>";
@@ -554,6 +605,8 @@
 		12913AC819C989C4000FCE92 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				9B4D2F001B2814CA003A399E /* KGModal */,
+				9B1317DA1AF9D7A8002BAC6D /* HPGrowing */,
 				D8CEDD9F1A5ABAEC007FA2F2 /* NIDropDown */,
 				9B603A331A49688A0048DD48 /* SDWebImage */,
 				4D5D935C1A01F9E200187A52 /* PayPalMobile */,
@@ -696,6 +749,7 @@
 		12FEC28A199F422700C76A71 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9B4387FC1AFC972A002B8D47 /* Terms and Conditions.pdf */,
 				12FEC28B199F422700C76A71 /* CarApp-Info.plist */,
 				12FEC28C199F422700C76A71 /* InfoPlist.strings */,
 				12FEC28F199F422700C76A71 /* main.m */,
@@ -768,6 +822,36 @@
 			path = RatePage;
 			sourceTree = "<group>";
 		};
+		4D60200E1A7A1660009F5539 /* MapVC */ = {
+			isa = PBXGroup;
+			children = (
+				4D60200F1A7A1886009F5539 /* CAInitialMapViewController.h */,
+				4D6020101A7A1886009F5539 /* CAInitialMapViewController.m */,
+				4DBE9C641A8252C100C46CC7 /* ZSAnnotation */,
+			);
+			name = MapVC;
+			sourceTree = "<group>";
+		};
+		4D72D2E01A88F1EC00998B94 /* TermsAndCondition */ = {
+			isa = PBXGroup;
+			children = (
+				4D72D2E11A88F21A00998B94 /* CATermsAndConditionVC.h */,
+				4D72D2E21A88F21A00998B94 /* CATermsAndConditionVC.m */,
+			);
+			name = TermsAndCondition;
+			sourceTree = "<group>";
+		};
+		4DBE9C641A8252C100C46CC7 /* ZSAnnotation */ = {
+			isa = PBXGroup;
+			children = (
+				4DBE9C681A8253A300C46CC7 /* ZSPinAnnotation.h */,
+				4DBE9C691A8253A300C46CC7 /* ZSPinAnnotation.m */,
+				4DBE9C651A8252E600C46CC7 /* ZSAnnotation.h */,
+				4DBE9C661A8252E600C46CC7 /* ZSAnnotation.m */,
+			);
+			name = ZSAnnotation;
+			sourceTree = "<group>";
+		};
 		4DF53C5319EE27E200CCDEBE /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -800,6 +884,51 @@
 				4DF53C6719EE617500CCDEBE /* CAContainerViewController.m */,
 			);
 			path = Container;
+			sourceTree = "<group>";
+		};
+		9B1317D01AF9D6A7002BAC6D /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				9B1317D11AF9D6D6002BAC6D /* CAChatViewController.h */,
+				9B1317D21AF9D6D6002BAC6D /* CAChatViewController.m */,
+				9B1317CA1AF9D6A0002BAC6D /* CAMessage.h */,
+				9B1317CB1AF9D6A0002BAC6D /* CAMessage.m */,
+				9B1317CC1AF9D6A0002BAC6D /* CAChatCell.h */,
+				9B1317CD1AF9D6A0002BAC6D /* CAChatCell.m */,
+			);
+			name = Chat;
+			path = ../Model/View/TripCell;
+			sourceTree = "<group>";
+		};
+		9B1317DA1AF9D7A8002BAC6D /* HPGrowing */ = {
+			isa = PBXGroup;
+			children = (
+				9B1317D41AF9D79D002BAC6D /* HPGrowingTextView.h */,
+				9B1317D51AF9D79D002BAC6D /* HPGrowingTextView.m */,
+				9B1317D61AF9D79D002BAC6D /* HPTextViewInternal.h */,
+				9B1317D71AF9D79D002BAC6D /* HPTextViewInternal.m */,
+			);
+			name = HPGrowing;
+			sourceTree = "<group>";
+		};
+		9B367D811B2AD77C0012F9F7 /* Friends */ = {
+			isa = PBXGroup;
+			children = (
+				9B367D821B2AE3FC0012F9F7 /* CAFriendsViewController.h */,
+				9B367D831B2AE3FC0012F9F7 /* CAFriendsViewController.m */,
+			);
+			name = Friends;
+			path = Trips;
+			sourceTree = "<group>";
+		};
+		9B4D2F001B2814CA003A399E /* KGModal */ = {
+			isa = PBXGroup;
+			children = (
+				9B4D2F011B282A0A003A399E /* KGModal.h */,
+				9B4D2F021B282A0A003A399E /* KGModal.m */,
+				9B4D2EFD1B2814B1003A399E /* license.txt */,
+			);
+			name = KGModal;
 			sourceTree = "<group>";
 		};
 		9B603A331A49688A0048DD48 /* SDWebImage */ = {
@@ -961,7 +1090,7 @@
 				ORGANIZATIONNAME = SICS;
 				TargetAttributes = {
 					12FEC27D199F422700C76A71 = {
-						DevelopmentTeam = 36Z932575K;
+						DevelopmentTeam = D3JYCU4TXJ;
 					};
 					12FEC29D199F422700C76A71 = {
 						TestTargetID = 12FEC27D199F422700C76A71;
@@ -993,9 +1122,11 @@
 			files = (
 				9BA5493B19E008F5006D43B2 /* StarEmpty.png in Resources */,
 				9BA5493D19E008F5006D43B2 /* StarEmptyLarge.png in Resources */,
+				9B4387FD1AFC972A002B8D47 /* Terms and Conditions.pdf in Resources */,
 				12FEC2BE199F42B000C76A71 /* MainStoryboard.storyboard in Resources */,
 				9BA5493C19E008F5006D43B2 /* StarEmpty@2x.png in Resources */,
 				12FEC28E199F422700C76A71 /* InfoPlist.strings in Resources */,
+				9B4D2EFF1B2814B1003A399E /* license.txt in Resources */,
 				9BA5494219E008F5006D43B2 /* StarFullLarge@2x.png in Resources */,
 				9BA5494019E008F5006D43B2 /* StarFull@2x.png in Resources */,
 				4D4143D619ED090900998FAD /* SVProgressHUD.bundle in Resources */,
@@ -1022,25 +1153,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B1317D81AF9D79D002BAC6D /* HPGrowingTextView.m in Sources */,
 				12253B7119D02A3500014796 /* SideMenuViewController.m in Sources */,
 				12253B6919D0175D00014796 /* PlaceMark.m in Sources */,
 				9BE1A7901A54163F00FCBFB7 /* CAProfileAndRatingViewController.m in Sources */,
 				12253B5419D00C2400014796 /* GeoCoder.m in Sources */,
 				121873F219D16484000924EB /* CATripCell.m in Sources */,
+				9B1317CE1AF9D6A0002BAC6D /* CAMessage.m in Sources */,
 				4DF53C6419EE285E00CCDEBE /* SPGooglePlacesPlaceDetailQuery.m in Sources */,
 				9B603A5C1A49688A0048DD48 /* SDWebImageManager.m in Sources */,
 				1216665419A305B9001DE9C8 /* NSObject+PropertyDictionaryAddition.m in Sources */,
 				9BE1A7941A542CAA00FCBFB7 /* CARatingTableViewCell.m in Sources */,
 				1216664919A3054A001DE9C8 /* CAServiceManager.m in Sources */,
+				9B1317D91AF9D79D002BAC6D /* HPTextViewInternal.m in Sources */,
 				9B603A591A49688A0048DD48 /* SDWebImageDecoder.m in Sources */,
+				4D72D2E31A88F21A00998B94 /* CATermsAndConditionVC.m in Sources */,
 				1216665519A305B9001DE9C8 /* UITableView+TextFieldAdditions.m in Sources */,
+				9B4D2F031B282A0A003A399E /* KGModal.m in Sources */,
 				9B603A611A49688A0048DD48 /* UIImage+WebP.m in Sources */,
 				D8CEDD9E1A5ABAE7007FA2F2 /* NIDropDown.m in Sources */,
+				9B367D841B2AE3FC0012F9F7 /* CAFriendsViewController.m in Sources */,
+				9B1317CF1AF9D6A0002BAC6D /* CAChatCell.m in Sources */,
 				9B603A551A49688A0048DD48 /* MKAnnotationView+WebCache.m in Sources */,
 				4D36DD2719FF666D00EE8809 /* CARequestsViewController.m in Sources */,
 				12FEC297199F422700C76A71 /* CarApp.xcdatamodeld in Sources */,
 				1216663619A303EC001DE9C8 /* CANavigationController.m in Sources */,
 				9BDDCBA919DFB8290010B66A /* CAProfileTableViewController.m in Sources */,
+				4DBE9C671A8252E600C46CC7 /* ZSAnnotation.m in Sources */,
 				9B603A5A1A49688A0048DD48 /* SDWebImageDownloader.m in Sources */,
 				12913AF419C999C5000FCE92 /* UIViewController+MFSideMenuAdditions.m in Sources */,
 				12C321B819D43CDF004382F3 /* UIImage+Utilities.m in Sources */,
@@ -1056,14 +1195,17 @@
 				4DF53C6219EE285E00CCDEBE /* SPGooglePlacesAutocompleteQuery.m in Sources */,
 				9B603A5E1A49688A0048DD48 /* UIButton+WebCache.m in Sources */,
 				4DF53C6319EE285E00CCDEBE /* SPGooglePlacesAutocompleteUtilities.m in Sources */,
+				4D6020111A7A1886009F5539 /* CAInitialMapViewController.m in Sources */,
 				9B603A5D1A49688A0048DD48 /* SDWebImagePrefetcher.m in Sources */,
 				4D5D937B1A0256DC00187A52 /* CARateViewController.m in Sources */,
 				12913AF219C999C5000FCE92 /* MFSideMenuContainerViewController.m in Sources */,
+				4DBE9C6A1A8253A300C46CC7 /* ZSPinAnnotation.m in Sources */,
 				9B603A581A49688A0048DD48 /* SDWebImageCompat.m in Sources */,
 				12913AE919C98F09000FCE92 /* CATripsViewController.m in Sources */,
 				9BDDCBA119DFAABA0010B66A /* NSDate+TimeZone.m in Sources */,
 				9B603A5F1A49688A0048DD48 /* UIImage+GIF.m in Sources */,
 				4DF53C5619EE27EA00CCDEBE /* CASearchLocationViewController.m in Sources */,
+				9B1317D31AF9D6D6002BAC6D /* CAChatViewController.m in Sources */,
 				12913AF319C999C5000FCE92 /* MFSideMenuShadow.m in Sources */,
 				4DF53C6819EE617500CCDEBE /* CAContainerViewController.m in Sources */,
 				12253B6719D0175D00014796 /* MapView.m in Sources */,
@@ -1078,7 +1220,9 @@
 				9B603A5B1A49688A0048DD48 /* SDWebImageDownloaderOperation.m in Sources */,
 				1216663719A303EC001DE9C8 /* CASignUpViewController.m in Sources */,
 				9B603A641A49688A0048DD48 /* UIView+WebCacheOperation.m in Sources */,
+				9B367D7D1B2AB6EA0012F9F7 /* CAContacts.m in Sources */,
 				1216665A19A306C0001DE9C8 /* CAUser.m in Sources */,
+				9B4E737F1B32A4F300A19EA6 /* CATripSelectionCell.m in Sources */,
 				12253B6819D0175D00014796 /* Place.m in Sources */,
 				1205738019CFE96F0077D2A0 /* CATripDetailsTableViewController.m in Sources */,
 				1216665319A305B9001DE9C8 /* NSMutableData+PostDataAdditions.m in Sources */,
@@ -1142,8 +1286,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Krishnadas Pisharam (36Z932575K)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Krishnadas Pisharam (36Z932575K)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1161,7 +1305,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "d4219ba0-6394-4d31-9ecc-099bcbc90435";
+				PROVISIONING_PROFILE = "ff01e2c2-7ccd-4bbd-8da9-bb1e061735c0";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1182,8 +1326,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Krishnadas Pisharam (36Z932575K)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Krishnadas Pisharam (36Z932575K)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1194,7 +1338,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				PROVISIONING_PROFILE = "d4219ba0-6394-4d31-9ecc-099bcbc90435";
+				PROVISIONING_PROFILE = "ff01e2c2-7ccd-4bbd-8da9-bb1e061735c0";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1205,8 +1349,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Krishnadas Pisharam (36Z932575K)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Krishnadas Pisharam (36Z932575K)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CarApp/SVProgressHUD/Pinterest.embeddedframework",
@@ -1216,7 +1360,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
 				INFOPLIST_FILE = "CarApp/CarApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CarApp/Externals/PayPalMobile",
@@ -1227,7 +1371,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "d4219ba0-6394-4d31-9ecc-099bcbc90435";
+				PROVISIONING_PROFILE = "ff01e2c2-7ccd-4bbd-8da9-bb1e061735c0";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1237,8 +1381,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Krishnadas Pisharam (36Z932575K)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Krishnadas Pisharam (36Z932575K)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CarApp/SVProgressHUD/Pinterest.embeddedframework",
@@ -1248,7 +1392,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
 				INFOPLIST_FILE = "CarApp/CarApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CarApp/Externals/PayPalMobile",
@@ -1259,7 +1403,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "d4219ba0-6394-4d31-9ecc-099bcbc90435";
+				PROVISIONING_PROFILE = "ff01e2c2-7ccd-4bbd-8da9-bb1e061735c0";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1268,6 +1412,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CarApp.app/CarApp";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1281,6 +1427,7 @@
 				);
 				INFOPLIST_FILE = "CarAppTests/CarAppTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -1290,6 +1437,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CarApp.app/CarApp";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -1299,6 +1448,7 @@
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
 				INFOPLIST_FILE = "CarAppTests/CarAppTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};

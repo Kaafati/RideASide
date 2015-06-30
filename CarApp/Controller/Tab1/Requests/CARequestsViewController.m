@@ -250,7 +250,7 @@
     cell.imageUserPicture.clipsToBounds=YES;
     [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
 //    [cell.imageUserPicture setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"] ];
-    cell.labelTrip.text=user.reviewNote;
+    cell.labelTrip.text= user.userName;
     [cell.imageUserPicture.layer setBorderColor:[UIColor whiteColor].CGColor];
     cell.imageUserPicture.layer.borderWidth=2;
     

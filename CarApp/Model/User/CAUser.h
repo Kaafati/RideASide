@@ -14,6 +14,7 @@
 @property(nonatomic,strong)NSString *password;
 @property(nonatomic,strong)NSString *phoneNumber;
 @property(nonatomic,strong)NSString *userId;
+@property(nonatomic,strong)NSString *category;
 @property(nonatomic,strong)NSString *profile_ImageName;
 @property(nonatomic,strong)UIImage *profile_Image;//set just for passing values
 @property(nonatomic,strong)NSString *latitude;
@@ -22,6 +23,8 @@
 @property(nonatomic,strong)NSString *reviewNote;
 @property(nonatomic,strong)NSString *facebook_id;
 @property(nonatomic,strong)NSString *about_me;
+@property(nonatomic,strong)NSArray *othersLocation;
+@property(nonatomic,strong)NSArray *contacts;
 
 
 +(CAUser *)sharedUser;
@@ -39,25 +42,27 @@
 -(void)viewRatingHistoryWithCompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock;
 +(void)signUpWithFB:(NSString *)facebookId email:(NSString *)email name:(NSString *)name profileImg:(NSString *)profileImg withCompletionBlock:(void (^)(BOOL, CAUser *, NSError*))completionBlock;
 -(void)fetchRatingAndReviewWithUserId:(NSString *)userId WithCompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock;
+-(void)fetchDriverListAccepted:(NSString *)tripid withCategory:(NSString *)category withCompletion:(void(^)(bool success,id result,NSError*err))completion;
 
 +(CAUser *)userWithDetails:(NSDictionary *) userDetails;
-
-
-
-//http://sicsglobal.com/projects/WebT1/roadtripapp/add_location.php?id=3&latitude=36.114646&longitude=-115.172816 -Adding Location
-//http://sicsglobal.com/projects/WebT1/roadtripapp/signin.php?name=user1@gmail.com&password=pass  //Sign
-//http://sicsglobal.com/projects/WebT1/roadtripapp/signup.php?name=user1&email=user@gmail.com&phone=12345&password=pass&file= //Sign up
-//http://sicsglobal.com/projects/WebT1/roadtripapp/edit_profile.php?id=5&name=mm&email=jj@jdj.com&phone=1234&password=hai&file= //Updation Link
-//http://sicsglobal.com/projects/WebT1/roadtripapp/users_around.php?tripid=90 -Users around the trip
-//http://sicsglobal.com/projects/WebT1/roadtripapp/joineess.php?tripid=90 View trip joinees
-//http://sicsglobal.com/projects/WebT1/roadtripapp/logout.php?userid=33 Logout
-//http://sicsglobal.com/projects/WebT1/roadtripapp/payment.php?user_id=33&trip_id=2&trip_name=Longdrive&amount=100 -Trip PaymentDetails
-//http://sicsglobal.com/projects/WebT1/roadtripapp/rating.php?user_id=53&rate_user=54&rating=4&review=good//Add Rating
++(void)fetchUsersTotalRatingCountWithCompletion:(void(^)(bool success,id result,NSError *error))completion;
++(void)forgotPasswordWithEmailId:(NSString *)emialId withCompletionBlock:(void (^)(bool, id, NSError *))completion;
+//http://sicsglobal.com/projects/WebT1/rideaside/sum_rating.php?user_id=2 ViewTotalRating Of User
+//http://sicsglobal.com/projects/WebT1/rideaside/add_location.php?id=3&latitude=36.114646&longitude=-115.172816 -Adding Location
+//http://sicsglobal.com/projects/WebT1/rideaside/signin.php?name=user1@gmail.com&password=pass  //Sign
+//http://sicsglobal.com/projects/WebT1/rideaside/signup.php?name=user1&email=user@gmail.com&phone=12345&password=pass&file= //Sign up
+//http://sicsglobal.com/projects/WebT1/rideaside/edit_profile.php?id=5&name=mm&email=jj@jdj.com&phone=1234&password=hai&file= //Updation Link
+//http://sicsglobal.com/projects/WebT1/rideaside/users_around.php?tripid=90 -Users around the trip
+//http://sicsglobal.com/projects/WebT1/rideaside/joineess.php?tripid=90 View trip joinees
+//http://sicsglobal.com/projects/WebT1/rideaside/list_drivers.php?user_id=39&category=Passenger&tripid=80 ViewDriverAcceptedList
+//http://sicsglobal.com/projects/WebT1/rideaside/logout.php?userid=33 Logout
+//http://sicsglobal.com/projects/WebT1/rideaside/payment.php?user_id=33&trip_id=2&trip_name=Longdrive&amount=100 -Trip PaymentDetails
+//http://sicsglobal.com/projects/WebT1/rideaside/rating.php?user_id=53&rate_user=54&rating=4&review=good AddRating
 //UserId=Looged in user and rate_user=user to be rated
-////http://sicsglobal.com/projects/WebT1/roadtripapp/userdetails.php?user_id=53&rate_user=54-Profile Details
-//http://sicsglobal.com/projects/WebT1/roadtripapp/rating.php?user_id=53&rate_user=54&rating=4&review=good Adding review and rating
-//http://sicsglobal.com/projects/WebT1/roadtripapp/view_rating.php?user_id=54  View Ratingg
-//http://sicsglobal.com/projects/WebT1/roadtripapp/facebooklogin.php?facebook_id=43546&email=reref@gg.com&name=redft&file= SignUp with facebook
-
+////http://sicsglobal.com/projects/WebT1/rideaside/userdetails.php?user_id=53&rate_user=54-Profile Details
+//http://sicsglobal.com/projects/WebT1/rideaside/rating.php?user_id=53&rate_user=54&rating=4&review=good Adding review and rating
+//http://sicsglobal.com/projects/WebT1/rideaside/view_rating.php?user_id=54  View Ratingg
+//http://sicsglobal.com/projects/WebT1/rideaside/facebooklogin.php?facebook_id=43546&email=reref@gg.com&name=redft&file= SignUp with facebook
+//http://sicsglobal.com/projects/WebT1/rideaside/forgotpassword.php?user_id=25&email_id=dorad686@yahoo.com
 
 @end

@@ -41,38 +41,38 @@
         self.vehicleNumber=dictionary[@"VehicleNumber"];
         self.tripPostedById=dictionary[@"OwnerId"];
         self.tripStartTimeForNotification=dictionary[@"StartTimeNotification"];
-        
-        
-        
-        
+        self.category = dictionary[@"Category"] ? :dictionary[@"category"];
+                  
     }
     return self;
 }
+
 -(void)getTripDetailswithPath:(NSString *)path withSearchString:(NSString *)searchString withIndex:(NSInteger)index  withOptionForTripDetailIndex:(NSUInteger)indexOfTripDetailIndex withCompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateStyle = NSDateFormatterMediumStyle;
     
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-
-    
     
      NSMutableData *body = [NSMutableData postData];
     [body addValue:[CAUser sharedUser].userId forKey:@"userid"];
     [body addValue:[NSString stringWithFormat:@"%ld",(long)index] forKey:@"index"];
     [body addValue:searchString.length>0?searchString:@"" forKey:@"search"];
     [body addValue:[NSString stringWithFormat:@"%ld",(long)indexOfTripDetailIndex] forKey:@"status"];
-    [body addValue:[CATrip changeLocalTimeZoneToServerForDate:[NSString stringWithFormat:@"%@",[NSDate date]]] forKey:@"date"];
     
-//    NSLog(@"http://sicsglobal.com/projects/WebT1/roadtripapp/%@?userid=%@&index=%d&search=%@&status=%d",path,[CAUser sharedUser].userId,index,searchString.length>0?searchString:@"",indexOfTripDetailIndex);
+    [body addValue:[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]] forKey:@"date"];
     
+    NSLog(@"http://sicsglobal.com/projects/WebT1/rideaside/%@?userid=%@&index=%ld&search=%@&status=%lu&date=%@",path,[CAUser sharedUser].userId,(long)index,searchString.length>0?searchString:@"",(unsigned long)indexOfTripDetailIndex,[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]]);
     
     [CAServiceManager fetchDataFromService:path withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
      {
+         NSLog(@"resulr  %@",result);
          if(success)
          {
              if ([result[@"status"] isEqualToString:@"success"])
              {
+                // NSLog(@"Rsult trip list %@",result);
+
                  [result[@"result"] isKindOfClass:[NSArray class]]? completionBlock(success,[self gettTripArray:result[@"result"]],error):  completionBlock(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Trips Not Available"}]);
              }
              else
@@ -102,9 +102,10 @@
 }
 
 -(void)fetchRequestsWithIndex:(NSString *)index withPath:(NSString *)path CompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock{
-     NSMutableData *body = [NSMutableData postData];
-      [body addValue:[CAUser sharedUser].userId forKey:@"UserId"];
     
+    NSMutableData *body = [NSMutableData postData];
+    [body addValue:[CAUser sharedUser].userId forKey:@"UserId"];
+
     [CAServiceManager fetchDataFromService:path withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
      {
          if(success)
@@ -125,6 +126,33 @@
          
 
      }];
+}
++(void)editTrip:(CATrip *)trip completion:(void (^)(BOOL,id result, NSError *))completion
+{
+//http://sicsglobal.com/projects/WebT1/rideaside/edit_trip.php?id=1&startingPlace=trivandrum&endingPlace=kochi&datetime=2014-08-20%2017:21:13&fuelExp=500&tollbooth=no&kilometer=200&vehicle=car&seats=5&trip_name=Longdrive&vehicle_number=123&cost=1 Edit Trip
+  
+    NSMutableData *body=[NSMutableData postData];
+    [body addValue:trip.tripId forKey:@"id"];
+    [body addValue:trip.StartingPlace forKey:@"startingPlace"];
+    [body addValue:trip.EndPlace forKey:@"endingPlace"];
+    [body addValue:trip.date forKey:@"datetime"];
+    [body addValue:trip.FuelExpenses forKey:@"fuelExp"];
+    [body addValue:trip.TollBooth forKey:@"tollbooth"];
+    [body addValue:trip.TotalKilometer forKey:@"kilometer"];
+    [body addValue:trip.Vehicle forKey:@"vehicle"];
+    [body addValue:trip.SeatsAvailable forKey:@"seats"];
+    [body addValue:trip.tripName forKey:@"trip_name"];
+    [body addValue:trip.vehicleNumber forKey:@"vehicle_number"];
+    [body addValue:trip.cost forKey:@"cost"];
+    [body addValue:trip.tripStartTimeForNotification forKey:@"alert_date"];
+    
+    [CAServiceManager fetchDataFromService:@"edit_trip.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
+     {
+         NSLog(@"FETCH RESULT - %@",result);
+         success ? [result[@"Result"] isEqualToString:@"Success"] ? completion(YES,[[CATrip alloc]initWithDictionary:[result valueForKey:@"Message"]],nil) : completion(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"error"]}]) : completion(NO,nil,error);
+         
+     }];
+
 }
 -(void)addTripWithDataWithTrip:(CATrip*)trip  CompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock;{
     NSMutableData *body=[NSMutableData postData];
@@ -148,10 +176,7 @@
          success ? [result[@"Result"] isEqualToString:@"Success"] ? completionBlock(YES,nil,nil) : completionBlock(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"error"]}]) : completionBlock(NO,nil,error);
          
      }];
-    
 }
-
-
 
 -(NSMutableArray*)gettTripArray:(NSMutableArray *)arraydata
 {
@@ -163,6 +188,7 @@
     }];
     return tripArrayList;
 }
+
 +(CATrip *)getTripDetail:(NSDictionary *)userInfo{
     CATrip *trip=[[CATrip alloc]init];
     trip.StartingPlace=userInfo[@"Staring Place"];
@@ -179,9 +205,10 @@
     trip.cost=userInfo[@"cost"];
     trip.tripId=userInfo[@"Tripid"];
     trip.SeatsAvailable=userInfo[@"Seats"];
-    
+    trip.category = userInfo[@"category"];
     return  trip;
 }
+
 +(void)acceptOrRejectTrip:(CATrip*)trip withStatus:(NSString *)status CompletionBlock:(void (^)(BOOL, NSError*))completionBlock{
     
     NSMutableData *body=[NSMutableData postData];
@@ -195,10 +222,44 @@
          success ? [result[@"status"] isEqualToString:@"Success"] ? completionBlock(YES,nil) : completionBlock(NO,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"Message"]?result[@"Message"]:result[@"error"]}]) : completionBlock(NO,error);
          
      }];
-    
-    
-    
 }
 
++(void)acceptOrRejectTripForDriver:(CATrip*)trip withStatus:(NSString*)status completion:(void(^)(bool,NSError*))completion{
+    NSMutableData *body = [NSMutableData postData];
+    [body addValue:trip.tripId forKey:@"tripid"];
+    [body addValue:[CAUser sharedUser].userId forKey:@"joineeid"];
+    [body addValue:status forKey:@"status"];
+    NSLog(@"tripid%@,userid%@,status%@",trip.tripId,[CAUser sharedUser].userId,status);
+    [CAServiceManager fetchDataFromService:@"accept_tripDriver.php?" withParameters:body withCompletionBlock:^(BOOL success, id result, NSError *error) {
+        NSLog(@"the result accept or reject is %@",result);
+        success ? [result[@"status"] isEqualToString:@"Success"] ? completion(YES,nil) : completion(NO,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"Message"]?result[@"Message"]:result[@"error"]}]) : completion(NO,error);
+    }];
+}
+
++(void)selectDriverForTrip:(CATrip*)trip completion:(void(^)(BOOL,NSError*))completion{
+    NSMutableData *body = [NSMutableData postData];
+    [body addValue:trip.tripId forKey:@"tripid"];
+    [body addValue:[CAUser sharedUser].userId forKey:@"joineeid"];
+    [CAServiceManager fetchDataFromService:@"select_driver.php?" withParameters:body withCompletionBlock:^(BOOL success, id result, NSError *error) {
+        
+        success ? [result[@"status"] isEqualToString:@"Success"] ? completion(YES,nil) : completion(NO,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"Message"]?result[@"Message"]:result[@"error"]}]) : completion(NO,error);
+
+    }];
+}
+
++(void)inviteTripWithTripId:(NSString *)tripId andAppuserId:(NSString *)userId completion:(void (^)(BOOL, id, NSError *))completion{
+    //http://sicsglobal.com/projects/WebT1/rideaside/inviite_frnds.php?trip_id=1&phone_num=123456789
+    NSMutableData *body=[NSMutableData postData];
+    [body addValue:tripId forKey:@"id"];
+    [body addValue:userId forKey:@"userid"];
+    [CAServiceManager fetchDataFromService:@"inviite_frnds.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
+     {
+         NSLog(@"FETCH RESULT - %@",result);
+         success ? [result[@"Result"] isEqualToString:@"Success"] ? completion(YES,result,nil) : completion(NO,nil,error) : completion(NO,nil,error);
+         
+     }];
+
+    
+}
 
 @end

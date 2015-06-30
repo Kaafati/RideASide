@@ -10,4 +10,6 @@
 #import <MapKit/MapKit.h>
 @interface CANavigationController : UINavigationController
 @property(nonatomic,strong) CLLocation *currentLocation ;
+@property(nonatomic,strong) CLLocation *previousLocation ;
+
 @end

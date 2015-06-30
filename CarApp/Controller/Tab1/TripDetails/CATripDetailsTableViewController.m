@@ -12,7 +12,7 @@
 #import "MFSideMenu.h"
 #import "NSDate+TimeZone.h"
 #import "GeoCoder.h"
-#import "CAMapViewController.h"
+#import "CAInitialMapViewController.h"
 #import "CAViewJoineesViewController.h"
 #import "CAUser.h"
 #import "CAAppDelegate.h"
@@ -20,19 +20,23 @@
 #import "CANavigationController.h"
 #import "PayPalMobile.h"
 #import <CoreLocation/CoreLocation.h>
-
-
+#import "CAMapViewController.h"
+#import "CAChatViewController.h"
 #define kPayPalEnvironment PayPalEnvironmentNoNetwork
 @interface CATripDetailsTableViewController ()<UITextFieldDelegate,UIAlertViewDelegate,searchLocationDelegate,PayPalPaymentDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
 {
     IBOutletCollection(UITextField) NSArray *textFieldTripDetails;
-       IBOutletCollection(UITableViewCell) NSArray *cellArray;
+    IBOutletCollection(UITableViewCell) NSArray *cellArray;
     __weak IBOutlet UIDatePicker *datePicker;
     __weak IBOutlet UIToolbar *toolBar;
     NSString *dateOfTrip,*dateForPushNotification;
     UITextField *activeTextField;
     IBOutlet UIButton *addTripOrViewJoiness;
     IBOutlet UIButton *acceptTrip;
+    
+    IBOutletCollection(UIButton) NSArray *buttonsInfoArray;
+    __weak IBOutlet UIButton *buttonChatOrEdit;
+    __weak IBOutlet UIButton *rejectButton;
     IBOutlet UIStepper *stepper;
     IBOutlet UISegmentedControl *segmentControl;
     NSInteger milegae;
@@ -40,7 +44,7 @@
     NSArray *arraycarMakes,*arraycarModels;
     UIPickerView *pickerViewVehicle ;
     NSString *stringCarMakes,*stringCarModels;
-
+    NSArray *information;
 }
 @property(nonatomic, strong, readwrite) PayPalConfiguration *payPalConfig;
 @end
@@ -58,17 +62,32 @@
 
 - (void)viewDidLoad
 {
-   
-    
-    [self pickerUI];
-    
-   
-
+     information=@[@"Trip name",@"Starting place",@"Destination",@"Distance",@"Vehicle",@"Vehicle Number",@"Cost",@"Number of seats",@"Trip date"];
     [super viewDidLoad];
+
+    [self pickerUI];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tap];
     (_trip.tripPostedById.length>0&&!_isFromRequestPage)?[self leftSideNavigationBar]: [self setupMenuBarButtonItems];
     [self setUI];
+   
+}
+- (IBAction)showView:(UIButton *)sender {
+    
+    UIMenuController *menuController = [UIMenuController sharedMenuController];
+    UIMenuItem *resetMenuItem = [[UIMenuItem alloc] initWithTitle:information[[buttonsInfoArray indexOfObject:sender]] action:@selector(menuItemClicked:)];
+    menuController.arrowDirection = UIMenuControllerArrowUp;
+    [menuController setMenuItems:@[resetMenuItem]];
+    [menuController setTargetRect:CGRectZero inView:sender.viewForBaselineLayout];
+    [menuController setMenuVisible:YES animated:YES];
+}
+-(void)menuItemClicked:(id)sender
+{
+   
+}
+-(BOOL)canBecomeFirstResponder
+{
+    return YES;
 }
 - (void)setupMenuBarButtonItems {
     if(self.menuContainerViewController.menuState == MFSideMenuStateClosed &&
@@ -82,7 +101,7 @@
 - (UIBarButtonItem *)leftMenuBarButtonItem {
     [activeTextField resignFirstResponder];
     return [[UIBarButtonItem alloc]
-            initWithImage:[UIImage imageNamed:@"menu-icon"] style:UIBarButtonItemStyleBordered
+            initWithImage:[UIImage imageNamed:@"menu-icon"] style:UIBarButtonItemStylePlain
             target:self
             action:@selector(leftSideMenuButtonPressed:)];
 }
@@ -90,13 +109,12 @@
 - (UIBarButtonItem *)backBarButtonItem {
     [activeTextField resignFirstResponder];
     return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back-arrow"]
-                                            style:UIBarButtonItemStyleBordered
+                                            style:UIBarButtonItemStylePlain
                                            target:self
                                            action:@selector(backButtonPressed:)];
 }
 
 
-#pragma mark -
 #pragma mark - UIBarButtonItem Callbacks
 
 - (void)backButtonPressed:(id)sender {
@@ -108,6 +126,7 @@
         [self setupMenuBarButtonItems];
     }];
 }
+
 -(void)pickerUI
 {
     NSDictionary * dict = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Cars" ofType:@"plist"]];
@@ -127,31 +146,53 @@
     labelCarModels.textAlignment = NSTextAlignmentCenter;
     [pickerViewVehicle addSubview:labelCarModels];
 }
+
 -(void)setUI{
+    /*Removed the fuel field and toll field on 6 jun -15 and modified the textField arrayPositions */
+
+    
+    
     
     milegae=0;
     self.tableView.backgroundView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]];
-    NSArray *images=@[@"tripName",@"startingplace",@"end",@"fuel",@"toll",@"distance",@"vehicle",@"vehicleNumber",@"cost",@"seats",@"date"];
+    NSArray *images=@[@"tripName",@"startingplace",@"end",@"distance",@"vehicle",@"vehicleNumber",@"cost",@"seats",@"date"];
     if(_trip.TollBooth.length>0){
         self.title=@"Trip Details";
+        [buttonChatOrEdit setTitle:[_trip.UserId isEqualToString:[CAUser sharedUser].userId]  ? @"Edit Trip Detail" : @"Chat" forState:UIControlStateNormal];
+        if ([_trip.category isEqualToString:@"Passenger"]) {
+            [addTripOrViewJoiness setTitle:@"View Drivers" forState:UIControlStateNormal];
+            
+            
+            
+        }else{
         [addTripOrViewJoiness setTitle:@"View Joinees" forState:UIControlStateNormal];
+        }
+//        [addTripOrViewJoiness setFrame:CGRectMake(35, 0, 115, 40)];
+//        UIButton *btnViewDrivers = [[UIButton alloc]initWithFrame:CGRectMake(170, 0, 115, 40)];
+//        [btnViewDrivers setTitle:@"View Drivers" forState:UIControlStateNormal];
+//        [btnViewDrivers.titleLabel setFont:[UIFont fontWithName:@"Helvetica Neue" size:15]];
+//        [btnViewDrivers setBackgroundColor:[UIColor colorWithRed:25/255.0 green:124/255.0 blue:204/255.0 alpha:1]];
+//        [btnViewDrivers addTarget:self action:@selector(addTripOrViewJoinees:) forControlEvents:UIControlEventTouchUpInside];
+//        [cellArray[0] addSubview:btnViewDrivers];
     }
     else{
         self.title=@"Add Trip";
         [addTripOrViewJoiness setTitle:@"Add Trip" forState:UIControlStateNormal];
     }
-    
+//    [textFieldTripDetails[3] setInputAccessoryView:toolBar];
+    [textFieldTripDetails[3] setInputAccessoryView:toolBar];
+    [textFieldTripDetails[4] setInputAccessoryView:toolBar];
+    [textFieldTripDetails[6] setInputAccessoryView:toolBar];
     
     [textFieldTripDetails enumerateObjectsUsingBlock:^(UITextField *textField, NSUInteger idx, BOOL *stop) {
+        
         if(_trip.TollBooth.length>0){
-            textField.userInteractionEnabled=NO;
+            textField.userInteractionEnabled= NO;
             
         }
         else{
             textField.delegate=self;
         }
-        
-        
         
         textField.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"textField_bg"]];
         UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 0,18, 18)];
@@ -165,21 +206,20 @@
         [textField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
         
     }];
+    
     if(_trip.TollBooth.length>0)//View Trip
     {
-        
         
         [textFieldTripDetails[0] setText:_trip.tripName];
         [textFieldTripDetails[1] setText:_trip.StartingPlace];
         [textFieldTripDetails[2] setText:_trip.EndPlace];
-        [textFieldTripDetails[3] setText:[NSString stringWithFormat:@"%@ in litres",_trip.FuelExpenses]];
-        [textFieldTripDetails[4] setText:_trip.TollBooth];
-        [textFieldTripDetails[5] setText:_trip.TotalKilometer];
-        [textFieldTripDetails[6] setText:_trip.Vehicle];
-        [textFieldTripDetails[7] setText:_trip.vehicleNumber];
-        [textFieldTripDetails[8] setText:[NSString stringWithFormat:@"%@ per seat",_trip.cost]];
-        [textFieldTripDetails[9] setText:_trip.SeatsAvailable];
-        [textFieldTripDetails[10] setText:_trip.date];
+       
+        [textFieldTripDetails[3] setText:_trip.TotalKilometer];
+        [textFieldTripDetails[4] setText:_trip.Vehicle];
+        [textFieldTripDetails[5] setText:_trip.vehicleNumber];
+        [textFieldTripDetails[6] setText:[NSString stringWithFormat:@"%@ per seat",_trip.cost]];
+        [textFieldTripDetails[7] setText:_trip.SeatsAvailable];
+        [textFieldTripDetails[8] setText:_trip.date];
         [stepper setHidden:YES];
         [segmentControl setHidden:YES];
         [acceptTrip setEnabled:YES];
@@ -188,10 +228,14 @@
             [cellArray[0] setHidden:YES];
         }
         else{
-              [cellArray[1] setHidden:YES];
+           
+            
+
+            [acceptTrip setFrame:CGRectMake(addTripOrViewJoiness.frame.origin.x,10, addTripOrViewJoiness.bounds.size.width , addTripOrViewJoiness.frame.size.height)];
+            [acceptTrip setTitle:@"Pay For Trip" forState:UIControlStateNormal];
+            [rejectButton setHidden:YES];
+            //[cellArray[1] setHidden:YES];
         }
-        
-        
         
         UIButton *rightbarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
         rightbarbutton.frame =CGRectMake(0, 0, 80, 30) ;
@@ -207,21 +251,20 @@
         [geoCoderEndPlace geoCodeAddress:_trip.EndPlace inBlock:^(CLLocation *location) {
             _trip.endPlaceLocation=location;
         }];
-        
     }
     else//Add Trip
     {
         
+
         [textFieldTripDetails[3] setInputAccessoryView:toolBar];
-        [textFieldTripDetails[5] setInputAccessoryView:toolBar];
-        [textFieldTripDetails[8] setInputAccessoryView:toolBar];
-        [textFieldTripDetails[9] setText:@"1"];
-        
+        [textFieldTripDetails[4] setInputAccessoryView:toolBar];
+        [textFieldTripDetails[6] setInputAccessoryView:toolBar];
+        [textFieldTripDetails[7] setText:@"1"];
         stepper.minimumValue = 1;
         stepper.maximumValue = 6;
         stepper.stepValue = 1;
         
-        UITextField *textField=textFieldTripDetails[10];
+        UITextField *textField=textFieldTripDetails[8];
         textField.inputView=datePicker;
         textField.inputAccessoryView=toolBar;
         datePicker.minimumDate=[NSDate date];
@@ -229,6 +272,7 @@
     }
     
 }
+
 -(void)leftSideNavigationBar{
     UIButton *leftbarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     leftbarbutton.frame =CGRectMake(0, 0, 30, 30) ;
@@ -243,8 +287,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - Actions
 
-#pragma mark-Actions
 -(IBAction)addTripOrViewJoinees:(UIButton *)sender
 {
     [activeTextField resignFirstResponder];
@@ -254,24 +298,137 @@
     else{
         [self addTripDetails];
     }
+}
+- (IBAction)buttonChatOrEditPressed:(UIButton *)sender {
+    
+    if ([[sender titleForState:UIControlStateNormal]  isEqual: @"Chat"]) {
+        CAChatViewController *chatViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CAChatViewController"];
+        chatViewController.tripId = _trip.tripId;
+        [self.navigationController pushViewController:chatViewController animated:true];
+    }
+    else{
+     
+        if (sender.tag == 0) {
+            sender.tag = 1;
+            [self enableInteration:YES];
+           [sender setTitle:@"Update Trip Detail" forState:UIControlStateNormal];
+        }
+        else{
+            sender.tag = 0;
+            [self enableInteration:NO];
+            [SVProgressHUD show];
+            [self updateTripDetail];
+        }
+    }
+}
+-(void)updateTripDetail
+{
+    CATrip *trip = [[CATrip alloc]init];
+    trip.tripName=[textFieldTripDetails[0] text];
+    trip.StartingPlace=[textFieldTripDetails[1] text];
+    trip.EndPlace=[textFieldTripDetails[2] text];
+    //   trip.FuelExpenses=[NSString stringWithFormat:@"%d",milegae];
+  
+    trip.TotalKilometer=[textFieldTripDetails[3] text];
+    trip.Vehicle=[textFieldTripDetails[4] text];
+    trip.vehicleNumber=[textFieldTripDetails[5] text];
+    trip.cost=[NSString stringWithFormat:@"%.02f",costPerHead];
+    trip.SeatsAvailable=[textFieldTripDetails[7] text];
+    trip.date=[textFieldTripDetails[8] text];
+    [self performSelector:@selector(doneSelectingDate:) withObject:nil];
+    trip.tripStartTimeForNotification=dateForPushNotification;
+    trip.tripId = _trip.tripId;
+    [buttonChatOrEdit setTitle:@"Edit Trip Detail" forState:UIControlStateNormal];
+    [CATrip editTrip:trip completion:^(BOOL success, id result, NSError *error) {
+        [SVProgressHUD dismiss];
+
+        if (success==true) {
+            
+            [self.changedTripDelegate changedTrip:(CATrip *)result inIndex:_row];
+            NSLog(@"result %@",[result valueForKey:@"tripName"]);
+        }
+    }];
+}
+-(void)enableInteration:(BOOL)interaction
+{
+        [textFieldTripDetails enumerateObjectsUsingBlock:^(UITextField *textField, NSUInteger idx, BOOL *stop) {
+        
+        if(interaction == true){
+            textField.userInteractionEnabled= YES ;
+            
+            textField.delegate=self;
+            
+        }
+        else{
+            textField.userInteractionEnabled= NO ;
+
+        }
+        
+       
+        
+    }];
+    
+    if(interaction==false)
+    {
+        
+//        [textFieldTripDetails[0] setText:_trip.tripName];
+//        [textFieldTripDetails[1] setText:_trip.StartingPlace];
+//        [textFieldTripDetails[2] setText:_trip.EndPlace];
+//        [textFieldTripDetails[3] setText:[NSString stringWithFormat:@"%@ in litres",_trip.FuelExpenses]];
+//        [textFieldTripDetails[4] setText:_trip.TollBooth];
+//        [textFieldTripDetails[5] setText:_trip.TotalKilometer];
+//        [textFieldTripDetails[6] setText:_trip.Vehicle];
+//        [textFieldTripDetails[7] setText:_trip.vehicleNumber];
+//        [textFieldTripDetails[8] setText:[NSString stringWithFormat:@"%@ per seat",_trip.cost]];
+//        [textFieldTripDetails[9] setText:_trip.SeatsAvailable];
+//        [textFieldTripDetails[10] setText:_trip.date];
+        [stepper setHidden:YES];
+        [segmentControl setHidden:YES];
+        [acceptTrip setEnabled:YES];
+        
+       
+    }
+    else
+    {
+
+        [textFieldTripDetails[3] setInputAccessoryView:toolBar];
+        [textFieldTripDetails[6] setInputAccessoryView:toolBar];
+        
+        UITextField *textField=textFieldTripDetails[8];
+        textField.inputView=datePicker;
+        textField.inputAccessoryView=toolBar;
+        datePicker.minimumDate=[NSDate date];
+        
+        textField.delegate=self;
+        [stepper setHidden:NO];
+        [segmentControl setHidden:NO];
+        [acceptTrip setEnabled:NO];
+        
+        
+    }
+   
     
 }
 
 #pragma mark-Add Trip Details
+
 - (IBAction)stepperChanged:(UIStepper *)sender {
     NSUInteger value = sender.value;
-    [textFieldTripDetails[9] setText:[NSString stringWithFormat:@"%lu",value]];
+    
+    [textFieldTripDetails[7] setText:[NSString stringWithFormat:@"%zd",value]];
 }
+
 -(IBAction)segmentValueChanged:(UISegmentedControl *)sender{
-    [textFieldTripDetails[4] setText:[sender titleForSegmentAtIndex:sender.selectedSegmentIndex]];
-     }
+//    [textFieldTripDetails[4] setText:[sender titleForSegmentAtIndex:sender.selectedSegmentIndex]];
+}
+
 -(IBAction)doneSelectingDate:(id)sender{
     [activeTextField resignFirstResponder];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateStyle = NSDateFormatterMediumStyle;
     
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    [textFieldTripDetails[10] setText:[NSString stringWithFormat:@"%@",
+    [textFieldTripDetails[8] setText:[NSString stringWithFormat:@"%@",
                                        [dateFormatter stringFromDate:datePicker.date]]];
     dateOfTrip=[[NSDate alloc]changeLocalTimeZoneToServerForDate:[NSString stringWithFormat:@"%@",
                                                                   [dateFormatter stringFromDate:datePicker.date]]];
@@ -281,16 +438,41 @@
                                                                                [dateFormatter stringFromDate:dateOfSelected]]];
     
 }
+
 -(void)addTripDetails{
-    if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].length>0&&[textFieldTripDetails[2] text].length>0&&[textFieldTripDetails[3] text].length>0&&[textFieldTripDetails[4] text].length>0&&[textFieldTripDetails[6] text].length>0&&[textFieldTripDetails[7] text].length>0&&[textFieldTripDetails[8] text].length>0&&[textFieldTripDetails[9] text].length>0&&[textFieldTripDetails[10] text].length>0)
-    {
-        [SVProgressHUD showWithStatus:@"Adding Trip Details..."];
-        [self parseAddTrip];
-    }
+//    if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].length>0&&[textFieldTripDetails[2] text].length>0&&[textFieldTripDetails[3] text].length>0&&[textFieldTripDetails[4] text].length>0&&[textFieldTripDetails[6] text].length>0&&[textFieldTripDetails[7] text].length>0&&[textFieldTripDetails[8] text].length>0&&[textFieldTripDetails[9] text].length>0&&[textFieldTripDetails[10] text].length>0)
+//    {
+//        [SVProgressHUD showWithStatus:@"Adding Trip Details..."];
+//        [self parseAddTrip];
+//    }
+//    else
+//        [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Please fill all fields" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
+   [textFieldTripDetails[3] setText:@"1"];
+  
+if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].length>0&&[textFieldTripDetails[2] text].length>0&&[textFieldTripDetails[4] text].length>0&&[textFieldTripDetails[5] text].length>0&&[textFieldTripDetails[6] text].length>0&&[textFieldTripDetails[8] text].length>0)
+            {
+                [self parseAddTrip];
+            }
     else
+    {
         [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Please fill all fields" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
+[textFieldTripDetails enumerateObjectsUsingBlock:^(UITextField * obj, NSUInteger idx, BOOL *stop) {
+    
+    
+    if (!obj.text.length  /*|| idx!=3 MilageTextField(Cause hiding the cell for some )*/) {
+        
+        NSMutableAttributedString *text =[[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@%@",[obj.placeholder hasPrefix:@"!"] ? @"" : @"! ",obj.placeholder]];
+        [text addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(obj.attributedText.length, 1)];
+        [obj setAttributedPlaceholder:text];
+        
+    }
+    
+}];
+    }
+
     
 }
+
 
 -(void)goToMapPage{
     [activeTextField resignFirstResponder];
@@ -300,18 +482,27 @@
 }
 
 -(void)parseAddTrip{
+   if([[textFieldTripDetails[6] text] intValue] == 0)
+   {
+       [textFieldTripDetails[6] setText:@""];
+       [[[UIAlertView alloc] initWithTitle:@"" message:@"Please give a valid amount" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles: nil] show];
+       return;
+   }
+    [SVProgressHUD showWithStatus:@"Adding Trip Details..."];
+
     CATrip *trip=[[CATrip alloc]init];
     trip.tripName=[textFieldTripDetails[0] text];
     trip.StartingPlace=[textFieldTripDetails[1] text];
     trip.EndPlace=[textFieldTripDetails[2] text];
-//   trip.FuelExpenses=[NSString stringWithFormat:@"%d",milegae];
-    trip.FuelExpenses=[textFieldTripDetails[3] text];
-    trip.TollBooth=[textFieldTripDetails[4] text];
-    trip.TotalKilometer=[textFieldTripDetails[5] text];
-    trip.Vehicle=[textFieldTripDetails[6] text];
-    trip.vehicleNumber=[textFieldTripDetails[7] text];
-    trip.cost=[NSString stringWithFormat:@"%.02f",costPerHead];
-    trip.SeatsAvailable=[textFieldTripDetails[9] text];
+    //   trip.FuelExpenses=[NSString stringWithFormat:@"%d",milegae];
+//    trip.FuelExpenses=[textFieldTripDetails[3] text];
+//    trip.TollBooth=[textFieldTripDetails[4] text];
+    trip.TotalKilometer=[textFieldTripDetails[3] text];
+    trip.Vehicle=[textFieldTripDetails[4] text];
+    trip.vehicleNumber=[textFieldTripDetails[5] text];
+  //  trip.cost=[NSString stringWithFormat:@"%.02f",costPerHead];
+   trip.cost= [textFieldTripDetails[6] text]; 
+    trip.SeatsAvailable=[textFieldTripDetails[7] text];
     trip.date=dateOfTrip;
     trip.tripStartTimeForNotification=dateForPushNotification;
     
@@ -320,11 +511,15 @@
                       [SVProgressHUD dismiss];
                       if(success){
                           [textFieldTripDetails enumerateObjectsUsingBlock:^(UITextField *obj, NSUInteger idx, BOOL *stop) {
-                              obj.text=@"";
+                              
+                              NSMutableAttributedString *text =[[NSMutableAttributedString alloc] initWithString:[obj.placeholder stringByReplacingOccurrencesOfString:@"! " withString:@""]];
+                              [obj setAttributedPlaceholder:text];
+                              obj.text= idx == 7 ? @"1" : @"";
+
                           }];
-                          [textFieldTripDetails[9] setText:@"1"];
-                          [textFieldTripDetails[4] setText:@"Yes"];
-                          segmentControl.selectedSegmentIndex=0;
+                          
+//                          [textFieldTripDetails[4] setText:@"Yes"];
+//                          segmentControl.selectedSegmentIndex=0;
                           stepper.value=1;
                           milegae=0;;
                           
@@ -352,6 +547,9 @@
     return YES;
 }
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+    
+   if ([textField.text isEqualToString:@"!"]) textField.text = @"";
+       
     if(textField.tag==1500||textField.tag==1501){
         
         textField.text=@"";
@@ -362,28 +560,33 @@
     }
     if(activeTextField.tag==1001||activeTextField.tag==1002){
         [self presentSearchViewControllerWithTag:activeTextField.tag withText:activeTextField.text];
-        [activeTextField resignFirstResponder];
-        return  NO;
+         [activeTextField resignFirstResponder];
+       return  NO;
     }
     return YES;
 }
 -(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
-  
-//    if(textField.tag==1500){
-//    cost=textField.text.intValue;
-//    [textField setText:[NSString stringWithFormat:@"%d perseat",cost]];
-//    }
-//    else
+    
+    //    if(textField.tag==1500){
+    //    cost=textField.text.intValue;
+    //    [textField setText:[NSString stringWithFormat:@"%d perseat",cost]];
+    //    }
+    //    else
+    
+    if(textField.tag==1500 && textField.text.intValue == 0){
+        
+        
+    }
     if(textField.tag==1501){
         milegae=textField.text.intValue;
-        [textField setText:[NSString stringWithFormat:@"%d in litres",milegae]];
+        [textField setText:[NSString stringWithFormat:@"%zd in litres",milegae]];
         [self getLocationLatLong:[textFieldTripDetails[1] text]];
         [self getLocationLatLong:[textFieldTripDetails[2] text]];
     }
     
-//    else if(textField.tag==1001){
-//        [self getLocationLatLong:textField.text];
-//    }
+    //    else if(textField.tag==1001){
+    //        [self getLocationLatLong:textField.text];
+    //    }
     
     return YES;
 }
@@ -398,59 +601,89 @@
     [self.navigationController pushViewController:viewJoinees animated:YES];
     
 }
+
 #pragma  mark-Accept RejectTrip
 -(IBAction)acceptTrip:(UIButton *)sender{
-  switch (sender.tag) {
-      case 1001:
-//          [self parseAcceptTrip:@"Accept"];
-          [self parseAcceptTrip:@"Pending"];
-          break;
-      case 1002:
-          [self parseAcceptTrip:@"Reject"];
-          break;
-          
-      default:
-          break;
-  }
+    switch (sender.tag) {
+        case 1001:
+            NSLog(@"_trip.category %@",_trip.category);
+            //          [self parseAcceptTrip:@"Accept"];
+            if ([acceptTrip.titleLabel.text isEqualToString:@"Pay For Trip"]) {
+                [self performPaymentPage];
+            }else{
+                [_trip.category isEqualToString:@"Passenger"] ? [self parseAcceptDriverOnTrip:@"Added"] :[self parseAcceptTrip:@"Pending"];
+            }
+            break;
+        case 1002:
+            NSLog(@"_trip.category %@",_trip.category);
+            
+            [_trip.category isEqualToString:@"Passenger"] ? [self parseAcceptDriverOnTrip:@"reject"] :[self parseAcceptTrip:@"Reject"];
+            break;
+            
+        default:
+            break;
+    }
 }
+
 -(void)parseAcceptTrip:(NSString *)status{
     [CATrip acceptOrRejectTrip:_trip withStatus:status CompletionBlock:^(BOOL success, NSError *error) {
         if(success){
             if([status isEqualToString:@"Pending"]){
                 
                 [acceptTrip setEnabled:NO];
-//              [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request accepted" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
+                //              [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request accepted" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
                 [self performPaymentPage];
             }
             else{
                 if(_isFromRequestPage){
-                       [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
-                       [self.navigationController popViewControllerAnimated:YES];
+                    [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
+                    [self.navigationController popViewControllerAnimated:YES];
                 }
                 else{
-                   [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request rejected" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
-                 [self goToHomePage];
+                    [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request rejected" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
+                    [self goToHomePage];
                 }
             }
         }
         else{
             [CAServiceManager handleError:error];
-             [self goToHomePage];
+            [self goToHomePage];
         }
-       
+        
     }];
 }
+
+-(void)parseAcceptDriverOnTrip:(NSString *)status{
+    
+    [CATrip acceptOrRejectTripForDriver:_trip withStatus:status completion:^(bool success, NSError *error) {
+        if(success){
+            if([status isEqualToString:@"Added"]){
+                [acceptTrip setEnabled:NO];
+                [self goToHomePage];
+            }else{
+                [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request rejected" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
+                [self goToHomePage];
+            }
+        }else{
+            [CAServiceManager handleError:error];
+            [self goToHomePage];
+        }
+        
+    }];
+}
+
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+
     switch (buttonIndex) {
         case 0:
             [self goToHomePage];
-
+            
             break;
         case 1:{
             NSString *urlString = [NSString stringWithFormat:@"http://maps.google.com/maps?daddr=%@&saddr=Current+Location",_trip.StartingPlace];
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
             [self goToHomePage];
-
+            
         }
             break;
             
@@ -458,20 +691,32 @@
             break;
     }
 }
+
 -(void)goToHomePage{
+    
     CAAppDelegate * appDelegate = (CAAppDelegate*)[UIApplication sharedApplication].delegate;
     [appDelegate setHomePage];
 }
+
 #pragma mark-delegate
+
 -(void)searchLocationWithAddress:(NSDictionary*)address withTextFieldTag:(NSUInteger)textFieldTag{
     UITextField *textField=(textFieldTag==1001)?textFieldTripDetails[1]:textFieldTripDetails[2];
     [textField setText:address[@"address"]];
 }
+
 #pragma mark-Paypal
+
 -(void)performPaymentPage{
+    
+    if(_trip.cost.integerValue < 1)
+    {
+        [[[UIAlertView alloc] initWithTitle:@"" message:@"Please give the valid amount" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles: nil] show];
+        return;
+    }
     // Paypal configuration
     if(!_payPalConfig)
-    _payPalConfig = [[PayPalConfiguration alloc] init];
+        _payPalConfig = [[PayPalConfiguration alloc] init];
     _payPalConfig.acceptCreditCards = YES;
     _payPalConfig.languageOrLocale = @"en";
     _payPalConfig.merchantName = @"Awesome Shirts, Inc.";
@@ -481,16 +726,26 @@
     
     NSLog(@"PayPal iOS SDK version: %@", [PayPalMobile libraryVersion]);
     [self goToPayPalPage];
-
+    
 }
 
 -(void)goToPayPalPage{
-    
-    PayPalItem *item = [PayPalItem itemWithName:_trip.tripName
-                                       withQuantity:1
-                                          withPrice:[NSDecimalNumber decimalNumberWithString:_trip.cost]
-                                       withCurrency:@"USD"
-                                            withSku:@""];
+    NSInteger cost = [_trip.cost integerValue];
+    PayPalItem *item;
+    if (cost==0) {
+        item = [PayPalItem itemWithName:_trip.tripName
+                           withQuantity:1
+                              withPrice:[NSDecimalNumber decimalNumberWithString:@"10"]
+                           withCurrency:@"USD"
+                                withSku:@""];
+    }else{
+               item = [PayPalItem itemWithName:_trip.tripName
+                                  withQuantity:1
+                                     withPrice:[NSDecimalNumber decimalNumberWithString:_trip.cost]
+                                  withCurrency:@"USD"
+                                       withSku:@""];
+
+    }
     
     NSArray *items = @[item];
     NSDecimalNumber *subtotal = [PayPalItem totalPriceForItems:items];
@@ -551,30 +806,28 @@
     [SVProgressHUD showWithStatus:@"Sending payment details..." maskType:SVProgressHUDMaskTypeBlack];
     NSLog(@"Here is your proof of payment:\n\n%@\n\nSend this to your server for confirmation and fulfillment.", completedPayment.confirmation);
     [self parsePaymentDetailsToBackEnd];
-    
-    
 }
+
 -(void)parsePaymentDetailsToBackEnd{
     [CAUser parsePaymentDetailsToBackEndWithTripId:_trip.tripId andTripName:_trip.tripName andAmount:_trip.cost WithCompletionBlock:^(BOOL success, NSError *error) {
         [SVProgressHUD dismiss];
         if(success){
-                      if(_isFromRequestPage){
-                          [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
-                          [self.navigationController popViewControllerAnimated:YES];
-       
-                      }
-                      else{
-                      [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip Accepted" delegate:self cancelButtonTitle:@"Home Page" otherButtonTitles:@"Directions", nil]show];
-                      }
+            if(_isFromRequestPage){
+                [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+            else{
+                [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip Accepted" delegate:self cancelButtonTitle:@"Home Page" otherButtonTitles:@"Directions", nil]show];
+            }
         }
         else
             [CAServiceManager handleError:error];
-        
     }];
     
 }
 
 #pragma mark - Calculate TripDistance And Cost
+
 -(void)getLocationLatLong:(NSString *)string
 {
     [SVProgressHUD showWithStatus:@"Estimating Cost Per Head..."];
@@ -590,13 +843,11 @@
             {
                 startLat = coordinate.latitude;
                 startLng = coordinate.longitude;
-                
             }
             else if([string  isEqualToString:[textFieldTripDetails[2] text]])
             {
                 destLat = coordinate.latitude;
                 destLng = coordinate.longitude;
-                
             }
         }
         [self getTheDistanceBetweenStartAndEndPointWith:startLat and:startLng and:destLat and:destLng];
@@ -628,13 +879,13 @@
         NSString *strKilometer = [distComponent stringByReplacingOccurrencesOfString:@" km" withString:@""];
         float miles = [strKilometer floatValue]*0.6214;
         [self calculateCostPerSeatUsing:miles];
-   }
-
+    }
+    
 }
 
 -(void)calculateCostPerSeatUsing:(float)totalMiles{
     
-   if (totalMiles >= 1 && totalMiles < 25 ) {
+    if (totalMiles >= 1 && totalMiles < 25 ) {
         costPerHead = totalMiles * .50;
     }else if (totalMiles >= 25 && totalMiles < 50){
         costPerHead = totalMiles * .35;
@@ -649,7 +900,7 @@
     
     [textFieldTripDetails[8] setText:[NSString stringWithFormat:@"%.02f per seat",costPerHead]];
     [SVProgressHUD dismiss];
-   
+    
 }
 
 #pragma mark - Table View Delegate
@@ -665,6 +916,9 @@
     else
     {
         return [super tableView:tableView heightForRowAtIndexPath:indexPath];
+       
+        
+        
     }
 }
 
@@ -674,7 +928,7 @@
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-   
+    
     if (component==0) {
         stringCarMakes = arraycarMakes[row];
         
@@ -685,27 +939,27 @@
         
     }
     
-   activeTextField.text = [NSString stringWithFormat:@"%@-%@",stringCarMakes,stringCarModels] ;
+    activeTextField.text = [NSString stringWithFormat:@"%@-%@",stringCarMakes,stringCarModels] ;
     return component==0 ? arraycarMakes[row] : arraycarModels[row];
-
+    
 }
 
 -(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
-        return component == 0 ? arraycarMakes.count : arraycarModels.count;
-
+    return component == 0 ? arraycarMakes.count : arraycarModels.count;
+    
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-   
-        if (component==0) {
-            arraycarModels  =[[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Cars" ofType:@"plist"]] valueForKeyPath:[NSString stringWithFormat:@"CarMakes.%@",arraycarMakes[row]]];
-            [pickerView reloadAllComponents];
-        }
-        
-   
-
+    
+    if (component==0) {
+        arraycarModels  =[[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Cars" ofType:@"plist"]] valueForKeyPath:[NSString stringWithFormat:@"CarMakes.%@",arraycarMakes[row]]];
+        [pickerView reloadAllComponents];
+    }
+    
+    
+    
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView

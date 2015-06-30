@@ -15,9 +15,7 @@
     SPGooglePlacesAutocompleteQuery *searchQuery;
     NSArray *searchResult;
     IBOutlet UITableView *tableView;
-    IBOutlet UISearchBar *searchBars;
-    
-   
+    IBOutlet UISearchBar *searchBars;   
 }
 
 @end
@@ -36,8 +34,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain
-                                                                     target:self action:@selector(cancelAction)];
+    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelAction)];
     self.navigationItem.leftBarButtonItem = leftBarButton;
     searchBars.tintColor=[UIColor whiteColor];
     searchBars.searchBarStyle = UISearchBarStyleMinimal;
@@ -50,6 +47,7 @@
 -(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
 }
+
 -(void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
 {
     [searchBar resignFirstResponder];

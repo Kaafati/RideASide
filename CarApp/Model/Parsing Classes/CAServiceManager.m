@@ -19,8 +19,9 @@
     self = [super init];
     if (self) {
         
+        //http://sicsglobal.com/projects/App_projects/rideaside/accept_trip.php
         
-        _mainURl=@"http://sicsglobal.com/projects/WebT1/roadtripapp/";
+        _mainURl=@"http://sicsglobal.com/projects/App_projects/rideaside/";
         
     }
     return self;

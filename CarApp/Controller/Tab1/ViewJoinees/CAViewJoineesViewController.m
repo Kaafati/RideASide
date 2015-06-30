@@ -13,11 +13,15 @@
 #import "CAProfileTableViewController.h"
 #import "MFSideMenu.h"
 #import "UIButton+WebCache.h"
+#import "PayPalMobile.h"
 
+#define kPayPalEnvironment PayPalEnvironmentNoNetwork
 
-@interface CAViewJoineesViewController (){
+@interface CAViewJoineesViewController ()<PayPalPaymentDelegate>{
     NSArray *tripUsers;
 }
+
+@property(nonatomic, strong, readwrite) PayPalConfiguration *payPalConfig;
 
 @end
 
@@ -37,8 +41,9 @@
     [super viewDidLoad];
     [self setUpUi];
     [self setupMenuBarButtonItems];
-    [self fetchJoineesList];
-    
+
+    [_trips.category isEqualToString:@"Passenger"] ? [self fetchDriversList]: [self fetchJoineesList];
+    //[self fetchJoineesList];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -62,23 +67,28 @@
     } else {
         self.navigationItem.leftBarButtonItem = [self leftMenuBarButtonItem];
     }
+    //self.navigationItem.rightBarButtonItem = [_trips.category isEqualToString:@"Passenger"] ? [self rightBarButtonItem] : nil;
+}
+
+-(UIBarButtonItem *)rightBarButtonItem{
+
+    return [[UIBarButtonItem alloc]initWithTitle:@"PayForTrip" style:UIBarButtonItemStylePlain target:self action:@selector(payForTripAction:)];
 }
 
 - (UIBarButtonItem *)leftMenuBarButtonItem {
     return [[UIBarButtonItem alloc]
-            initWithImage:[UIImage imageNamed:@"menu-icon"] style:UIBarButtonItemStyleBordered
+            initWithImage:[UIImage imageNamed:@"menu-icon"] style:UIBarButtonItemStylePlain
             target:self
             action:@selector(leftSideMenuButtonPressed:)];
 }
 
 - (UIBarButtonItem *)backBarButtonItem {
     return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back-arrow"]
-                                            style:UIBarButtonItemStyleBordered
+                                            style:UIBarButtonItemStylePlain
                                            target:self
                                            action:@selector(backButtonPressed:)];
 }
 
-#pragma mark -
 #pragma mark - UIBarButtonItem Callbacks
 
 - (void)backButtonPressed:(id)sender {
@@ -91,6 +101,10 @@
     }];
 }
 
+-(void)payForTripAction:(UIBarButtonItem*)sender{
+    [self payPalPaymentProcess];
+}
+
 #pragma mark-Parsing
 -(void)fetchJoineesList{
     CAUser *user=[[CAUser alloc]init];
@@ -101,6 +115,104 @@
     }];
 
 }
+
+-(void)fetchDriversList{
+    NSLog(@"Details tripid %@,tripCategory=%@",_trips.tripId,_trips.category);
+    CAUser *user = [[CAUser alloc]init];
+    [user fetchDriverListAccepted:_trips.tripId withCategory:_trips.category withCompletion:^(bool success, id result, NSError *err) {
+        tripUsers=(NSArray *)result;
+        [self.tableView reloadData];
+    }];
+}
+
+#pragma mark - PayPalPayment
+
+-(void)payPalPaymentProcess{
+    // Paypal configuration
+    if (!_payPalConfig) {
+        _payPalConfig = [[PayPalConfiguration alloc]init];
+        _payPalConfig.acceptCreditCards = YES;
+        _payPalConfig.languageOrLocale = @"en";
+        _payPalConfig.merchantName = @"Awesome Shirts, Inc.";
+        _payPalConfig.merchantPrivacyPolicyURL = [NSURL URLWithString:@"https://www.paypal.com/webapps/mpp/ua/privacy-full"];
+        _payPalConfig.merchantUserAgreementURL = [NSURL URLWithString:@"https://www.paypal.com/webapps/mpp/ua/useragreement-full"];
+        _payPalConfig.languageOrLocale = [NSLocale preferredLanguages][0];
+        [self goToPayPalPage];
+    }
+}
+
+-(void)goToPayPalPage{
+    PayPalItem *item = [PayPalItem itemWithName:_trips.tripName withQuantity:1 withPrice:[NSDecimalNumber decimalNumberWithString:@"10"] withCurrency:@"USD" withSku:@""];
+    NSArray *items = @[item];
+    NSDecimalNumber *subtotal= [PayPalItem totalPriceForItems:items];
+    // Optional: include payment details
+    NSDecimalNumber *shipping = [[NSDecimalNumber alloc]initWithString:@"10"];
+    NSDecimalNumber *tax = [[NSDecimalNumber alloc]initWithString:@"10"];
+    PayPalPaymentDetails *payPalDetails = [PayPalPaymentDetails paymentDetailsWithSubtotal:subtotal withShipping:shipping withTax:tax];
+    NSDecimalNumber *total = [[subtotal decimalNumberByAdding:shipping] decimalNumberByAdding:tax];
+    
+    PayPalPayment *payment = [[PayPalPayment alloc] init];
+    payment.amount = total;
+    payment.currencyCode = @"USD";
+    payment.shortDescription = @"Total Amount";
+    payment.items = items;  // if not including multiple items, then leave payment.items as nil
+    payment.paymentDetails = payPalDetails; // if not including payment details, then leave payment.paymentDetails as nil
+    
+    if (!payment.processable) {
+        // This particular payment will always be processable. If, for
+        // example, the amount was negative or the shortDescription was
+        // empty, this payment wouldn't be processable, and you'd want
+        // to handle that here.
+    }
+    
+    // Update payPalConfig re accepting credit cards.
+    self.payPalConfig.acceptCreditCards = YES;
+    
+    PayPalPaymentViewController *paymentViewController = [[PayPalPaymentViewController alloc] initWithPayment:payment
+                                                                                                configuration:self.payPalConfig
+                                                                                                     delegate:self];
+    [self presentViewController:paymentViewController animated:YES completion:nil];
+}
+
+#pragma mark PayPalPaymentDelegate methods
+
+- (void)payPalPaymentViewController:(PayPalPaymentViewController *)paymentViewController didCompletePayment:(PayPalPayment *)completedPayment {
+    NSLog(@"PayPal Payment Success!");
+    
+    [self sendCompletedPaymentToServer:completedPayment]; // Payment was processed successfully; send to server for verification and fulfillment
+   // [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+}
+
+- (void)payPalPaymentDidCancel:(PayPalPaymentViewController *)paymentViewController {
+    NSLog(@"PayPal Payment Canceled");
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
+#pragma mark Proof of payment validation
+
+- (void)sendCompletedPaymentToServer:(PayPalPayment *)completedPayment {
+    // TODO: Send completedPayment.confirmation to server
+    [SVProgressHUD showWithStatus:@"Sending payment details..." maskType:SVProgressHUDMaskTypeBlack];
+    NSLog(@"Here is your proof of payment:\n\n%@\n\nSend this to your server for confirmation and fulfillment.", completedPayment.confirmation);
+    [self parsePaymentDetailsToBackEnd];
+}
+
+-(void)parsePaymentDetailsToBackEnd{
+    [CAUser parsePaymentDetailsToBackEndWithTripId:_trips.tripId andTripName:_trips.tripName andAmount:_trips.cost WithCompletionBlock:^(BOOL success, NSError *error) {
+        [SVProgressHUD dismiss];
+        if(success){
+           // if(_isFromRequestPage){
+               // [self.delegate actionAfterAcceptOrRejectTripwithIndexPathOfRowSelected:_indexPathOfRowSelected];
+                [self.navigationController popViewControllerAnimated:YES];
+        } 
+
+    }];
+    
+}
+
 #pragma mark - Table view data source
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -149,6 +261,7 @@
     CAUser *user=tripUsers[indexPath.row];
     CAProfileTableViewController *profile=[self.storyboard instantiateViewControllerWithIdentifier:@"profileView"];
     [profile setUserId:user.userId];
+    [profile setTrip:_trips];
     [self.navigationController pushViewController:profile animated:YES];
     
 }

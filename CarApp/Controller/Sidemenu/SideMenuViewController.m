@@ -17,14 +17,14 @@
 #import "CAContainerViewController.h"
 #import "CAServiceManager.h"
 #import "CARequestsViewController.h"
-
+#import "CAFriendsViewController.h"
 @implementation SideMenuViewController{
     NSArray *arrayMenus;
     UIView *headerView ;
     UIImageView  *imageView;
 }
 -(void)viewDidLoad{
-    arrayMenus=@[@"Home",@"Edit Profile",@"Requests",@"Review History",@"Logout"];
+    arrayMenus=@[@"Home",@"Edit Profile",@"Requests",@"Review History",@"Friends",@"Logout"];
     self.tableView.backgroundColor=[UIColor darkGrayColor];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTableView)  name:
      @"updateProfileImage" object:nil];
@@ -46,7 +46,7 @@
     
 }
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return [NSString stringWithFormat:@"Section %d", section];
+    return [NSString stringWithFormat:@"Section %ld", (long)section];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -122,8 +122,12 @@
             [controllers addObject:tripDetails];
         }
             break;
-            
         case 4:{
+             CAFriendsViewController *friends=[storyBoard instantiateViewControllerWithIdentifier:@"CAFriendsViewController"];
+         [controllers addObject:friends];
+        }
+            break;
+        case 5:{
             [SVProgressHUD showWithStatus:@"Logging out..." maskType:SVProgressHUDMaskTypeBlack];
             [self parseLogout];
         }
@@ -141,6 +145,7 @@
 -(void)parseLogout{
     [CAUser parseLogoutwithCompletionBlock:^(BOOL success, NSError *error) {
         [SVProgressHUD dismiss];
+        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:[[NSBundle mainBundle] bundleIdentifier]];
         if(success){
             CAAppDelegate * appDelegate = (CAAppDelegate*)[UIApplication sharedApplication].delegate;
             [appDelegate didLogout];

@@ -13,15 +13,18 @@
 #import "UIButton+WebCache.h"
 #import "UIImage+Utilities.h"
 #import "CAAppDelegate.h"
-
-@interface CASignUpViewController ()<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIActionSheetDelegate, UITextViewDelegate>
+#import "CALoginViewController.h"
+@interface CASignUpViewController ()<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIActionSheetDelegate, UITextViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
 {
     IBOutletCollection(UITextField) NSArray *textFieldSignUp;
     UITextField *textFiledActive;
     IBOutlet UIButton *signUpButton;
     IBOutlet UIButton *profileImage;
     IBOutlet UITextView *textViewAboutMe;
-    
+    __weak IBOutlet UITableViewCell *cellCategory;
+    __weak IBOutlet UITableViewCell *cellTMC;
+    NSArray *category;
+    __weak IBOutlet UIButton *btnTermsAndCondition;
 }
 
 @end
@@ -41,6 +44,7 @@
 {
     [super viewDidLoad];
     [self setUpUi];
+    [CAUser sharedUser].userId.length>0 ? [self hideTermsAndConditionCell]:[self addAttributedText];
     
     
     // Uncomment the following line to preserve selection between presentations.
@@ -49,14 +53,26 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
+
+-(void)hideTermsAndConditionCell{
+    [cellTMC setHidden:YES];
+}
+
+-(void)addAttributedText{
+    NSDictionary *attribute = @{NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle)};
+    NSAttributedString *attributedString = [[NSAttributedString alloc]initWithString:@"Terms And Condition" attributes:attribute];
+    [btnTermsAndCondition.titleLabel setAttributedText:attributedString];
+    
+}
+
 -(void)setUpUi
 {
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tap];
     
-    NSArray *images=@[@"username",@"emailId",@"mobile",@"password"];
-    
+    NSArray *images=@[@"username",@"emailId",@"mobile",@"password",@"username"];
+    category = @[@"Driver",@"Passenger"];
     [textFieldSignUp enumerateObjectsUsingBlock:^(UITextField *textField, NSUInteger idx, BOOL *stop) {
         [textField setDelegate:self];
         textField.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"textField_bg"]];
@@ -72,8 +88,6 @@
        }];
     
     
-   
-    
     self.tableView.backgroundView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]];
     if([CAUser sharedUser].userId.length>0){//Edit Profile
         self.title = @"Edit Profile";
@@ -83,10 +97,13 @@
         [textFieldSignUp[1] setText:[CAUser sharedUser].emailId];
         [textFieldSignUp[2] setText:[CAUser sharedUser].phoneNumber];
         [textFieldSignUp[3] setText:[CAUser sharedUser].password];
+        [textFieldSignUp[4] setText:[CAUser sharedUser].category];
         [textViewAboutMe setText:[[[CAUser sharedUser] about_me] length] ? [[CAUser sharedUser] about_me] :@"Bio" ];
         [textFieldSignUp[0] setUserInteractionEnabled:NO];
          [textFieldSignUp[1] setUserInteractionEnabled:NO];
         
+        [textFieldSignUp[4] setInputView:[self setPickerView]];
+        [textFieldSignUp[4] setInputAccessoryView:[self setPickerToolBar]];
         
         [profileImage sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
 //        [profileImage setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
@@ -100,6 +117,7 @@
         
     }
     else{ //Sign Up
+        [textFieldSignUp[4] setHidden:YES];
         self.title = @"Register";
         [profileImage setBackgroundImage:[UIImage imageNamed:@"placeholder"] forState:UIControlStateNormal];
         [profileImage setBackgroundImage:[UIImage imageNamed:@"placeholder"] forState:UIControlStateSelected];
@@ -112,6 +130,27 @@
     [profileImage.layer setCornerRadius:50.0f];
     [profileImage setClipsToBounds:YES];
     
+}
+
+-(UIPickerView *)setPickerView{
+    UIPickerView *pickerVw = [[UIPickerView alloc]init];
+    pickerVw.delegate=self;
+    pickerVw.dataSource = self;
+    pickerVw.showsSelectionIndicator = YES;
+    return pickerVw;
+}
+
+-(UIToolbar *)setPickerToolBar{
+    UIToolbar *toolBar = [[UIToolbar alloc]init];
+    [toolBar sizeToFit];
+    UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonAction:)];
+    [toolBar setItems:@[flexSpace,doneButton]];
+    return toolBar;
+}
+
+-(void)doneButtonAction:(UIBarButtonItem *)sender{
+    [self.view endEditing:YES];
 }
 
 - (void)setupMenuBarButtonItems {
@@ -137,7 +176,7 @@
                                            action:@selector(backButtonPressed:)];
 }
 
-#pragma mark -
+
 #pragma mark - UIBarButtonItem Callbacks
 
 - (void)backButtonPressed:(id)sender {
@@ -156,7 +195,6 @@
     // Dispose of any resources that can be recreated.
 }
 -(IBAction)signUp:(id)sender
-
 {
     [textFiledActive resignFirstResponder];
     if([CAUser sharedUser].userId.length>0){
@@ -184,14 +222,22 @@
         [SVProgressHUD dismiss];
         if(success)
         {
-            [SVProgressHUD showWithStatus:@"Please check your email to activate your account" maskType:SVProgressHUDMaskTypeBlack];
+           
+            [self performSelector:@selector(showStatus) withObject:nil afterDelay:0.5];
             [self.navigationController popViewControllerAnimated:YES];
+            
+           
         }
         else
             [CAServiceManager handleError:error];
     }];
 }
 
+-(void)showStatus
+{
+    
+    [SVProgressHUD showSuccessWithStatus:@"Check your email for Verification"];
+}
 
 -(void)parseUpdateProfile{
     [SVProgressHUD showWithStatus:@"Updating profile..." maskType:SVProgressHUDMaskTypeClear];
@@ -200,6 +246,7 @@
     user.emailId=[textFieldSignUp[1] text];
     user.phoneNumber=[textFieldSignUp[2] text];
     user.password=[textFieldSignUp[3] text];
+    user.category = [textFieldSignUp[4] text];
     user.about_me=[textViewAboutMe.text isEqualToString:@"Bio"]?@"":textViewAboutMe.text;
     user.profile_Image=[profileImage.currentBackgroundImage fixOrientation];
     [user updateUserProfileWithCompletionBlock:^(BOOL success, NSError *error){
@@ -216,15 +263,36 @@
     }];
 }
 
+#pragma mark PickerView Delegates
+
+-(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
+    return 1;
+}
+
+-(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
+    return category.count;
+}
+
+-(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    return category[row];
+}
+
+-(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
+    [(UITextField *) textFieldSignUp[4] setText:category[row]];
+}
+
 #pragma mark Textfield Delegates
+
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
     return YES;
 }
+
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
     textFiledActive = textField;
 }
+
 -(void)showAlertMessage:(NSString *)message
 {
     [[[UIAlertView alloc]initWithTitle:@"Message" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil]show];
@@ -236,13 +304,12 @@
     }
     
 }
+
 -(void)textViewDidEndEditing:(UITextView *)textView{
     if ([textViewAboutMe.text isEqualToString:@""]) {
         [textViewAboutMe setText: @"Bio"];
     }
-    
 }
-
 
 -(void)ressignKeyboardForTextView{
     UIToolbar* keyboardDoneButtonView = [[UIToolbar alloc] init];
@@ -252,7 +319,6 @@
                                                                   action:@selector(doneClicked:)];
     [keyboardDoneButtonView setItems:[NSArray arrayWithObjects:doneButton, nil]];
     textViewAboutMe.inputAccessoryView = keyboardDoneButtonView;
-
 }
 
 - (IBAction)doneClicked:(id)sender
@@ -273,11 +339,19 @@
     
     [actionSheet showInView:[UIApplication sharedApplication].keyWindow];
     
+ }
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    UITableViewCell *cell = indexPath.section==0 ? [super tableView:tableView cellForRowAtIndexPath:indexPath] : nil;
     
-    
-    
-    
+    if (cell.tag==5 &&cell==cellCategory) {
+        return (!([CAUser sharedUser].userId.length>0)) ? 0 : CGRectGetHeight(cell.frame);
+    }else if (cell.tag==0){
+        return 78;
+    }
+        return CGRectGetHeight(cell.frame);
 }
+
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     switch (buttonIndex)
@@ -295,6 +369,7 @@
             break;
     }
 }
+
 -(void)showCamera:(NSInteger)actionSheetIndex{
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
     [imagePickerController setDelegate:self];
@@ -302,8 +377,8 @@
     imagePickerController.allowsEditing=YES;
     [self presentViewController:imagePickerController animated:YES completion:nil];
     
-    
 }
+
 #pragma UIImagePickerController Delegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     
@@ -312,12 +387,12 @@
     [profileImage setBackgroundImage:selectedImage forState:UIControlStateSelected];
     [profileImage setSelected:YES];
     [self dismissViewControllerAnimated:YES completion:nil];
-    
 }
 
 -(void)dismissKeyboard{
     [textFiledActive resignFirstResponder];
 }
+
 #pragma mark-Mail Validation
 - (BOOL)validateEmail:(NSString *)email
 {

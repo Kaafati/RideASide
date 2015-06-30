@@ -8,7 +8,6 @@
 
 #import "CANavigationController.h"
 #import "NSMutableData+PostDataAdditions.h"
-
 #import "CAUser.h"
 #import "MFSideMenu.h"
 
@@ -44,15 +43,15 @@
     self.view.backgroundColor=[UIColor blackColor];
     intialFunctionCallCounter=0;
     [self addLocation];
-   [NSTimer  scheduledTimerWithTimeInterval:90 target:self selector:@selector(updateLocation) userInfo:nil repeats:YES];
-    
-    
-    
+ 
+    [NSTimer  scheduledTimerWithTimeInterval:90 target:self selector:@selector(updateLocation) userInfo:nil repeats:YES];
+    NSLog(@"new value %f",currentLocation.coordinate.latitude);
     // Do any additional setup after loading the view.
 }
+
 -(void)updateLocation{
-  
-    if([CAUser sharedUser].userId.length>0){
+ 
+    if([CAUser sharedUser].userId.length>0 && currentLocation.coordinate.longitude != _previousLocation.coordinate.longitude && currentLocation.coordinate.latitude != _previousLocation.coordinate.latitude){
         NSMutableData *body=[NSMutableData postData];
        [body addValue:[NSString stringWithFormat:@"%f",currentLocation.coordinate.latitude] forKey:@"latitude"];
        [body addValue:[NSString stringWithFormat:@"%f",currentLocation.coordinate.longitude] forKey:@"longitude"];
@@ -61,10 +60,8 @@
             
         }];
     }
-
-    
-    
 }
+
 -(void)addLocation{
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
@@ -73,32 +70,27 @@
         [locationManager requestAlwaysAuthorization];
 
     [locationManager startUpdatingLocation];
-    
 }
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-    currentLocation = newLocation;
-    if(intialFunctionCallCounter==0){
-       [self updateLocation];
-        intialFunctionCallCounter=1;
+    _previousLocation = oldLocation;
+
+   // NSLog(@"locationManager value %f",newLocation.coordinate.latitude);
+    if (oldLocation.coordinate.longitude != newLocation.coordinate.longitude && oldLocation.coordinate.latitude != newLocation.coordinate.latitude) {
+        currentLocation =  newLocation;
+        if(intialFunctionCallCounter==0){
+            [self updateLocation];
+            intialFunctionCallCounter=1;
+        }
     }
     
 }
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
- {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

@@ -68,6 +68,14 @@
                                            target:self
                                            action:@selector(backButtonPressed:)];
 }
+- (IBAction)callUser:(UIButton *)sender {
+
+    NSURL *phoneurl=[NSURL URLWithString:[NSString stringWithFormat:@"telprompt:%@",userDetails.phoneNumber]];
+    if ([[UIApplication sharedApplication]canOpenURL:phoneurl]) {
+        [[UIApplication sharedApplication]openURL:phoneurl];
+    }
+
+}
 
 #pragma mark - UIBarButtonItem Callbacks
 
@@ -83,7 +91,7 @@
 
 #pragma mark - Initial UISetup
 -(void)setUpUi{
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]];
+  //  self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]];
     NSArray *images=@[@"username",@"emailId",@"mobile"];
     
     if(![_userId isEqualToString:[CAUser sharedUser].userId]){
@@ -100,6 +108,14 @@
     
     [_textFieldProfileDetails enumerateObjectsUsingBlock:^(UITextField *textField, NSUInteger idx, BOOL *stop) {
         textField.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"textField_bg"]];
+        if (idx==2) {
+            UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 22)];
+            [textField setLeftViewMode:UITextFieldViewModeAlways];
+            [textField setLeftView:paddingView];
+            [textField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
+
+            return ;
+        }
         UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 0,18, 18)];
         [imgView setContentMode:UIViewContentModeScaleAspectFit];
         imgView.image = [UIImage imageNamed:images[idx]];
@@ -116,7 +132,6 @@
     [self fetchUserProfileDetails];
     [self fetchUserRatingDetails];
 }
-
 
 #pragma mark-Parsing
 -(void)fetchUserProfileDetails{
@@ -138,7 +153,7 @@
         if (success) {
             [arrayDataList enumerateObjectsUsingBlock:^(NSDictionary * obj, NSUInteger idx, BOOL *stop) {
                 [tableArray addObject:obj];
-//                [self calculateAndSetAvgRating];
+                [self calculateAndSetAvgRating];
                 [tabelViewRating reloadData];
             }];
         }
@@ -214,6 +229,8 @@
     rateView.rate =[tableArray[indexPath.row][@"rating"] integerValue];
     rateView.alignment = RateViewAlignmentLeft;
     [cell.contentView addSubview:rateView];
+    
+    
     return cell;
 }
 

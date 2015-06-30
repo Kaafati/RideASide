@@ -20,7 +20,6 @@
 @interface CAMapViewController ()<goingToUserProfilePageDelegate>{
     MapView *mapView;
     NSArray *tripUsers;
-    
 }
 
 @end
@@ -63,10 +62,12 @@
     [super viewWillAppear:animated];
     
 }
+
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillAppear:animated];
   
 }
+
 -(void)fetchTripUsers{
     CAUser *user=[[CAUser alloc]init];
     [user fetchUsersAroundTripwithTripId:_trips.tripId WithCompletionBlock:^(BOOL success, id result, NSError *error) {
@@ -74,8 +75,8 @@
         [self postAnnotationsInTrip];
         
     }];
-    
 }
+
 -(void)postAnnotationsInTrip{
     [tripUsers enumerateObjectsUsingBlock:^(CAUser  *obj, NSUInteger idx, BOOL *stop) {
         Place* home = [[Place alloc] init] ;
@@ -86,27 +87,26 @@
         [mapView addAnnotation:home];
     }];
 }
-#pragma mark-Actions
+
+#pragma mark - Actions
+
 -(void)drawRoute
 {
-    
     Place* home = [[Place alloc] init] ;
 	home.name = _trips.StartingPlace;
 	home.description = @"";
 	home.latitude =_trips.startPlaceLocation.coordinate.latitude;
 	home.longitude =_trips.startPlaceLocation.coordinate.longitude;
     
-    
-    
-	Place* restLocation = [[Place alloc] init];
+	Place *restLocation = [[Place alloc]init];
 	restLocation.name =_trips.EndPlace;
 	restLocation.description = @"";
 	restLocation.latitude =_trips.endPlaceLocation.coordinate.latitude;;
     restLocation.longitude= _trips.endPlaceLocation.coordinate.longitude;
     [mapView showRouteFrom:restLocation to:home];
-    
     [SVProgressHUD dismiss];
 }
+
 -(void)shareAction{
     UIGraphicsBeginImageContext(self.view.frame.size);
     // Put everything in the current view into the screenshot
@@ -143,12 +143,15 @@
              [Alert show];
              
          }
-     }];}
+     }];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 -(void)goToProfilePageWithUserId:(NSString *)userId{
     CAProfileTableViewController *profile=[self.storyboard instantiateViewControllerWithIdentifier:@"profileView"];
     [profile setUserId:userId];

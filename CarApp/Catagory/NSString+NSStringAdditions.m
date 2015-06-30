@@ -12,7 +12,7 @@
 
 + (NSString *) escapedString:(NSString *)text
 {
-	return ( NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
+	return (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL,
                                                                                  ( CFStringRef)text,
                                                                                  NULL,
                                                                                  (CFStringRef)@"!*'();:@&=+$,/?%#[]", 
@@ -28,6 +28,7 @@
                                                                                  (CFStringRef)@"!*'();:@&=+$,/?%#[]",
                                                                                  CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
 }
+
 - (NSString *) md5
 {
     //const char *cStr = [self UTF8String];
@@ -41,4 +42,5 @@
             result[12], result[13], result[14], result[15]
             ];  
 }
+
 @end

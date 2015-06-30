@@ -10,4 +10,5 @@
 
 @interface CATripsViewController : UITableViewController
 @property(nonatomic,strong)NSString *navigationTitle;
+-(void)parseMyTrips:(NSInteger)indexOfTab WithSearchString:(NSString *)searchText WithrideIndex:(NSInteger)rideIndex;
 @end

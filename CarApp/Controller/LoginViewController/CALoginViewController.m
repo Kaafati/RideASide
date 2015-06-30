@@ -12,13 +12,14 @@
 #import "CAServiceManager.h"
 #import "CAAppDelegate.h"
 #import <FacebookSDK/FacebookSDK.h>
-
-
-
-@interface CALoginViewController ()<UITextFieldDelegate>
+#import "CANavigationController.h"
+#import "CAContacts.h"
+@import CoreText;
+@interface CALoginViewController ()<UITextFieldDelegate,UIAlertViewDelegate>
 {
      IBOutletCollection(UITextField) NSArray *textFieldLogin;
     UITextField *textFieldActive;
+    __weak IBOutlet UIButton *forgotPassword;
 }
 
 @end
@@ -38,8 +39,7 @@
 {
     [super viewDidLoad];
     [self setUpUi];
-
-    
+//    NSLog(@"contact %@",[CAContacts getContacts]);
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
@@ -59,7 +59,8 @@
     self.tableView.backgroundView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]];
     NSArray *images=@[@"username",@"password"];
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-  [textFieldLogin enumerateObjectsUsingBlock:^(UITextField *textField, NSUInteger idx, BOOL *stop) {
+ 
+    [textFieldLogin enumerateObjectsUsingBlock:^(UITextField *textField, NSUInteger idx, BOOL *stop) {
         [textField setDelegate:self];
         textField.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"textField_bg"]];
         UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 0,18, 18)];
@@ -73,20 +74,73 @@
         [textField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
 
     }];
+   
+        NSMutableAttributedString* string = [[NSMutableAttributedString alloc]initWithString: @"Forgot your password?"];
+        [string addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInt:NSUnderlineStyleSingle] range:NSMakeRange(0, string.length)];//Underline color
+        [string addAttribute:NSUnderlineColorAttributeName value:[UIColor whiteColor] range:NSMakeRange(0, string.length)];//TextColor
+        [forgotPassword setAttributedTitle:string forState:UIControlStateNormal];
 }
 
 #pragma mark- Delegate
--(IBAction)login:(id)sender
+- (IBAction)buttonForgotPasswordPressed:(UIButton *)sender {
+    UIAlertView *alertview  = [[UIAlertView alloc]initWithTitle:@"Enter your Email" message:@"" delegate:self cancelButtonTitle:@"cancel" otherButtonTitles:@"send", nil];
+    alertview.alertViewStyle  = UIAlertViewStylePlainTextInput;
+    [[alertview textFieldAtIndex:0] setPlaceholder:@"Enter your Email"];
+    [[alertview textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeEmailAddress];
+    [alertview show];
+
+    
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    if (buttonIndex==1) {
+        [[[alertView textFieldAtIndex:0] text] length] ? ![self validateEmail:[[alertView textFieldAtIndex:0] text]] ? [[[UIAlertView alloc] initWithTitle:@"" message:@"Please enter a valid Email" delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil] show] : [self forgotPasswordWIthEmailId:[[alertView textFieldAtIndex:0] text]] : nil;
+       
+    }
+   
+}
+-(void)forgotPasswordWIthEmailId:(NSString *)email
+{
+    [SVProgressHUD show];
+    [CAUser forgotPasswordWithEmailId:email withCompletionBlock:^(bool success, id result, NSError *error) {
+        
+        [SVProgressHUD dismiss];
+        if (success) {
+            [[[UIAlertView alloc] initWithTitle:@"" message:@"Please check your Email" delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil] show];
+        }
+        else
+        {
+            [[[UIAlertView alloc] initWithTitle:@"" message:@"Failed" delegate:self cancelButtonTitle:@"ok" otherButtonTitles:nil] show];
+        }
+    }];
+}
+
+#pragma mark-Mail Validation
+- (BOOL)validateEmail:(NSString *)email
+{
+    NSString *emailRegEx =
+    @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
+    return [emailTest evaluateWithObject:email];
+}
+
+-(IBAction)login:(UIButton *)sender
+{
+    
+
     [textFieldActive resignFirstResponder];
     ([textFieldLogin[0] text].length>0&&[textFieldLogin[1] text].length>0)?[self parseLogin]:[self showAlert];
 }
+
 -(void)showAlert
 {
     [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Please fill all fields" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil]show];
 }
+
 -(void)parseLogin
 {
+    
     [SVProgressHUD showWithStatus:@"Logging in..." maskType:SVProgressHUDMaskTypeBlack];
     [CAUser loginWithUsername:[textFieldLogin[0] text] password:[textFieldLogin[1] text] withCompletionBlock:^(BOOL success, CAUser *user, NSError *error) {
         [SVProgressHUD dismiss];
@@ -94,7 +148,8 @@
         {
             
             CAAppDelegate * appDelegate = (CAAppDelegate*)[UIApplication sharedApplication].delegate;
-            [appDelegate setHomePage];
+            [appDelegate setInitialMapView];
+          //  [[CAUser sharedUser] setContacts:[CAContacts getContacts]];
         }
         else
         {
@@ -105,8 +160,8 @@
         }
         
     }];
-
 }
+
 -(IBAction)signUp:(id)sender
 {
     CASignUpViewController *signInViewController=[self.storyboard instantiateViewControllerWithIdentifier:@"signUpView"];
@@ -144,8 +199,6 @@
                 }
             }];
 }
-
-
 
 #pragma mark Textfield Delegates
 -(void)textFieldDidBeginEditing:(UITextField *)textField{

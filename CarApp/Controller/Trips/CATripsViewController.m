@@ -21,7 +21,7 @@
 #import "CAProfileTableViewController.h"
 #import "CAProfileAndRatingViewController.h"
 
-@interface CATripsViewController ()<UISearchBarDelegate>{
+@interface CATripsViewController ()<UISearchBarDelegate,delgateTripChanges>{
     NSMutableArray *tableArray;
     NSInteger startCount;
     BOOL isLoadMoreData;
@@ -69,14 +69,14 @@
 
 - (UIBarButtonItem *)leftMenuBarButtonItem {
     return [[UIBarButtonItem alloc]
-            initWithImage:[UIImage imageNamed:@"menu-icon"] style:UIBarButtonItemStyleBordered
+            initWithImage:[UIImage imageNamed:@"menu-icon"] style:UIBarButtonItemStylePlain
             target:self
             action:@selector(leftSideMenuButtonPressed:)];
 }
 
 - (UIBarButtonItem *)backBarButtonItem {
     return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back-arrow"]
-                                            style:UIBarButtonItemStyleBordered
+                                            style:UIBarButtonItemStylePlain
                                            target:self
                                            action:@selector(backButtonPressed:)];
 }
@@ -122,10 +122,10 @@
     
     
 }
--(void)parseMyTrips:(NSInteger)indexOfTab WithSearchString:(NSString *)searchText WithrideIndex:(NSUInteger)rideIndex
+-(void)parseMyTrips:(NSInteger)indexOfTab WithSearchString:(NSString *)searchText WithrideIndex:(NSInteger)rideIndex
 {
     NSString *pathName;
-    switch (indexOfTab) {
+    switch (self.tabBarController.selectedIndex) {
         case 0:
             pathName=@"view_trip.php";
             break;
@@ -139,7 +139,7 @@
             break;
     }
     CATrip *trip=[[CATrip alloc]init];
-   
+    NSLog(@"PathName =%@",pathName);
     [SVProgressHUD showWithStatus:@"Fetching Posts..." maskType:SVProgressHUDMaskTypeBlack];
     [trip getTripDetailswithPath:pathName withSearchString:[searchText isKindOfClass:[NSNull class]]?@"":searchText withIndex:startCount withOptionForTripDetailIndex:rideIndex withCompletionBlock:^(BOOL success, id result, NSError *error) {
         [SVProgressHUD dismiss];
@@ -158,8 +158,6 @@
         [refreshControl endRefreshing];
         [self.view setUserInteractionEnabled:YES];
         [self.tableView reloadData];
-        
-        
     }];
 }
 
@@ -219,12 +217,21 @@
     CATrip *trip=tableArray[indexPath.row];
     CATripDetailsTableViewController *tripDetails=[self.storyboard instantiateViewControllerWithIdentifier:@"tripDetailsView"];
     tripDetails.trip=trip;
+    tripDetails.changedTripDelegate = (id<delgateTripChanges>)self;
+    tripDetails.row = indexPath.row;
     [self.navigationController pushViewController:tripDetails animated:YES];
+}
+
+
+-(void)changedTrip:(CATrip *)trip inIndex:(NSUInteger)row
+{
+    trip.name = [CAUser sharedUser].userName;
+    [tableArray replaceObjectAtIndex:row withObject:trip];
+    [self.tableView reloadData];
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)aScrollView
                   willDecelerate:(BOOL)decelerate
 {
-    
     if(self.tableView.contentOffset.y<0)/* scroll from top */
     {
     }
@@ -291,6 +298,7 @@
     startCount=0;
     [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex];
 }
+
 -(UIView *)setUpHeaderView{
     UIView *headerView;
     switch (self.tabBarController.selectedIndex) {
@@ -308,30 +316,32 @@
     
     return headerView;
 }
+
 #pragma mark-Creating Header View
 
 -(UIView *)setUpSecondTabBarHeaderView{
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0,30, 100)];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0,self.view.frame.size.width, 100)];
     NSArray *itemArray = [NSArray arrayWithObjects: @"All rides", @"Upcoming Rides", @"Finished Rides", nil];
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:itemArray];
-    segmentedControl.frame = CGRectMake(10, 10, 310, 30);
+    segmentedControl.frame = CGRectMake(10, 10, headerView.frame.size.width-18, 30);
     [segmentedControl addTarget:self action:@selector(segmentControlAction:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
     segmentedControl.tintColor=[UIColor whiteColor];
     
-    UISearchBar *search_Bar=[[UISearchBar alloc] initWithFrame:CGRectMake(0, 40,320, 44)];
+    UISearchBar *search_Bar=[[UISearchBar alloc] initWithFrame:CGRectMake(0, 40,headerView.frame.size.width, 44)];
     search_Bar.autocorrectionType = UITextAutocorrectionTypeNo;
     search_Bar.placeholder = @"Enter the place to search";
     search_Bar.delegate = self;
     search_Bar.tintColor=[UIColor whiteColor];
     search_Bar.searchBarStyle = UISearchBarStyleMinimal;
-   [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
+      [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
     [headerView addSubview:segmentedControl];
     [headerView addSubview:search_Bar];
-    
+   
     return headerView;
     
 }
+
 -(UIView *)setUpThirdTabBarHeaderView{
     
     UISearchBar *searchBar=[[UISearchBar alloc] initWithFrame:CGRectMake(0, 0,320, 44)];
@@ -344,12 +354,14 @@
     return searchBar;
     
 }
+
 -(void)segmentControlAction:(UISegmentedControl *)segmentedControl{
     segmentIndex=segmentedControl.selectedSegmentIndex;
     startCount=0;
     [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex];
     
 }
+
 #pragma mark-Search Bar Delegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [searchBar setShowsCancelButton:YES animated:YES];
@@ -364,6 +376,7 @@
     [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex];
     [searchBar resignFirstResponder];
 }
+
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
     searchString=searchBar.text;
     [searchBar setShowsCancelButton:NO animated:YES];

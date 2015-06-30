@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 @protocol searchLocationDelegate <NSObject>
-
 -(void)searchLocationWithAddress:(NSDictionary*)address withTextFieldTag:(NSUInteger)textFieldTag;
 @end
 

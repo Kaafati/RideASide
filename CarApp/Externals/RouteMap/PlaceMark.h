@@ -8,8 +8,10 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 #import "Place.h"
+#import "ZSPinAnnotation.h"
+#import "ZSAnnotation.h"
 
-@interface PlaceMark : NSObject <MKAnnotation> {
+@interface PlaceMark : ZSPinAnnotation <MKAnnotation> {
 
 	CLLocationCoordinate2D coordinate;
 	Place* place;

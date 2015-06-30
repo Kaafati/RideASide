@@ -90,7 +90,7 @@
 }
 -(IBAction)update:(id)sender{
     [SVProgressHUD showWithStatus:@"Updating..." maskType:SVProgressHUDMaskTypeBlack];
-    [CAUser parseReviewingadRaringOfUseriD:_userId withReview:textView.text withRateValue:[NSString stringWithFormat:@"%d",starRate] WithCompletionBlock:^(BOOL success, NSError *error) {
+    [CAUser parseReviewingadRaringOfUseriD:_userId withReview:textView.text withRateValue:[NSString stringWithFormat:@"%zd",starRate] WithCompletionBlock:^(BOOL success, NSError *error) {
         [SVProgressHUD dismiss];
         if(success){
             [self.delegate updateUserDetails];

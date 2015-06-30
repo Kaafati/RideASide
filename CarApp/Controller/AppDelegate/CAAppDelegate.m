@@ -15,8 +15,8 @@
 #import "CATripDetailsTableViewController.h"
 #import "CAUser.h"
 #import "PayPalMobile.h"
-
-
+#import "CAInitialMapViewController.h"
+@import iAd;
 @implementation CAAppDelegate
 
 @synthesize managedObjectContext = _managedObjectContext;
@@ -25,7 +25,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"FontNAme" size:12], NSFontAttributeName, nil]];
     
@@ -56,18 +55,20 @@
     }
 
 }
+
 -(void)checkAutoLogin{
     if ([[NSUserDefaults standardUserDefaults]objectForKey:kLoggeduserdetails])
     {
         NSDictionary *userDetails = [NSKeyedUnarchiver unarchiveObjectWithData:(NSData *)[[NSUserDefaults standardUserDefaults] objectForKey:kLoggeduserdetails]];
         [CAUser userWithDetails:userDetails];
         
-        [self setHomePage];
+        [self setInitialMapView];
     }
     else{
         [self setRootPage];
     }
 }
+
 -(void)setRootPage
 {
     UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:Nil];
@@ -76,6 +77,14 @@
     [self.window setRootViewController:navigationController];
     
 }
+
+-(void)setInitialMapView{
+    UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:Nil];
+    CAInitialMapViewController *initialMpVw = [storyBoard instantiateViewControllerWithIdentifier:@"InitialMapViewID"];
+    CANavigationController *navController = [[CANavigationController alloc]initWithRootViewController:initialMpVw];
+    self.window.rootViewController = navController;
+}
+
 -(void)setHomePage{
     CATabBarController *tabView = [[CATabBarController alloc] init];
     
@@ -85,14 +94,14 @@
                                                     leftMenuViewController:leftMenuViewController
                                                     rightMenuViewController:nil];
     self.window.rootViewController = container;
-    
-    
 }
+
 -(void)didLogout{
     [CAUser logout];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:kLoggeduserdetails];
     [self checkAutoLogin];
 }
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -230,6 +239,7 @@
     NSString *str = [[deviceToken description] stringByReplacingOccurrencesOfString: @" " withString:@""];
     str = [str stringByReplacingOccurrencesOfString: @"<" withString:@""];
     str = [str stringByReplacingOccurrencesOfString: @">" withString:@""];
+    NSLog(@"deviceTocken Trim %@",str);
     [[NSUserDefaults standardUserDefaults]setValue:str forKey:@"DeviceToken"];
     [[NSUserDefaults standardUserDefaults]synchronize];
 }
@@ -238,6 +248,7 @@
 {
     NSLog(@"Failed to get token, error: %@", error);
 }
+
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 {
     NSLog(@"Userinfooo %@",userInfo);
@@ -245,13 +256,13 @@
     [self processRemoteNotification:userInfo];
     
 }
+
 -(void)processRemoteNotification:(NSDictionary *)userInfo{
     UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:Nil];
     CATripDetailsTableViewController *tripDetails=[storyBoard instantiateViewControllerWithIdentifier:@"tripDetailsView"];
     tripDetails.trip=[CATrip getTripDetail:userInfo[@"aps"]];
     CANavigationController *navigationController=[[CANavigationController alloc]initWithRootViewController:tripDetails];
     self.window.rootViewController = navigationController;
-    
-    
 }
+
 @end

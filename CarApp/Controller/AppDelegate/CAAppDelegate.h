@@ -22,5 +22,6 @@
 - (NSURL *)applicationDocumentsDirectory;
 -(void)setHomePage;
 -(void)didLogout;
+-(void)setInitialMapView;
 
 @end
