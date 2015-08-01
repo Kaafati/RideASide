@@ -173,14 +173,24 @@
     
    NSMutableArray * contactList = [[NSMutableArray alloc] init];
     CFArrayRef allPeople = ABAddressBookCopyArrayOfAllPeople(addressBook);
+    CFArrayRef allPeopleWithSortOrder  = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, allPeople, kABPersonSortByLastName);
     CFIndex nPeople = ABAddressBookGetPersonCount(addressBook);
-    
+    ABPersonSortOrdering sortOrder = ABPersonGetSortOrdering();
+    if (sortOrder == kABPersonSortByFirstName) {
+        // sort by firstName
+        allPeopleWithSortOrder  = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, allPeople, kABPersonSortByFirstName);
+        
+    }
+    else {
+        allPeopleWithSortOrder  = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, allPeople, kABPersonSortByLastName);
+        
+        // sort by lastName
+    }
     for (int i=0;i < nPeople;i++) {
       //  NSMutableDictionary *dOfPerson=[NSMutableDictionary dictionary];
          CAContacts *contacts = [CAContacts new];
-        ABRecordRef ref = CFArrayGetValueAtIndex(allPeople,i);
-        
-        //For username and surname
+        ABRecordRef ref = CFArrayGetValueAtIndex(    CFArrayGetCount(allPeopleWithSortOrder) != 0 ? allPeopleWithSortOrder : allPeople,i);
+         //For username and surname
         
         CFStringRef firstName, lastName;
         firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
@@ -195,8 +205,22 @@
           //  [dOfPerson setObject:(__bridge NSString *)ABMultiValueCopyValueAtIndex(eMail, 0) forKey:@"email"];
             
         }
+        //get contacts picture, if pic doesn't exists, show standart one
         
+                  CFDataRef imgData = ABPersonCopyImageData(ref);
+                  NSData *imageData = (__bridge NSData *)imgData;
+                  contacts.image = [UIImage imageWithData:imageData];
+        
+                  if (imgData != NULL) {
+                      CFRelease(imgData);
+                  }
+        
+                    if (!contacts.image) {
+                        contacts.image = [UIImage imageNamed:@"placeholder"];
+                    }
+
         //For phone Number
+   
         ABMultiValueRef phones =(__bridge ABMultiValueRef)((__bridge NSString*)ABRecordCopyValue(ref, kABPersonPhoneProperty));
          NSCharacterSet *character = [NSCharacterSet characterSetWithCharactersInString:@"() -,"];
         if (ABMultiValueGetCount(phones) > 0) {

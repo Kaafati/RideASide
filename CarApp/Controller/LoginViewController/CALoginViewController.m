@@ -14,12 +14,18 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import "CANavigationController.h"
 #import "CAContacts.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+
 @import CoreText;
+//@import iAd;
 @interface CALoginViewController ()<UITextFieldDelegate,UIAlertViewDelegate>
 {
      IBOutletCollection(UITextField) NSArray *textFieldLogin;
     UITextField *textFieldActive;
     __weak IBOutlet UIButton *forgotPassword;
+    UIView *viewAd;
 }
 
 @end
@@ -39,6 +45,8 @@
 {
     [super viewDidLoad];
     [self setUpUi];
+   
+   // [self setUpInterstitial];
 //    NSLog(@"contact %@",[CAContacts getContacts]);
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -47,11 +55,66 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    NSLog(@"%@",[FBSDKAccessToken currentAccessToken]);
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+/*
+ 
+ -(void)setUpInterstitial
+ {
+ interstritial = [[ADInterstitialAd alloc] init];
+ interstritial.delegate = self;
+ viewAd = [[UIView alloc] initWithFrame:[[[[UIApplication sharedApplication].delegate
+ window] rootViewController] view].frame];
+ [interstritial presentInView:viewAd];
+ UIButton *buttonClose = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMidX(viewAd.bounds)/12, CGRectGetMidY(viewAd.bounds)
+ 12, 20, 20)];
+ [viewAd addSubview:buttonClose];
+ [[[[[UIApplication sharedApplication].delegate window] rootViewController] view] addSubview:viewAd];
+ [buttonClose setTitleColor:[UIColor grayColor] forState:normal];
+ [buttonClose setTitle:@"x" forState:normal];
+ [buttonClose.titleLabel setFont:[UIFont systemFontOfSize:[UIFont systemFontSize]]];
+ [buttonClose setTitleEdgeInsets:UIEdgeInsetsMake(-3, 0, 0, 0)];
+ [buttonClose setBackgroundColor:[UIColor whiteColor]];
+ [buttonClose.layer setCornerRadius:buttonClose.frame.size.width/2];
+ [buttonClose.layer setBorderColor:[UIColor grayColor].CGColor];
+ [buttonClose.layer setBorderWidth:1];
+ [buttonClose addTarget:self action:@selector(removeAd:) forControlEvents:UIControlEventTouchUpInside];
+ }
+ 
+-(void)removeAd:(UIButton *)sender
+{
+    [interstritial setDelegate:nil];
+    [viewAd setHidden:true];
+    [self performSelector:@selector(openAD) withObject:nil afterDelay:3];
+    
+}
+-(void)openAD
+{
+    [viewAd setHidden:NO];
+    [interstritial setDelegate:self];
+}
+-(void)interstitialAd:(ADInterstitialAd *)interstitialAd didFailWithError:(NSError *)error
+{
+    
+}
+-(void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd
+{
+}
+-(void)interstitialAdDidUnload:(ADInterstitialAd *)interstitialAd
+{
+   // [self setUpInterstitial];
+
+}
+*/
 
 -(void)setUpUi
 {
@@ -169,7 +232,9 @@
 }
 
 - (IBAction)facebookLogin:(id)sender {
-    FBSession *session = [[FBSession alloc] initWithPermissions:@[@"public_profile", @"email"]];
+    [self logingWithfaceBook];
+    
+  /*  FBSession *session = [[FBSession alloc] initWithPermissions:@[@"public_profile", @"email",@"user_friends"]];
     [FBSession setActiveSession:session];
     [session openWithBehavior:FBSessionLoginBehaviorForcingWebView
             completionHandler:^(FBSession *session,
@@ -198,6 +263,118 @@
                      }];
                 }
             }];
+   */
+    
+}
+-(void)logingWithfaceBook
+{
+    FBSDKAccessToken *access = [FBSDKAccessToken currentAccessToken];
+    if (access!=nil)
+    {
+        [SVProgressHUD showWithStatus:@"Signing up..." maskType:SVProgressHUDMaskTypeBlack];
+
+        NSDictionary *params = @{
+                                 @"fields": @"context.fields(mutual_friends),birthday,gender,education,work,email,id,name,picture.width(200).height(200)",
+                                 };
+        //  /* make the API call */
+        
+        
+        FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                      initWithGraphPath:@"me"
+                                      parameters:params
+                                      HTTPMethod:@"GET"];
+        [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                              id result,
+                                              NSError *error) {
+            
+            if (!error) {
+                
+                NSLog(@"result %@",result);
+                
+                                         [CAUser signUpWithFB:[result objectForKey:@"id"] email:[result objectForKey:@"email"] name:[result objectForKey:@"name"] profileImg:[result valueForKeyPath:@"picture.data.url"] withCompletionBlock:^(BOOL success, CAUser *signUpUser, NSError *error) {
+                                             [SVProgressHUD dismiss];
+                                             if (success) {
+                
+                                                 CAAppDelegate * appDelegate = (CAAppDelegate*)[UIApplication sharedApplication].delegate;
+                                                 [appDelegate setHomePage];
+                
+                                             }
+                                             else{
+                                                 [CAServiceManager handleError:error];
+                                             }
+                                         }];
+
+            }
+           
+            
+            
+            // Handle the result
+        }];
+    }
+    else
+    {
+        FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
+         {
+             
+             [SVProgressHUD showSuccessWithStatus:@"Success"];
+             [SVProgressHUD dismiss];
+             if (error)
+             {
+                 
+                 // Process error
+             }
+             else if (result.isCancelled)
+             {
+                 
+                 // Handle cancellations
+             }
+             else
+             {
+                 ///me/mutualfriends/[OTHER ID]/?fields=name,picture
+                 NSDictionary *params = @{
+                                          @"fields": @"context.fields(mutual_friends),birthday,gender,education,work,email,id,name,picture.width(100).height(100)",
+                                          };
+                /* make the API call */
+                 
+                 FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                               initWithGraphPath:@"me"
+                                               parameters:params
+                                               HTTPMethod:@"GET"];
+                 [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                                       id result,
+                                                       NSError *error) {
+                     [SVProgressHUD dismiss];
+                     if (!error) {
+                         NSLog(@"result %@",result);
+
+                         [SVProgressHUD showWithStatus:@"Signing up..." maskType:SVProgressHUDMaskTypeBlack];
+                         [CAUser signUpWithFB:[result objectForKey:@"id"] email:[result objectForKey:@"email"] name:[result objectForKey:@"name"] profileImg:[result valueForKeyPath:@"picture.data.url"] withCompletionBlock:^(BOOL success, CAUser *signUpUser, NSError *error) {
+                             [SVProgressHUD dismiss];
+                             if (success) {
+                                 
+                                 CAAppDelegate * appDelegate = (CAAppDelegate*)[UIApplication sharedApplication].delegate;
+                                 [appDelegate setHomePage];
+                                 
+                             }
+                             else{
+                                 [CAServiceManager handleError:error];
+                             }
+                         }];
+                     }
+                     
+                     
+                     // Handle the result
+                 }];
+                 if ([result.grantedPermissions containsObject:@"email"])
+                 {
+                     NSLog(@"result is:%@",result);
+                 }
+             }
+         }];
+        
+    }
+
 }
 
 #pragma mark Textfield Delegates

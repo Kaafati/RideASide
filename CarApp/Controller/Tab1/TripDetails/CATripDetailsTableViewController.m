@@ -22,8 +22,11 @@
 #import <CoreLocation/CoreLocation.h>
 #import "CAMapViewController.h"
 #import "CAChatViewController.h"
+#import "CACarCollectionViewCell.h"
+#import "UIButton+WebCache.h"
+
 #define kPayPalEnvironment PayPalEnvironmentNoNetwork
-@interface CATripDetailsTableViewController ()<UITextFieldDelegate,UIAlertViewDelegate,searchLocationDelegate,PayPalPaymentDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
+@interface CATripDetailsTableViewController ()<UITextFieldDelegate,UIAlertViewDelegate,searchLocationDelegate,PayPalPaymentDelegate,UIPickerViewDataSource,UIPickerViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
 {
     IBOutletCollection(UITextField) NSArray *textFieldTripDetails;
     IBOutletCollection(UITableViewCell) NSArray *cellArray;
@@ -39,6 +42,7 @@
     __weak IBOutlet UIButton *rejectButton;
     IBOutlet UIStepper *stepper;
     IBOutlet UISegmentedControl *segmentControl;
+    IBOutlet UICollectionView *collectionCar;
     NSInteger milegae;
     float startLat, startLng, destLat, destLng ,costPerHead;;
     NSArray *arraycarMakes,*arraycarModels;
@@ -505,7 +509,7 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
     trip.SeatsAvailable=[textFieldTripDetails[7] text];
     trip.date=dateOfTrip;
     trip.tripStartTimeForNotification=dateForPushNotification;
-    
+    trip.addedBy = [CAUser sharedUser].category;
     [trip addTripWithDataWithTrip:trip
                   CompletionBlock:^(BOOL success, id result, NSError *error) {
                       [SVProgressHUD dismiss];
@@ -555,8 +559,19 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
         textField.text=@"";
     }
     activeTextField=textField;
-    if (activeTextField.tag==777) {
-        activeTextField.inputView = pickerViewVehicle;
+    if (activeTextField.tag==777 ) {
+        if ([[[CAUser sharedUser] arrayCar] count]) {
+            activeTextField.inputView = collectionCar;
+
+        }
+        else
+        {
+            activeTextField.inputView = pickerViewVehicle;
+
+        }
+    }
+    if ((textField == textFieldTripDetails[5]) && ([[[CAUser sharedUser] arrayCar] count])) {
+        textField.inputView = collectionCar;
     }
     if(activeTextField.tag==1001||activeTextField.tag==1002){
         [self presentSearchViewControllerWithTag:activeTextField.tag withText:activeTextField.text];
@@ -608,16 +623,22 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
         case 1001:
             NSLog(@"_trip.category %@",_trip.category);
             //          [self parseAcceptTrip:@"Accept"];
-            if ([acceptTrip.titleLabel.text isEqualToString:@"Pay For Trip"]) {
-                [self performPaymentPage];
-            }else{
+            if ([acceptTrip.titleLabel.text isEqualToString:@"Accept"]) {
+                [self parseAcceptTrip:@"Accept"];
+               // [self performPaymentPage];
+            }
+            else if ([acceptTrip.titleLabel.text isEqualToString:@"Reject"])
+            {
+                 [self parseAcceptTrip:@"Reject"];
+            }
+            else{
                 [_trip.category isEqualToString:@"Passenger"] ? [self parseAcceptDriverOnTrip:@"Added"] :[self parseAcceptTrip:@"Pending"];
             }
             break;
         case 1002:
             NSLog(@"_trip.category %@",_trip.category);
-            
-            [_trip.category isEqualToString:@"Passenger"] ? [self parseAcceptDriverOnTrip:@"reject"] :[self parseAcceptTrip:@"Reject"];
+            [self parseAcceptTrip:@"Reject"];
+         //   [_trip.category isEqualToString:@"Passenger"] ? [self parseAcceptDriverOnTrip:@"reject"] :[self parseAcceptTrip:@"Reject"];
             break;
             
         default:
@@ -632,7 +653,7 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
                 
                 [acceptTrip setEnabled:NO];
                 //              [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request accepted" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
-                [self performPaymentPage];
+              //  [self performPaymentPage];
             }
             else{
                 if(_isFromRequestPage){
@@ -970,6 +991,31 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
 
 
 
+#pragma mark CollectionViewDelegate
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    CACarCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CACarCollectionViewCell" forIndexPath:indexPath];
+    [cell.buttonCar sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",carUrl,[[[[CAUser sharedUser] arrayCar]  valueForKey:[NSString stringWithFormat:@"car%dDetails",indexPath.row+1]] objectAtIndex:0]]] forState:UIControlStateNormal];
+   // [cell.buttonCar setBackgroundImage:[[[[CAUser sharedUser] arrayCar] valueForKey:@"car1Details"] objectAtIndex:0] forState:UIControlStateNormal];
+    cell.textFieldcarName.text = [[[[CAUser sharedUser] arrayCar]  valueForKey:[NSString stringWithFormat:@"car%dDetails",indexPath.row+1]] objectAtIndex:1];
+    cell.textFieldCarLicencePlate.text = [[[[CAUser sharedUser] arrayCar]  valueForKey:[NSString stringWithFormat:@"car%dDetails",indexPath.row+1]]  objectAtIndex:2];
+    return cell;
+}
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+
+    CACarCollectionViewCell *cell = (CACarCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+    [(UITextField *)textFieldTripDetails[4] setText:cell.textFieldcarName.text];
+        [(UITextField *)textFieldTripDetails[5] setText:cell.textFieldCarLicencePlate.text];
+    [self.view endEditing:YES];
+}
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    
+    return [(NSDictionary *)[[CAUser sharedUser] arrayCar] allKeys].count;
+}
 
 
 @end

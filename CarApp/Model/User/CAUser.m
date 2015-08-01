@@ -46,7 +46,148 @@ static CAUser *_user = nil;
     self.othersLocation =dictionary[@"others"];
     NSString *reviewNote=dictionary[@"review"];
     self.reviewNote=reviewNote.length>0?reviewNote:@"";
+    self.car_image1 = dictionary[@"car_image1"];
+    self.car_name1 =  dictionary[@"car_name1"];
+    self.car_licence_num1 = dictionary[@"car_licence_num1"];
+    self.car_image2 = dictionary[@"car_image2"];
+    self.car_name2 =  dictionary[@"car_name2"];
+    self.car_licence_num2 = dictionary[@"car_licence_num2"];
+    self.car_image3 = dictionary[@"car_image3"];
+    self.car_name3 =  dictionary[@"car_name3"];
+    self.car_licence_num3 = dictionary[@"car_licence_num3"];
+    self.visibility = dictionary[@"visibility"];
+    self.smoker = dictionary[@"smoker"];
+//   __block NSMutableDictionary *array = [NSMutableDictionary new];
+//   [@[dictionary[@"car_name1"],dictionary[@"car_name1"],dictionary[@"car_name1"]] enumerateObjectsUsingBlock:^(NSString * obj, NSUInteger idx, BOOL *stop) {
+//       [array setObject:@[dictionary[@"car_image1"],obj,dictionary[@"car_licence_num1"]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]];
+////       idx == 0 ? obj.length ? [array setObject:@[dictionary[@"car_image1"],obj,dictionary[@"car_licence_num1"]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]] : nil : nil;
+////       idx == 1 ? obj.length ? [array setObject:@[dictionary[@"car_image2"],obj,dictionary[@"car_licence_num2"]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]] : nil : nil;
+////       idx == 2 ? obj.length ? [array setObject:@[dictionary[@"car_image3"],obj,dictionary[@"car_licence_num3"]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]] : nil : nil;
+////       if (idx==0) {
+////           
+////       }
+////       else if(idx==1)
+////       {
+////           
+////       }
+////       else
+////       {
+////           
+////       }
+//     
+//   }];
+    
+   self.arrayCar = [self setArray:dictionary];
+
 }
+-(id)setArray:(id)dictionary
+{
+    if ([[dictionary allKeys] containsObject:@"car_name1"] || [[dictionary allKeys] containsObject:@"car_name2"] || [[dictionary allKeys] containsObject:@"car_name3"]) {
+        __block NSMutableDictionary *array = [NSMutableDictionary new];
+        [@[dictionary[@"car_name1"],dictionary[@"car_name2"],dictionary[@"car_name3"]] enumerateObjectsUsingBlock:^(NSString * obj, NSUInteger idx, BOOL *stop) {
+            
+            [dictionary[[NSString stringWithFormat:@"car_image%d",idx+1]] length] ? [array setObject:@[dictionary[[NSString stringWithFormat:@"car_image%d",idx+1]],obj,dictionary[[NSString stringWithFormat:@"car_licence_num%d",idx+1]]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]] : nil;
+            
+            // [array setObject:@[dictionary[[NSString stringWithFormat:@"car_image%d",idx+1]],obj,dictionary[[NSString stringWithFormat:@"car_licence_num%d",idx+1]]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]] ;
+        }];
+        
+        return array;
+    }
+    else
+        return nil;
+   
+}
+-(id)setArrayCarFromUpdate:(id)arrayCar
+{
+    [(NSDictionary *)arrayCar enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if ([arrayCar count]==1) {
+            self.car_image1 = obj[0];
+            self.car_name1 =  obj[1];
+            self.car_licence_num1 = obj[2];
+            
+        }
+        else if([arrayCar count]==2)
+        {
+            self.car_image1 = obj[0];
+            self.car_name1 =  obj[1];
+            self.car_licence_num1 = obj[2];
+            self.car_image2 = obj[0];
+            self.car_name2=  obj[1];
+            self.car_licence_num2 = obj[2];
+        }
+        else if([arrayCar count] == 3)
+        {
+            self.car_image1 = obj[0];
+            self.car_name1 =  obj[1];
+            self.car_licence_num1 = obj[2];
+            self.car_image2 = obj[0];
+            self.car_name2=  obj[1];
+            self.car_licence_num2 = obj[2];
+            self.car_image3 = obj[0];
+            self.car_name3 =  obj[1];
+            self.car_licence_num3 = obj[2];
+        }
+        else
+        {
+            self.car_image1 = @"";
+            self.car_name1 =  @"";
+            self.car_licence_num1 = @"";
+            self.car_image2 = @"";
+            self.car_name2=  @"";
+            self.car_licence_num2 = @"";
+            self.car_image3 = @"";
+            self.car_name3 =  @"";
+            self.car_licence_num3 = @"";
+        }
+        
+    }];
+    return arrayCar;
+}
+//-(void)setArrayCar:(NSArray *)arrayCar
+//{
+// [(NSDictionary *)arrayCar enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+//     if (arrayCar.count==1) {
+//         self.car_image1 = obj[0];
+//         self.car_name1 =  obj[1];
+//         self.car_licence_num1 = obj[2];
+//
+//     }
+//     else if(arrayCar.count==2)
+//     {
+//         self.car_image1 = obj[0];
+//         self.car_name1 =  obj[1];
+//         self.car_licence_num1 = obj[2];
+//         self.car_image2 = obj[0];
+//         self.car_name2=  obj[1];
+//         self.car_licence_num2 = obj[2];
+//     }
+//     else if(arrayCar.count == 3)
+//     {
+//         self.car_image1 = obj[0];
+//         self.car_name1 =  obj[1];
+//         self.car_licence_num1 = obj[2];
+//         self.car_image2 = obj[0];
+//         self.car_name2=  obj[1];
+//         self.car_licence_num2 = obj[2];
+//         self.car_image3 = obj[0];
+//         self.car_name3 =  obj[1];
+//         self.car_licence_num3 = obj[2];
+//     }
+//     else
+//     {
+//         self.car_image1 = @"";
+//         self.car_name1 =  @"";
+//         self.car_licence_num1 = @"";
+//         self.car_image2 = @"";
+//         self.car_name2=  @"";
+//         self.car_licence_num2 = @"";
+//         self.car_image3 = @"";
+//         self.car_name3 =  @"";
+//         self.car_licence_num3 = @"";
+//     }
+//     
+// }];
+//}
 
 -(void)updateValues:(NSDictionary *)dictionary{
     NSMutableDictionary *dictionary_Modified=[[NSMutableDictionary alloc]initWithDictionary:dictionary];
@@ -61,6 +202,17 @@ static CAUser *_user = nil;
     [CAUser sharedUser].password=dictionary[@"password"];
     [CAUser sharedUser].about_me =dictionary[@"about_me"];
     [CAUser sharedUser].category = dictionary[@"category"];
+    [CAUser sharedUser].car_image1 = dictionary[@"car_image1"];
+    [CAUser sharedUser].car_name1 =  dictionary[@"car_name1"];
+    [CAUser sharedUser].car_licence_num1 = dictionary[@"car_licence_num1"];
+    [CAUser sharedUser].car_image2 = dictionary[@"car_image2"];
+    [CAUser sharedUser].car_name2 =  dictionary[@"car_name2"];
+    [CAUser sharedUser].car_licence_num2 = dictionary[@"car_licence_num2"];
+    [CAUser sharedUser].car_image3 = dictionary[@"car_image3"];
+    [CAUser sharedUser].car_name3 =  dictionary[@"car_name3"];
+    [CAUser sharedUser].car_licence_num3 = dictionary[@"car_licence_num3"];
+    [CAUser sharedUser].visibility = dictionary[@"visibility"];
+
 }
 
 +(CAUser*)sharedUser{
@@ -118,6 +270,7 @@ static CAUser *_user = nil;
         }
     }];
 }
+
 
 +(UIImage *)convertProfileImage:(NSString *)imageURL{
     NSData *profileImgData = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: imageURL]];
@@ -182,6 +335,8 @@ static CAUser *_user = nil;
 +(void)addUserLocationWithData:(NSData *)data withCompletionBlock:(void (^)(BOOL, NSError*))completionBlock{
     [CAServiceManager fetchDataFromService:@"add_location.php?" withParameters:data withCompletionBlock:^(BOOL success, id result, NSError *error){
         NSLog(@"Result %@",result);
+        
+        completionBlock([result[@"status"] isEqualToString:@"Succcess"] ?  true : false,nil);
     }];
 }
 
@@ -193,15 +348,36 @@ static CAUser *_user = nil;
     [body addValue:self.password forKey:@"password"];
     [body addValue:self.about_me forKey:@"about_me"];
     [body addValue:self.category forKey:@"category"];
-
+    [body addValue:self.visibility forKey:@"visibility"];
+    [body addValue:self.smoker forKey:@"smoker"];
     [body addValue:[CAUser sharedUser].userId forKey:@"id"];
     NSString *deviceToken=[[NSUserDefaults standardUserDefaults]valueForKey:@"DeviceToken"] ;
     [body addValue:deviceToken.length>0?deviceToken:@"428f838e3f724b24a17f8f50f91e85138cb32d25a3c417792249f0f22fc92fae" forKey:@"device_token"];
     
 //    UIImage *image=[UIImage imageNamed:@"back-arrow"];
     NSString *fileName = [CAUser makeFileName];
+    NSString *fileName1 = [CAUser makeFileName];
+    NSString *fileName2 = [CAUser makeFileName];
+    NSString *fileName3 = [CAUser makeFileName];
     [body addValue:UIImageJPEGRepresentation(self.profile_Image, 0.5) forKey:@"file" withFileName:fileName];
+   
+    if (self.car_image1) {
+        [body addValue: UIImageJPEGRepresentation(self.car_image1, 0.5)  forKey:@"car_image1" withFileName:fileName1];
+        [body addValue:self.car_name1  forKey:@"car_name1"];
+        [body addValue:self.car_licence_num1  forKey:@"car_licence_num1"];
+    }
     
+if (self.car_image2) {
+    [body addValue: UIImageJPEGRepresentation(self.car_image2, 0.5)  forKey:@"car_image2" withFileName:fileName2];
+        [body addValue: self.car_name2  forKey:@"car_name2"];
+        [body addValue:self.car_licence_num2  forKey:@"car_licence_num2"];
+   
+}
+    if (self.car_image3) {
+    [body addValue: UIImageJPEGRepresentation(self.car_image3, 0.5)  forKey:@"car_image3" withFileName:fileName3];
+        [body addValue:self.car_name3  forKey:@"car_name3"];
+    [body addValue:self.car_licence_num3  forKey:@"car_licence_num3"];
+    }
     return body;
 }
 
@@ -410,6 +586,21 @@ static CAUser *_user = nil;
     
     return fileName;
 }
++(void)listTheAppUserwithCompletionBlock:(void (^)(bool, id, NSError *))completion
+{
+    //http://sicsglobal.com/projects/App_projects/rideaside/list_users.php?userId=14&lattitude=8.487500&longitude=76.952500
+    NSMutableData *body=[NSMutableData postData];
+    [body addValue:[CAUser sharedUser].userId forKey:@"userId"];
+    [body addValue:[CAUser sharedUser].latitude forKey:@"lattitude"];
+    [body addValue:[CAUser sharedUser].longitude forKey:@"longitude"];
+    
+    [CAServiceManager fetchDataFromService:@"list_users.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error){
+        CAUser *user = [[CAUser alloc]init];
+        success ? [result[@"status"] isEqualToString:@"success"] ? completion(YES,[user gettTripUsersArray:result[@"result"]],nil) : completion(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"Message"]?result[@"Message"]:result[@"error"]}]) : completion(NO,nil,error);
+        
+    }];
+    
+}
 
 -(NSMutableArray*)gettTripUsersArray:(NSMutableArray *)arraydata
 {
@@ -457,7 +648,6 @@ static CAUser *_user = nil;
     }];
     
 }
-
 #pragma mark saveLoggedUserAutoLogin
 + (void)saveLoggedUser:(NSDictionary *)dictionary
 {

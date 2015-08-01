@@ -50,7 +50,6 @@
 		12FEC2A3199F422700C76A71 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12FEC287199F422700C76A71 /* CoreData.framework */; };
 		12FEC2AB199F422700C76A71 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 12FEC2A9199F422700C76A71 /* InfoPlist.strings */; };
 		12FEC2AD199F422700C76A71 /* CarAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12FEC2AC199F422700C76A71 /* CarAppTests.m */; };
-		12FEC2BE199F42B000C76A71 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 12FEC2BD199F42B000C76A71 /* MainStoryboard.storyboard */; };
 		4D36DD2719FF666D00EE8809 /* CARequestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36DD2619FF666D00EE8809 /* CARequestsViewController.m */; };
 		4D4143D619ED090900998FAD /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4D4143D319ED090900998FAD /* SVProgressHUD.bundle */; };
 		4D4143D719ED090900998FAD /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4143D519ED090900998FAD /* SVProgressHUD.m */; };
@@ -73,6 +72,8 @@
 		4DF53C6319EE285E00CCDEBE /* SPGooglePlacesAutocompleteUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C5E19EE285E00CCDEBE /* SPGooglePlacesAutocompleteUtilities.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4DF53C6419EE285E00CCDEBE /* SPGooglePlacesPlaceDetailQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C6019EE285E00CCDEBE /* SPGooglePlacesPlaceDetailQuery.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		4DF53C6819EE617500CCDEBE /* CAContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C6719EE617500CCDEBE /* CAContainerViewController.m */; };
+		9B0A90C01B6A0CCA007B2307 /* CAIntoPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A90BF1B6A0CCA007B2307 /* CAIntoPageViewController.m */; };
+		9B0A90C61B6A115D007B2307 /* PageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A90C51B6A115D007B2307 /* PageContentViewController.m */; };
 		9B1317CE1AF9D6A0002BAC6D /* CAMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317CB1AF9D6A0002BAC6D /* CAMessage.m */; };
 		9B1317CF1AF9D6A0002BAC6D /* CAChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317CD1AF9D6A0002BAC6D /* CAChatCell.m */; };
 		9B1317D31AF9D6D6002BAC6D /* CAChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317D21AF9D6D6002BAC6D /* CAChatViewController.m */; };
@@ -80,10 +81,21 @@
 		9B1317D91AF9D79D002BAC6D /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317D71AF9D79D002BAC6D /* HPTextViewInternal.m */; };
 		9B367D7D1B2AB6EA0012F9F7 /* CAContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B367D7C1B2AB6EA0012F9F7 /* CAContacts.m */; };
 		9B367D841B2AE3FC0012F9F7 /* CAFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B367D831B2AE3FC0012F9F7 /* CAFriendsViewController.m */; };
+		9B4074B81B5607F5006C2AB2 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B4074B71B5607F5006C2AB2 /* FacebookSDK.framework */; };
+		9B4074BA1B560808006C2AB2 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B4074B91B560808006C2AB2 /* FBSDKCoreKit.framework */; };
+		9B4074BC1B56082C006C2AB2 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B4074BB1B56082C006C2AB2 /* FBSDKLoginKit.framework */; };
+		9B4074BE1B56084A006C2AB2 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B4074BD1B56084A006C2AB2 /* FBSDKShareKit.framework */; };
+		9B416A491B58BEBB00E08757 /* TPKeyboardAvoidingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B416A421B58BEBB00E08757 /* TPKeyboardAvoidingTableView.m */; };
+		9B416A4A1B58BEBB00E08757 /* TPKeyboardAvoidingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B416A441B58BEBB00E08757 /* TPKeyboardAvoidingScrollView.m */; };
+		9B416A4B1B58BEBB00E08757 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B416A451B58BEBB00E08757 /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
+		9B416A4C1B58BEBB00E08757 /* TPKeyboardAvoidingCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B416A471B58BEBB00E08757 /* TPKeyboardAvoidingCollectionView.m */; };
+		9B42C59A1B5E1E9D0089D8A0 /* CACarCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B42C5991B5E1E9D0089D8A0 /* CACarCollectionViewCell.m */; };
 		9B4387FD1AFC972A002B8D47 /* Terms and Conditions.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9B4387FC1AFC972A002B8D47 /* Terms and Conditions.pdf */; };
 		9B4D2EFF1B2814B1003A399E /* license.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9B4D2EFD1B2814B1003A399E /* license.txt */; };
 		9B4D2F031B282A0A003A399E /* KGModal.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B4D2F021B282A0A003A399E /* KGModal.m */; };
 		9B4E737F1B32A4F300A19EA6 /* CATripSelectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B4E737E1B32A4F300A19EA6 /* CATripSelectionCell.m */; };
+		9B4EB1D11B53605F0072624F /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 12FEC2BD199F42B000C76A71 /* MainStoryboard.storyboard */; };
+		9B5702F41B574D2500ADAFDD /* CAContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B5702F31B574D2500ADAFDD /* CAContactCell.m */; };
 		9B603A551A49688A0048DD48 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A351A49688A0048DD48 /* MKAnnotationView+WebCache.m */; };
 		9B603A561A49688A0048DD48 /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A371A49688A0048DD48 /* NSData+ImageContentType.m */; };
 		9B603A571A49688A0048DD48 /* SDImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A391A49688A0048DD48 /* SDImageCache.m */; };
@@ -100,6 +112,7 @@
 		9B603A621A49688A0048DD48 /* UIImageView+HighlightedWebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A501A49688A0048DD48 /* UIImageView+HighlightedWebCache.m */; };
 		9B603A631A49688A0048DD48 /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A521A49688A0048DD48 /* UIImageView+WebCache.m */; };
 		9B603A641A49688A0048DD48 /* UIView+WebCacheOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A541A49688A0048DD48 /* UIView+WebCacheOperation.m */; };
+		9B71B0521B4385E000CC926B /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B71B0501B4383ED00CC926B /* iAd.framework */; };
 		9BA5493A19E008F5006D43B2 /* DYRateView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA5493019E008F5006D43B2 /* DYRateView.m */; };
 		9BA5493B19E008F5006D43B2 /* StarEmpty.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493219E008F5006D43B2 /* StarEmpty.png */; };
 		9BA5493C19E008F5006D43B2 /* StarEmpty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493319E008F5006D43B2 /* StarEmpty@2x.png */; };
@@ -109,14 +122,12 @@
 		9BA5494019E008F5006D43B2 /* StarFull@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493719E008F5006D43B2 /* StarFull@2x.png */; };
 		9BA5494119E008F5006D43B2 /* StarFullLarge.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493819E008F5006D43B2 /* StarFullLarge.png */; };
 		9BA5494219E008F5006D43B2 /* StarFullLarge@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493919E008F5006D43B2 /* StarFullLarge@2x.png */; };
-		9BBB860C1A5180E600EFC1EE /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BBB860B1A5180E600EFC1EE /* FacebookSDK.framework */; };
 		9BDDCBA119DFAABA0010B66A /* NSDate+TimeZone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDCBA019DFAABA0010B66A /* NSDate+TimeZone.m */; };
 		9BDDCBA519DFAFC20010B66A /* CAViewJoineesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDCBA419DFAFC20010B66A /* CAViewJoineesViewController.m */; };
 		9BDDCBA919DFB8290010B66A /* CAProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDCBA819DFB8290010B66A /* CAProfileTableViewController.m */; };
 		9BE1A7901A54163F00FCBFB7 /* CAProfileAndRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE1A78F1A54163F00FCBFB7 /* CAProfileAndRatingViewController.m */; };
 		9BE1A7941A542CAA00FCBFB7 /* CARatingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */; };
 		D86F4F031A63C7E40064C3C4 /* Cars.plist in Resources */ = {isa = PBXBuildFile; fileRef = D86F4F021A63C7E40064C3C4 /* Cars.plist */; };
-		D8CEDD991A5A6BA4007FA2F2 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8CEDD981A5A6BA4007FA2F2 /* FacebookSDK.framework */; };
 		D8CEDD9E1A5ABAE7007FA2F2 /* NIDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */; };
 /* End PBXBuildFile section */
 
@@ -252,6 +263,10 @@
 		4DF53C6019EE285E00CCDEBE /* SPGooglePlacesPlaceDetailQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPGooglePlacesPlaceDetailQuery.m; sourceTree = "<group>"; };
 		4DF53C6619EE617500CCDEBE /* CAContainerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAContainerViewController.h; sourceTree = "<group>"; };
 		4DF53C6719EE617500CCDEBE /* CAContainerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAContainerViewController.m; sourceTree = "<group>"; };
+		9B0A90BE1B6A0CCA007B2307 /* CAIntoPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAIntoPageViewController.h; sourceTree = "<group>"; };
+		9B0A90BF1B6A0CCA007B2307 /* CAIntoPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAIntoPageViewController.m; sourceTree = "<group>"; };
+		9B0A90C41B6A115D007B2307 /* PageContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageContentViewController.h; path = Trips/PageContentViewController.h; sourceTree = "<group>"; };
+		9B0A90C51B6A115D007B2307 /* PageContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PageContentViewController.m; path = Trips/PageContentViewController.m; sourceTree = "<group>"; };
 		9B1317CA1AF9D6A0002BAC6D /* CAMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAMessage.h; sourceTree = "<group>"; };
 		9B1317CB1AF9D6A0002BAC6D /* CAMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAMessage.m; sourceTree = "<group>"; };
 		9B1317CC1AF9D6A0002BAC6D /* CAChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAChatCell.h; sourceTree = "<group>"; };
@@ -266,12 +281,28 @@
 		9B367D7C1B2AB6EA0012F9F7 /* CAContacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAContacts.m; sourceTree = "<group>"; };
 		9B367D821B2AE3FC0012F9F7 /* CAFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAFriendsViewController.h; sourceTree = "<group>"; };
 		9B367D831B2AE3FC0012F9F7 /* CAFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAFriendsViewController.m; sourceTree = "<group>"; };
+		9B4074B71B5607F5006C2AB2 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../../../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
+		9B4074B91B560808006C2AB2 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = ../../../../../Documents/FacebookSDK/FBSDKCoreKit.framework; sourceTree = "<group>"; };
+		9B4074BB1B56082C006C2AB2 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = ../../../../../Documents/FacebookSDK/FBSDKLoginKit.framework; sourceTree = "<group>"; };
+		9B4074BD1B56084A006C2AB2 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = ../../../../../Documents/FacebookSDK/FBSDKShareKit.framework; sourceTree = "<group>"; };
+		9B416A411B58BEBB00E08757 /* TPKeyboardAvoidingTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingTableView.h; sourceTree = "<group>"; };
+		9B416A421B58BEBB00E08757 /* TPKeyboardAvoidingTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingTableView.m; sourceTree = "<group>"; };
+		9B416A431B58BEBB00E08757 /* TPKeyboardAvoidingCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingCollectionView.h; sourceTree = "<group>"; };
+		9B416A441B58BEBB00E08757 /* TPKeyboardAvoidingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingScrollView.m; sourceTree = "<group>"; };
+		9B416A451B58BEBB00E08757 /* UIScrollView+TPKeyboardAvoidingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+TPKeyboardAvoidingAdditions.m"; sourceTree = "<group>"; };
+		9B416A461B58BEBB00E08757 /* TPKeyboardAvoidingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingScrollView.h; sourceTree = "<group>"; };
+		9B416A471B58BEBB00E08757 /* TPKeyboardAvoidingCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingCollectionView.m; sourceTree = "<group>"; };
+		9B416A481B58BEBB00E08757 /* UIScrollView+TPKeyboardAvoidingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+TPKeyboardAvoidingAdditions.h"; sourceTree = "<group>"; };
+		9B42C5981B5E1E9D0089D8A0 /* CACarCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CACarCollectionViewCell.h; sourceTree = "<group>"; };
+		9B42C5991B5E1E9D0089D8A0 /* CACarCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CACarCollectionViewCell.m; sourceTree = "<group>"; };
 		9B4387FC1AFC972A002B8D47 /* Terms and Conditions.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Terms and Conditions.pdf"; sourceTree = "<group>"; };
 		9B4D2EFD1B2814B1003A399E /* license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = license.txt; path = ../Controller/Trips/license.txt; sourceTree = "<group>"; };
 		9B4D2F011B282A0A003A399E /* KGModal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGModal.h; sourceTree = "<group>"; };
 		9B4D2F021B282A0A003A399E /* KGModal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGModal.m; sourceTree = "<group>"; };
 		9B4E737D1B32A4F300A19EA6 /* CATripSelectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATripSelectionCell.h; sourceTree = "<group>"; };
 		9B4E737E1B32A4F300A19EA6 /* CATripSelectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATripSelectionCell.m; sourceTree = "<group>"; };
+		9B5702F21B574D2500ADAFDD /* CAContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAContactCell.h; sourceTree = "<group>"; };
+		9B5702F31B574D2500ADAFDD /* CAContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAContactCell.m; sourceTree = "<group>"; };
 		9B603A341A49688A0048DD48 /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKAnnotationView+WebCache.h"; sourceTree = "<group>"; };
 		9B603A351A49688A0048DD48 /* MKAnnotationView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKAnnotationView+WebCache.m"; sourceTree = "<group>"; };
 		9B603A361A49688A0048DD48 /* NSData+ImageContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ImageContentType.h"; sourceTree = "<group>"; };
@@ -305,6 +336,7 @@
 		9B603A521A49688A0048DD48 /* UIImageView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+WebCache.m"; sourceTree = "<group>"; };
 		9B603A531A49688A0048DD48 /* UIView+WebCacheOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+WebCacheOperation.h"; sourceTree = "<group>"; };
 		9B603A541A49688A0048DD48 /* UIView+WebCacheOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+WebCacheOperation.m"; sourceTree = "<group>"; };
+		9B71B0501B4383ED00CC926B /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		9BA5492F19E008F5006D43B2 /* DYRateView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DYRateView.h; sourceTree = "<group>"; };
 		9BA5493019E008F5006D43B2 /* DYRateView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DYRateView.m; sourceTree = "<group>"; };
 		9BA5493219E008F5006D43B2 /* StarEmpty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = StarEmpty.png; sourceTree = "<group>"; };
@@ -315,7 +347,6 @@
 		9BA5493719E008F5006D43B2 /* StarFull@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "StarFull@2x.png"; sourceTree = "<group>"; };
 		9BA5493819E008F5006D43B2 /* StarFullLarge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = StarFullLarge.png; sourceTree = "<group>"; };
 		9BA5493919E008F5006D43B2 /* StarFullLarge@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "StarFullLarge@2x.png"; sourceTree = "<group>"; };
-		9BBB860B1A5180E600EFC1EE /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
 		9BDDCB9F19DFAABA0010B66A /* NSDate+TimeZone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+TimeZone.h"; sourceTree = "<group>"; };
 		9BDDCBA019DFAABA0010B66A /* NSDate+TimeZone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+TimeZone.m"; sourceTree = "<group>"; };
 		9BDDCBA319DFAFC20010B66A /* CAViewJoineesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAViewJoineesViewController.h; sourceTree = "<group>"; };
@@ -327,7 +358,6 @@
 		9BE1A7921A542CAA00FCBFB7 /* CARatingTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARatingTableViewCell.h; sourceTree = "<group>"; };
 		9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CARatingTableViewCell.m; sourceTree = "<group>"; };
 		D86F4F021A63C7E40064C3C4 /* Cars.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Cars.plist; path = "Parsing Classes/Cars.plist"; sourceTree = "<group>"; };
-		D8CEDD981A5A6BA4007FA2F2 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		D8CEDD9C1A5ABAE7007FA2F2 /* NIDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NIDropDown.h; sourceTree = "<group>"; };
 		D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NIDropDown.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -337,6 +367,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B4074BE1B56084A006C2AB2 /* FBSDKShareKit.framework in Frameworks */,
+				9B4074BC1B56082C006C2AB2 /* FBSDKLoginKit.framework in Frameworks */,
+				9B4074BA1B560808006C2AB2 /* FBSDKCoreKit.framework in Frameworks */,
+				9B4074B81B5607F5006C2AB2 /* FacebookSDK.framework in Frameworks */,
+				9B71B0521B4385E000CC926B /* iAd.framework in Frameworks */,
 				4D5D93731A0212FF00187A52 /* SystemConfiguration.framework in Frameworks */,
 				4D5D93711A0212F900187A52 /* MobileCoreServices.framework in Frameworks */,
 				4D5D936F1A0212F200187A52 /* MessageUI.framework in Frameworks */,
@@ -345,12 +380,10 @@
 				4D5D93691A0212DD00187A52 /* AVFoundation.framework in Frameworks */,
 				4D5D93671A0212D500187A52 /* AudioToolbox.framework in Frameworks */,
 				12FEC284199F422700C76A71 /* CoreGraphics.framework in Frameworks */,
-				9BBB860C1A5180E600EFC1EE /* FacebookSDK.framework in Frameworks */,
 				12FEC288199F422700C76A71 /* CoreData.framework in Frameworks */,
 				12FEC286199F422700C76A71 /* UIKit.framework in Frameworks */,
 				4D5D93651A01F9E200187A52 /* libPayPalMobile.a in Frameworks */,
 				12FEC282199F422700C76A71 /* Foundation.framework in Frameworks */,
-				D8CEDD991A5A6BA4007FA2F2 /* FacebookSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,6 +421,8 @@
 			children = (
 				1205737E19CFE96F0077D2A0 /* CATripDetailsTableViewController.h */,
 				1205737F19CFE96F0077D2A0 /* CATripDetailsTableViewController.m */,
+				9B42C5981B5E1E9D0089D8A0 /* CACarCollectionViewCell.h */,
+				9B42C5991B5E1E9D0089D8A0 /* CACarCollectionViewCell.m */,
 			);
 			path = TripDetails;
 			sourceTree = "<group>";
@@ -409,6 +444,7 @@
 				1216663119A303EC001DE9C8 /* Sign Up */,
 				12913AE619C98EF0000FCE92 /* Trips */,
 				9B367D811B2AD77C0012F9F7 /* Friends */,
+				9B0A90C71B6A129E007B2307 /* Page */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -525,6 +561,8 @@
 			isa = PBXGroup;
 			children = (
 				12FEC2BD199F42B000C76A71 /* MainStoryboard.storyboard */,
+				9B5702F21B574D2500ADAFDD /* CAContactCell.h */,
+				9B5702F31B574D2500ADAFDD /* CAContactCell.m */,
 				9BE1A7911A542C7D00FCBFB7 /* RatingCell */,
 				121873EF19D1646F000924EB /* TripCell */,
 			);
@@ -605,6 +643,7 @@
 		12913AC819C989C4000FCE92 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				9B416A4D1B58BEC000E08757 /* TPKeyBoardAvoiding */,
 				9B4D2F001B2814CA003A399E /* KGModal */,
 				9B1317DA1AF9D7A8002BAC6D /* HPGrowing */,
 				D8CEDD9F1A5ABAEC007FA2F2 /* NIDropDown */,
@@ -713,8 +752,11 @@
 		12FEC280199F422700C76A71 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D8CEDD981A5A6BA4007FA2F2 /* FacebookSDK.framework */,
-				9BBB860B1A5180E600EFC1EE /* FacebookSDK.framework */,
+				9B4074BD1B56084A006C2AB2 /* FBSDKShareKit.framework */,
+				9B4074BB1B56082C006C2AB2 /* FBSDKLoginKit.framework */,
+				9B4074B91B560808006C2AB2 /* FBSDKCoreKit.framework */,
+				9B4074B71B5607F5006C2AB2 /* FacebookSDK.framework */,
+				9B71B0501B4383ED00CC926B /* iAd.framework */,
 				4D5D93721A0212FF00187A52 /* SystemConfiguration.framework */,
 				4D5D93701A0212F900187A52 /* MobileCoreServices.framework */,
 				4D5D936E1A0212F200187A52 /* MessageUI.framework */,
@@ -886,6 +928,17 @@
 			path = Container;
 			sourceTree = "<group>";
 		};
+		9B0A90C71B6A129E007B2307 /* Page */ = {
+			isa = PBXGroup;
+			children = (
+				9B0A90BE1B6A0CCA007B2307 /* CAIntoPageViewController.h */,
+				9B0A90BF1B6A0CCA007B2307 /* CAIntoPageViewController.m */,
+				9B0A90C41B6A115D007B2307 /* PageContentViewController.h */,
+				9B0A90C51B6A115D007B2307 /* PageContentViewController.m */,
+			);
+			name = Page;
+			sourceTree = "<group>";
+		};
 		9B1317D01AF9D6A7002BAC6D /* Chat */ = {
 			isa = PBXGroup;
 			children = (
@@ -919,6 +972,21 @@
 			);
 			name = Friends;
 			path = Trips;
+			sourceTree = "<group>";
+		};
+		9B416A4D1B58BEC000E08757 /* TPKeyBoardAvoiding */ = {
+			isa = PBXGroup;
+			children = (
+				9B416A411B58BEBB00E08757 /* TPKeyboardAvoidingTableView.h */,
+				9B416A421B58BEBB00E08757 /* TPKeyboardAvoidingTableView.m */,
+				9B416A431B58BEBB00E08757 /* TPKeyboardAvoidingCollectionView.h */,
+				9B416A441B58BEBB00E08757 /* TPKeyboardAvoidingScrollView.m */,
+				9B416A451B58BEBB00E08757 /* UIScrollView+TPKeyboardAvoidingAdditions.m */,
+				9B416A461B58BEBB00E08757 /* TPKeyboardAvoidingScrollView.h */,
+				9B416A471B58BEBB00E08757 /* TPKeyboardAvoidingCollectionView.m */,
+				9B416A481B58BEBB00E08757 /* UIScrollView+TPKeyboardAvoidingAdditions.h */,
+			);
+			name = TPKeyBoardAvoiding;
 			sourceTree = "<group>";
 		};
 		9B4D2F001B2814CA003A399E /* KGModal */ = {
@@ -1120,10 +1188,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B4EB1D11B53605F0072624F /* MainStoryboard.storyboard in Resources */,
 				9BA5493B19E008F5006D43B2 /* StarEmpty.png in Resources */,
 				9BA5493D19E008F5006D43B2 /* StarEmptyLarge.png in Resources */,
 				9B4387FD1AFC972A002B8D47 /* Terms and Conditions.pdf in Resources */,
-				12FEC2BE199F42B000C76A71 /* MainStoryboard.storyboard in Resources */,
 				9BA5493C19E008F5006D43B2 /* StarEmpty@2x.png in Resources */,
 				12FEC28E199F422700C76A71 /* InfoPlist.strings in Resources */,
 				9B4D2EFF1B2814B1003A399E /* license.txt in Resources */,
@@ -1168,7 +1236,9 @@
 				9B1317D91AF9D79D002BAC6D /* HPTextViewInternal.m in Sources */,
 				9B603A591A49688A0048DD48 /* SDWebImageDecoder.m in Sources */,
 				4D72D2E31A88F21A00998B94 /* CATermsAndConditionVC.m in Sources */,
+				9B42C59A1B5E1E9D0089D8A0 /* CACarCollectionViewCell.m in Sources */,
 				1216665519A305B9001DE9C8 /* UITableView+TextFieldAdditions.m in Sources */,
+				9B0A90C01B6A0CCA007B2307 /* CAIntoPageViewController.m in Sources */,
 				9B4D2F031B282A0A003A399E /* KGModal.m in Sources */,
 				9B603A611A49688A0048DD48 /* UIImage+WebP.m in Sources */,
 				D8CEDD9E1A5ABAE7007FA2F2 /* NIDropDown.m in Sources */,
@@ -1182,6 +1252,8 @@
 				4DBE9C671A8252E600C46CC7 /* ZSAnnotation.m in Sources */,
 				9B603A5A1A49688A0048DD48 /* SDWebImageDownloader.m in Sources */,
 				12913AF419C999C5000FCE92 /* UIViewController+MFSideMenuAdditions.m in Sources */,
+				9B416A4B1B58BEBB00E08757 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
+				9B0A90C61B6A115D007B2307 /* PageContentViewController.m in Sources */,
 				12C321B819D43CDF004382F3 /* UIImage+Utilities.m in Sources */,
 				12FEC290199F422700C76A71 /* main.m in Sources */,
 				9B603A621A49688A0048DD48 /* UIImageView+HighlightedWebCache.m in Sources */,
@@ -1190,6 +1262,7 @@
 				1216663519A303EC001DE9C8 /* CALoginViewController.m in Sources */,
 				12253B5719D00ECC00014796 /* NSString+NSStringAdditions.m in Sources */,
 				1216666619A32AC1001DE9C8 /* CATrip.m in Sources */,
+				9B5702F41B574D2500ADAFDD /* CAContactCell.m in Sources */,
 				9B603A631A49688A0048DD48 /* UIImageView+WebCache.m in Sources */,
 				9B603A601A49688A0048DD48 /* UIImage+MultiFormat.m in Sources */,
 				4DF53C6219EE285E00CCDEBE /* SPGooglePlacesAutocompleteQuery.m in Sources */,
@@ -1209,6 +1282,7 @@
 				12913AF319C999C5000FCE92 /* MFSideMenuShadow.m in Sources */,
 				4DF53C6819EE617500CCDEBE /* CAContainerViewController.m in Sources */,
 				12253B6719D0175D00014796 /* MapView.m in Sources */,
+				9B416A491B58BEBB00E08757 /* TPKeyboardAvoidingTableView.m in Sources */,
 				9BDDCBA519DFAFC20010B66A /* CAViewJoineesViewController.m in Sources */,
 				12253B6D19D0176D00014796 /* RegexKitLite.m in Sources */,
 				1216665619A305B9001DE9C8 /* UIView+HierarchyAdditions.m in Sources */,
@@ -1223,7 +1297,9 @@
 				9B367D7D1B2AB6EA0012F9F7 /* CAContacts.m in Sources */,
 				1216665A19A306C0001DE9C8 /* CAUser.m in Sources */,
 				9B4E737F1B32A4F300A19EA6 /* CATripSelectionCell.m in Sources */,
+				9B416A4C1B58BEBB00E08757 /* TPKeyboardAvoidingCollectionView.m in Sources */,
 				12253B6819D0175D00014796 /* Place.m in Sources */,
+				9B416A4A1B58BEBB00E08757 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				1205738019CFE96F0077D2A0 /* CATripDetailsTableViewController.m in Sources */,
 				1216665319A305B9001DE9C8 /* NSMutableData+PostDataAdditions.m in Sources */,
 				12913ADB19C98ACE000FCE92 /* CATabBarController.m in Sources */,
@@ -1286,8 +1362,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1305,7 +1381,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "ff01e2c2-7ccd-4bbd-8da9-bb1e061735c0";
+				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1326,8 +1402,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1338,7 +1414,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				PROVISIONING_PROFILE = "ff01e2c2-7ccd-4bbd-8da9-bb1e061735c0";
+				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1349,8 +1425,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CarApp/SVProgressHUD/Pinterest.embeddedframework",
@@ -1361,17 +1438,14 @@
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
 				INFOPLIST_FILE = "CarApp/CarApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/CarApp/Externals/PayPalMobile",
-				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/CarApp/Externals/PayPalMobile";
 				OTHER_LDFLAGS = (
 					"-licucore",
 					"-lc++",
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "ff01e2c2-7ccd-4bbd-8da9-bb1e061735c0";
+				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1381,8 +1455,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CarApp/SVProgressHUD/Pinterest.embeddedframework",
@@ -1393,17 +1468,14 @@
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
 				INFOPLIST_FILE = "CarApp/CarApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/CarApp/Externals/PayPalMobile",
-				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/CarApp/Externals/PayPalMobile";
 				OTHER_LDFLAGS = (
 					"-licucore",
 					"-lc++",
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "ff01e2c2-7ccd-4bbd-8da9-bb1e061735c0";
+				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1418,6 +1490,7 @@
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					/Users/srishtiinnovative/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
@@ -1443,6 +1516,7 @@
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					/Users/srishtiinnovative/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";

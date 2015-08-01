@@ -42,12 +42,13 @@
         self.tripPostedById=dictionary[@"OwnerId"];
         self.tripStartTimeForNotification=dictionary[@"StartTimeNotification"];
         self.category = dictionary[@"Category"] ? :dictionary[@"category"];
+        self.visibility = dictionary[@"visibility"];
                   
     }
     return self;
 }
 
--(void)getTripDetailswithPath:(NSString *)path withSearchString:(NSString *)searchString withIndex:(NSInteger)index  withOptionForTripDetailIndex:(NSUInteger)indexOfTripDetailIndex withCompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock
+-(void)getTripDetailswithPath:(NSString *)path withSearchString:(NSString *)searchString withIndex:(NSInteger)index withMiles:(NSInteger)milesIndex withOptionForTripDetailIndex:(NSUInteger)indexOfTripDetailIndex withCompletionBlock:(void (^)(BOOL,id,id, NSError*))completionBlock
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateStyle = NSDateFormatterMediumStyle;
@@ -59,10 +60,10 @@
     [body addValue:[NSString stringWithFormat:@"%ld",(long)index] forKey:@"index"];
     [body addValue:searchString.length>0?searchString:@"" forKey:@"search"];
     [body addValue:[NSString stringWithFormat:@"%ld",(long)indexOfTripDetailIndex] forKey:@"status"];
-    
+    [body addValue:[NSString stringWithFormat:@"%ld",(long)milesIndex] forKey:@"distance"];
     [body addValue:[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]] forKey:@"date"];
     
-    NSLog(@"http://sicsglobal.com/projects/WebT1/rideaside/%@?userid=%@&index=%ld&search=%@&status=%lu&date=%@",path,[CAUser sharedUser].userId,(long)index,searchString.length>0?searchString:@"",(unsigned long)indexOfTripDetailIndex,[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]]);
+    NSLog(@"http://sicsglobal.com/projects/App_projects/rideaside/%@?userid=%@&index=%ld&search=%@&status=%lu&date=%@",path,[CAUser sharedUser].userId,(long)index,searchString.length>0?searchString:@"",(unsigned long)indexOfTripDetailIndex,[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]]);
     
     [CAServiceManager fetchDataFromService:path withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
      {
@@ -73,16 +74,17 @@
              {
                 // NSLog(@"Rsult trip list %@",result);
 
-                 [result[@"result"] isKindOfClass:[NSArray class]]? completionBlock(success,[self gettTripArray:result[@"result"]],error):  completionBlock(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Trips Not Available"}]);
+                 [result[@"result"] isKindOfClass:[NSArray class]]? completionBlock(success,[self gettTripArray:result[@"result"]],[self gettTripArray:result[@"created_rides"]],error):  completionBlock(NO,nil,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Trips Not Available"}]);
              }
              else
              {
-                 completionBlock(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Post Not Available"}]);
+                 
+                 [result[@"created_rides"] isKindOfClass:[NSArray class]] && [result[@"created_rides"] count] ?  completionBlock(success,nil,[self gettTripArray:result[@"created_rides"]],error) :completionBlock(NO,nil,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Post Not Available"}]);
              }
          }
          else{
              
-             completionBlock(success,nil,error);
+             completionBlock(success,nil,nil,error);
          }
          
      }];
@@ -169,7 +171,7 @@
     [body addValue:trip.vehicleNumber forKey:@"vehicle_number"];
     [body addValue:trip.cost forKey:@"cost"];
     [body addValue:trip.tripStartTimeForNotification forKey:@"alert_date"];
-    
+    [body addValue:trip.addedBy forKey:@"addedBy"];
     [CAServiceManager fetchDataFromService:@"addtripyy.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
      {
          NSLog(@"FETCH RESULT - %@",result);
@@ -259,6 +261,22 @@
          
      }];
 
+    
+}
++(void)listTheAppUserwithCompletionBlock:(void (^)(bool, id, NSError *))completion
+{
+    //http://sicsglobal.com/projects/App_projects/rideaside/list_users.php?userId=14&lattitude=8.487500&longitude=76.952500
+    NSMutableData *body=[NSMutableData postData];
+    [body addValue:[CAUser sharedUser].userId forKey:@"userId"];
+    [body addValue:[CAUser sharedUser].latitude forKey:@"lattitude"];
+    [body addValue:[CAUser sharedUser].longitude forKey:@"longitude"];
+    
+    [CAServiceManager fetchDataFromService:@"list_users.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error){
+        CATrip *user = [[CATrip alloc]init];
+        
+        success ? [result[@"status"] isEqualToString:@"success"] ? completion(YES,[user gettTripArray:result[@"result"]],nil) : completion(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"Message"]?result[@"Message"]:result[@"error"]}]) : completion(NO,nil,error);
+        
+    }];
     
 }
 

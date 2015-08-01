@@ -124,7 +124,7 @@ NSString *const KGModalDidHideNotification = @"KGModalDidHideNotification";
     [containerView addSubview:contentView];
     [viewController.view addSubview:containerView];
     self.containerView = containerView;
-    
+  /*
     KGModalCloseButton *closeButton = [[KGModalCloseButton alloc] init];
     
     if(self.closeButtonType == KGModalCloseButtonTypeRight){
@@ -136,13 +136,13 @@ NSString *const KGModalDidHideNotification = @"KGModalDidHideNotification";
     [closeButton addTarget:self action:@selector(closeAction:) forControlEvents:UIControlEventTouchUpInside];
     [containerView addSubview:closeButton];
     self.closeButton = closeButton;
-    
+   
     // Force adjust visibility and placing
     [self setCloseButtonType:self.closeButtonType];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapCloseAction:)
                                                  name:KGModalGradientViewTapped object:nil];
-    
+    */
     // The window has to be un-hidden on the main thread
     // This will cause the window to display
     dispatch_async(dispatch_get_main_queue(), ^{

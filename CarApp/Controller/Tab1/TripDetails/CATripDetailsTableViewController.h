@@ -22,5 +22,6 @@
 @property(nonatomic,strong)NSIndexPath *indexPathOfRowSelected;
 @property (weak, nonatomic)id<acceprOrRejectTripDelegate>delegate;
 @property (nonatomic,strong)id<delgateTripChanges>changedTripDelegate;
+@property (strong, nonatomic) IBOutlet UIView *viewCarPicker;
 
 @end

@@ -11,7 +11,7 @@
 #import "CANavigationController.h"
 #import "CATripDetailsTableViewController.h"
 #import "CAContainerViewController.h"
-
+#import "CAFriendsViewController.h"
 @interface CATabBarController ()<UITabBarControllerDelegate>
 
 @end
@@ -48,8 +48,8 @@
         
         CATripsViewController *ridesViewController= [storyboard instantiateViewControllerWithIdentifier:@"tripView"];
         CANavigationController *ridesNavigationController = [[CANavigationController alloc]initWithRootViewController:ridesViewController];
-        ridesViewController.tabBarItem.image=[[UIImage imageNamed:@"rides"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] ;
-        [ridesViewController.tabBarItem setSelectedImage:[[UIImage imageNamed:@"ridesSelected"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+        ridesViewController.tabBarItem.image=[[UIImage imageNamed:@"car"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] ;
+        [ridesViewController.tabBarItem setSelectedImage:[[UIImage imageNamed:@"car"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
         ridesViewController.tabBarItem.tag=1;
         ridesViewController.tabBarItem.title=@"Rides";
         
@@ -61,7 +61,6 @@
         tripDetails.tabBarItem.title=@"Post Ride";
         
         
-        
         CATripsViewController *passengersViewController= [storyboard instantiateViewControllerWithIdentifier:@"tripView"];
         CANavigationController *passengersNavigationController = [[CANavigationController alloc]initWithRootViewController:passengersViewController];
         passengersViewController.tabBarItem.image=[[UIImage imageNamed:@"passenger"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] ;
@@ -69,13 +68,21 @@
         passengersViewController.tabBarItem.title=@"Passengers";
         passengersViewController.tabBarItem.tag=3;
         
+        CAFriendsViewController *friendsViewController=[storyboard instantiateViewControllerWithIdentifier:@"CAFriendsViewController"];
+        CANavigationController *friendsNavigationController = [[CANavigationController alloc]initWithRootViewController:friendsViewController];
+        friendsViewController.tabBarItem.image=[[UIImage
+                                       imageNamed:@"friends"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] ;
+        [friendsViewController.tabBarItem setSelectedImage:[[UIImage imageNamed:@"friends"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+        friendsViewController.tabBarItem.tag=4;
+        friendsViewController.tabBarItem.title=@"Friends";
         
-        self.viewControllers = @[meNavigationController,ridesNavigationController,postTripNavigationController,passengersNavigationController];
+        self.viewControllers = @[meNavigationController,ridesNavigationController,postTripNavigationController,passengersNavigationController,friendsNavigationController];
     }
     return self;
 }
 -(void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
+   
 }
 
 

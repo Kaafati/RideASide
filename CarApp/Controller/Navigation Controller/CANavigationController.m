@@ -57,6 +57,10 @@
        [body addValue:[NSString stringWithFormat:@"%f",currentLocation.coordinate.longitude] forKey:@"longitude"];
         [body addValue:[CAUser sharedUser].userId forKey:@"id"];
         [CAUser addUserLocationWithData:body withCompletionBlock:^(BOOL success, NSError *error) {
+            if (success) {
+                [CAUser sharedUser].latitude = [NSString stringWithFormat:@"%f",currentLocation.coordinate.latitude];
+                [CAUser sharedUser].longitude = [NSString stringWithFormat:@"%f",currentLocation.coordinate.longitude];
+            }
             
         }];
     }
@@ -81,7 +85,10 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
     _previousLocation = oldLocation;
+    currentLocation =  newLocation;
 
+    [CAUser sharedUser].latitude = [NSString stringWithFormat:@"%f",newLocation.coordinate.latitude];
+        [CAUser sharedUser].longitude = [NSString stringWithFormat:@"%f",newLocation.coordinate.longitude];
    // NSLog(@"locationManager value %f",newLocation.coordinate.latitude);
     if (oldLocation.coordinate.longitude != newLocation.coordinate.longitude && oldLocation.coordinate.latitude != newLocation.coordinate.latitude) {
         currentLocation =  newLocation;
@@ -90,6 +97,11 @@
             intialFunctionCallCounter=1;
         }
     }
+    
+}
+- (void)locationManager:(CLLocationManager *)manager
+       didFailWithError:(NSError *)error
+{
     
 }
 

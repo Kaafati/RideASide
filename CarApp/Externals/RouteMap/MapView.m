@@ -13,12 +13,13 @@
 -(void) updateRouteView;
 -(NSArray*) calculateRoutesFrom:(CLLocationCoordinate2D) from to: (CLLocationCoordinate2D) to;
 -(void) centerMap;
-
+@property(nonatomic,strong)NSString* saddr;
+@property(nonatomic,strong) NSString* daddr;
 @end
 
 @implementation MapView
 
-@synthesize lineColor;
+@synthesize lineColor,saddr,daddr;
 
 - (id) initWithFrame:(CGRect) frame
 {
@@ -31,11 +32,153 @@
 		routeView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, mapView.frame.size.width, mapView.frame.size.height)];
 		routeView.userInteractionEnabled = NO;
 		[mapView addSubview:routeView];
-		
+        MKCoordinateSpan span = MKCoordinateSpanMake(0.005, 0.005);
+        MKCoordinateRegion region = MKCoordinateRegionMake(mapView.userLocation.location.coordinate, span);
+        
+        [mapView setRegion:region];
+        
+        [mapView setCenterCoordinate:mapView.userLocation.coordinate animated:YES];
 		self.lineColor = [UIColor greenColor];
+        
+        [mapView setRegion:region];
+        
+
+        
+        
 	}
 	return self;
 }
+
+- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id <MKOverlay>)overlay {
+    MKPolylineView *polylineView = [[MKPolylineView alloc] initWithPolyline:overlay];
+    polylineView.strokeColor = [UIColor colorWithRed:204/255. green:45/255. blue:70/255. alpha:1.0];
+    polylineView.lineWidth = 10.0;
+    
+    return polylineView;
+}
+
+- (CLLocationCoordinate2D)coordinateWithLocation:(NSDictionary*)location
+{
+    double latitude = [[location objectForKey:@"lat"] doubleValue];
+    double longitude = [[location objectForKey:@"lng"] doubleValue];
+    
+    return CLLocationCoordinate2DMake(latitude, longitude);
+}
+
+
+
+-(NSArray*) calculateRoutesFrom:(CLLocationCoordinate2D) f to: (CLLocationCoordinate2D) t {
+    
+    MKCoordinateSpan span = MKCoordinateSpanMake(0.005, 0.005);
+    MKCoordinateRegion region = MKCoordinateRegionMake(f, span);
+    [mapView setRegion:region];
+    [mapView showAnnotations:mapView.annotations animated:YES];
+    saddr = [NSString stringWithFormat:@"%f,%f", f.latitude, f.longitude];
+    daddr = [NSString stringWithFormat:@"%f,%f", t.latitude, t.longitude];
+    //New APi->http://maps.googleapis.com/maps/api/directions/json?origin=8.483420,76.919819&destination=8.524139,76.936638
+    NSString* apiUrlStr = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/directions/json?origin=%@&destination=%@", saddr, daddr];
+    //Old ONe -> NSString* apiUrlStr = [NSString stringWithFormat:@"http://maps.google.com/maps?output=dragdir&saddr=%@&daddr=%@", saddr, daddr];
+     NSURL* apiUrl = [NSURL URLWithString:apiUrlStr];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:apiUrl];
+    
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        
+        NSError *error = nil;
+        NSDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+        
+        NSArray *routes = [result objectForKey:@"routes"];
+        
+        NSDictionary *firstRoute = [routes objectAtIndex:0];
+        
+        NSDictionary *leg =  [[firstRoute objectForKey:@"legs"] objectAtIndex:0];
+        
+        NSDictionary *end_location = [leg objectForKey:@"end_location"];
+        
+        double latitude = [[end_location objectForKey:@"lat"] doubleValue];
+        double longitude = [[end_location objectForKey:@"lng"] doubleValue];
+        
+        CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
+        
+        MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
+        point.coordinate = coordinate;
+        point.title =  [leg objectForKey:@"end_address"];
+      //  point.subtitle = @"I'm here!!!";
+        
+        [mapView addAnnotation:point];
+        
+        NSArray *steps = [leg objectForKey:@"steps"];
+        
+        int stepIndex = 0;
+        
+        CLLocationCoordinate2D stepCoordinates[1  + [steps count] + 1];
+        
+        stepCoordinates[stepIndex] = CLLocationCoordinate2DMake([[[leg objectForKey:@"start_location"] objectForKey:@"lat"] doubleValue], [[[leg objectForKey:@"start_location"] objectForKey:@"lng"] doubleValue]);
+        
+        for (NSDictionary *step in steps) {
+            
+            NSDictionary *start_location = [step objectForKey:@"start_location"];
+            stepCoordinates[++stepIndex] = [self coordinateWithLocation:start_location];
+            
+            if ([steps count] == stepIndex){
+                NSDictionary *end_location = [step objectForKey:@"end_location"];
+                stepCoordinates[++stepIndex] = [self coordinateWithLocation:end_location];
+            }
+        }
+        
+        MKPolyline *polyLine = [MKPolyline polylineWithCoordinates:stepCoordinates count:1 + stepIndex];
+        [mapView addOverlay:polyLine];
+        
+        //  CLLocationCoordinate2D centerCoordinate = CLLocationCoordinate2DMake((userLocation.location.coordinate.latitude + coordinate.latitude)/2, (userLocation.location.coordinate.longitude + coordinate.longitude)/2);
+        
+    }];
+
+    return nil;
+}
+-(void)addAnnotation:(Place *)tripUserLocation{
+    PlaceMark* tripUser = [[PlaceMark alloc] initWithPlace:tripUserLocation] ;
+    [mapView addAnnotation:tripUser];
+}
+
+-(void) showRouteFrom: (Place*) f to:(Place*) t {
+    
+    if(routes) {
+        [mapView removeAnnotations:[mapView annotations]];
+    }
+    
+    PlaceMark* from = [[PlaceMark alloc] initWithPlace:f] ;
+    PlaceMark* to = [[PlaceMark alloc] initWithPlace:t] ;
+   
+    [mapView addAnnotation:to];
+    [mapView addAnnotation:from];
+    
+    routes = [self calculateRoutesFrom:from.coordinate to:to.coordinate];
+}
+-(MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
+    
+    if ([annotation isKindOfClass:[MKUserLocation class]])
+        return nil;
+    MKPinAnnotationView *mypin = [[MKPinAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:@"current"];
+    mypin.pinColor = MKPinAnnotationColorPurple;
+    mypin.backgroundColor = [UIColor clearColor];
+    PlaceMark *selectedAnnotation =[annotation isKindOfClass:[PlaceMark class]] ? annotation : nil;
+   
+   
+    if(selectedAnnotation.place.userId.length>0){
+        
+        UIButton *goToDetail = [UIButton buttonWithType:UIButtonTypeInfoDark];
+      mypin.rightCalloutAccessoryView = goToDetail;
+        UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed: selectedAnnotation.place.categoryWhenRideCreated ==0 ?@"passengerMap" : @"car"]];
+        [image setFrame:CGRectMake(0, CGRectGetMinY(mypin.frame), image.frame.size.width, image.frame.size.height)];
+        [mypin addSubview:image];
+    }
+    mypin.draggable = NO;
+    mypin.highlighted = YES;
+    mypin.animatesDrop = TRUE;
+    mypin.canShowCallout = YES;
+    return mypin;
+}
+/*
 
 -(NSMutableArray *)decodePolyLine: (NSMutableString *)encoded {
 	[encoded replaceOccurrencesOfString:@"\\\\" withString:@"\\"
@@ -76,17 +219,81 @@
 }
 
 -(NSArray*) calculateRoutesFrom:(CLLocationCoordinate2D) f to: (CLLocationCoordinate2D) t {
-	NSString* saddr = [NSString stringWithFormat:@"%f,%f", f.latitude, f.longitude];
-	NSString* daddr = [NSString stringWithFormat:@"%f,%f", t.latitude, t.longitude];
-	
-	NSString* apiUrlStr = [NSString stringWithFormat:@"http://maps.google.com/maps?output=dragdir&saddr=%@&daddr=%@", saddr, daddr];
+	 saddr = [NSString stringWithFormat:@"%f,%f", f.latitude, f.longitude];
+	 daddr = [NSString stringWithFormat:@"%f,%f", t.latitude, t.longitude];
+	 //New APi->http://maps.googleapis.com/maps/api/directions/json?origin=8.483420,76.919819&destination=8.524139,76.936638
+	NSString* apiUrlStr = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/directions/json?origin=%@&destination=%@", saddr, daddr];
+    //Old ONe -> NSString* apiUrlStr = [NSString stringWithFormat:@"http://maps.google.com/maps?output=dragdir&saddr=%@&daddr=%@", saddr, daddr];
 	NSURL* apiUrl = [NSURL URLWithString:apiUrlStr];
 	NSString *apiResponse = [NSString stringWithContentsOfURL:apiUrl];
 	NSString* encodedPoints = [apiResponse stringByMatching:@"points:\\\"([^\\\"]*)\\\"" capture:1L];
 	
 	return [self decodePolyLine:[encodedPoints mutableCopy]];
-}
+    
+    /*
+     
+     
+     [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:apiUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+     
+     NSError *error = nil;
+     NSDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+     
+     NSArray *routes = [result objectForKey:@"routes"];
+     
+     NSDictionary *firstRoute = [routes objectAtIndex:0];
+     
+     NSDictionary *leg =  [[firstRoute objectForKey:@"legs"] objectAtIndex:0];
+     
+     NSDictionary *end_location = [leg objectForKey:@"end_location"];
+     
+     double latitude = [[end_location objectForKey:@"lat"] doubleValue];
+     double longitude = [[end_location objectForKey:@"lng"] doubleValue];
+     
+     CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
+     
+     MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
+     point.coordinate = coordinate;
+     point.title =  [leg objectForKey:@"end_address"];
+     point.subtitle = @"I'm here!!!";
+     
+     [mapView addAnnotation:point];
+     
+     NSArray *steps = [leg objectForKey:@"steps"];
+     
+     int stepIndex = 0;
+     
+     CLLocationCoordinate2D stepCoordinates[1  + [steps count] + 1];
+     
+     stepCoordinates[stepIndex] = mapView.userLocation.coordinate;
+     
+     for (NSDictionary *step in steps) {
+     
+     NSDictionary *start_location = [step objectForKey:@"start_location"];
+     stepCoordinates[++stepIndex] = [self coordinateWithLocation:start_location];
+     
+     if ([steps count] == stepIndex){
+     NSDictionary *end_location = [step objectForKey:@"end_location"];
+     stepCoordinates[++stepIndex] = [self coordinateWithLocation:end_location];
+     }
+     }
+     
+     MKPolyline *polyLine = [MKPolyline polylineWithCoordinates:stepCoordinates count:1 + stepIndex];
+     [mapView addOverlay:polyLine];
+     
+     CLLocationCoordinate2D centerCoordinate = CLLocationCoordinate2DMake((mapView.userLocation.location.coordinate.latitude + coordinate.latitude)/2, (mapView.userLocation.location.coordinate.longitude + coordinate.longitude)/2);
+     
+     }];
+     
+     
 
+     
+ 
+    
+    
+    
+}
+*/
+/*
 -(void) centerMap {
 	MKCoordinateRegion region;
 
@@ -182,6 +389,9 @@
     MKPinAnnotationView *mypin = [[MKPinAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:@"current"];
     mypin.pinColor = MKPinAnnotationColorPurple;
     mypin.backgroundColor = [UIColor clearColor];
+    UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"passengerMap"]];
+    [image setFrame:CGRectMake(0, CGRectGetMinY(mypin.frame), image.frame.size.width, image.frame.size.height)];
+    [mypin addSubview:image];
     PlaceMark *selectedAnnotation =annotation;
     if(selectedAnnotation.place.userId.length>0){
     UIButton *goToDetail = [UIButton buttonWithType:UIButtonTypeInfoDark];
@@ -212,4 +422,5 @@ calloutAccessoryControlTapped:(UIControl *)control
 	routeView.hidden = NO;
 	[routeView setNeedsDisplay];
 }
+ */
 @end

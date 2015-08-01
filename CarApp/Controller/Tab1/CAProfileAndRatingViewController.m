@@ -14,6 +14,9 @@
 #import "UIButton+WebCache.h"
 #import "UIImageView+WebCache.h"
 #import "DYRateView.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 @interface CAProfileAndRatingViewController ()<updateUserDetails,UITableViewDelegate,UITableViewDataSource>{
     NSMutableArray *tableArray;
@@ -23,6 +26,10 @@
     IBOutlet UIView *userProfileView;
     IBOutlet UITableView *tabelViewRating;
     NSNumber *average;
+    IBOutlet UIButton *buttonMutualFriends;
+    IBOutlet UILabel *labelAge;
+    IBOutlet UILabel *labelGender;
+    IBOutlet UILabel *labelFaceBookWarning;
 }
 @property(nonatomic,strong) IBOutletCollection(UITextField) NSArray *textFieldProfileDetails;
 @end
@@ -40,6 +47,8 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+- (IBAction)buttonMutualFriendsPressed:(UIButton *)sender {
 }
 
 #pragma mark - Side Menu BarButton
@@ -70,10 +79,15 @@
 }
 - (IBAction)callUser:(UIButton *)sender {
 
-    NSURL *phoneurl=[NSURL URLWithString:[NSString stringWithFormat:@"telprompt:%@",userDetails.phoneNumber]];
-    if ([[UIApplication sharedApplication]canOpenURL:phoneurl]) {
-        [[UIApplication sharedApplication]openURL:phoneurl];
+    UITextField *mobile = (UITextField *)_textFieldProfileDetails[2];
+    
+    if (!mobile.secureTextEntry) {
+        NSURL *phoneurl=[NSURL URLWithString:[NSString stringWithFormat:@"telprompt:%@",userDetails.phoneNumber]];
+        if ([[UIApplication sharedApplication]canOpenURL:phoneurl]) {
+            [[UIApplication sharedApplication]openURL:phoneurl];
+        }
     }
+
 
 }
 
@@ -91,6 +105,10 @@
 
 #pragma mark - Initial UISetup
 -(void)setUpUi{
+    buttonMutualFriends.hidden = YES;
+    labelAge.hidden = YES;
+    labelGender.hidden = YES;
+    
   //  self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]];
     NSArray *images=@[@"username",@"emailId",@"mobile"];
     
@@ -102,6 +120,7 @@
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightbarbutton];
     }
     
+    [self loginWithFaceBookForMutualFriends];
     [profileImage.layer setCornerRadius:50.0f];
     [profileImage setClipsToBounds:YES];
     [profileImage setUserInteractionEnabled:NO];
@@ -113,7 +132,7 @@
             [textField setLeftViewMode:UITextFieldViewModeAlways];
             [textField setLeftView:paddingView];
             [textField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
-
+            
             return ;
         }
         UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 0,18, 18)];
@@ -131,6 +150,91 @@
     [SVProgressHUD showWithStatus:@"Fetching user details..." maskType:SVProgressHUDMaskTypeBlack];
     [self fetchUserProfileDetails];
     [self fetchUserRatingDetails];
+}
+-(void)loginWithFaceBookForMutualFriends
+{
+    FBSDKAccessToken *access = [FBSDKAccessToken currentAccessToken];
+    if (access!=nil)
+    {
+        NSDictionary *params = @{
+                                 @"fields": @"context.fields(mutual_friends),birthday,gender,education,work",
+                                 };
+        //  /* make the API call */
+        
+        
+        FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                      initWithGraphPath:@"me"
+                                      parameters:params
+                                      HTTPMethod:@"GET"];
+        [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                              id result,
+                                              NSError *error) {
+            NSLog(@"result %@",result);
+            NSDictionary *params2 = @{
+                                      @"fields": @"gender,birthday",
+                                      };
+            FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                          initWithGraphPath: [[[result valueForKeyPath:@"context.mutual_friends"] valueForKeyPath:@"data.id"] objectAtIndex:0]
+                                          parameters:params2
+                                          HTTPMethod:@"GET"];
+            [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                                  id result,
+                                                  NSError *error) {
+                [SVProgressHUD showSuccessWithStatus:@"Success"];
+                [SVProgressHUD dismiss];
+                NSLog(@"result %@",result);
+                
+                // Handle the result
+            }];
+            
+            
+            // Handle the result
+        }];
+    }
+    else
+    {
+        FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
+         {
+             
+             [SVProgressHUD showSuccessWithStatus:@"Success"];
+             [SVProgressHUD dismiss];
+             if (error)
+             {
+                 // Process error
+             }
+             else if (result.isCancelled)
+             {
+                 // Handle cancellations
+             }
+             else
+             {
+                 ///me/mutualfriends/[OTHER ID]/?fields=name,picture
+                 NSDictionary *params = @{
+                                          @"fields": @"context.fields(mutual_friends)",@"fields":@"education",
+                                          };
+                 /* make the API call */
+                 
+                 FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                               initWithGraphPath:@"me"
+                                               parameters:params
+                                               HTTPMethod:@"GET"];
+                 [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                                       id result,
+                                                       NSError *error) {
+                     [SVProgressHUD dismiss];
+                     NSLog(@"result %@",result);
+                     // Handle the result
+                 }];
+                 if ([result.grantedPermissions containsObject:@"email"])
+                 {
+                     NSLog(@"result is:%@",result);
+                 }
+             }
+         }];
+        
+    }
+
 }
 
 #pragma mark-Parsing
@@ -164,6 +268,7 @@
     userDetails=user;
     [_textFieldProfileDetails[0] setText:user.userName];
     [_textFieldProfileDetails[1] setText:user.emailId];
+    [_textFieldProfileDetails[2] setSecureTextEntry: user.visibility.integerValue == 1 ?  YES: NO];
     [_textFieldProfileDetails[2] setText:user.phoneNumber];
     [profileImage sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,user.profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
     

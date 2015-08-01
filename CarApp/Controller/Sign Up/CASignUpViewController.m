@@ -14,8 +14,23 @@
 #import "UIImage+Utilities.h"
 #import "CAAppDelegate.h"
 #import "CALoginViewController.h"
-@interface CASignUpViewController ()<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIActionSheetDelegate, UITextViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
+#import "KGModal.h"
+#import "TPKeyboardAvoidingScrollView.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+
+typedef NS_ENUM(NSInteger, ButtonSelection) {
+    buttonCar1,
+    buttonCar2,
+    buttonCar3,
+    profileButton
+};
+
+@interface CASignUpViewController ()<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIActionSheetDelegate, UITextViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource,UIAlertViewDelegate>
 {
+    IBOutlet UIButton *buttonConnectWithFacebook;
+    IBOutlet TPKeyboardAvoidingScrollView *scrollViewCar;
     IBOutletCollection(UITextField) NSArray *textFieldSignUp;
     UITextField *textFiledActive;
     IBOutlet UIButton *signUpButton;
@@ -23,8 +38,17 @@
     IBOutlet UITextView *textViewAboutMe;
     __weak IBOutlet UITableViewCell *cellCategory;
     __weak IBOutlet UITableViewCell *cellTMC;
-    NSArray *category;
+    NSArray *category,*smokeStatus;
     __weak IBOutlet UIButton *btnTermsAndCondition;
+    IBOutlet UIView *viewCar;
+    IBOutletCollection(UIButton) NSArray *arrayButtonCar;
+    IBOutletCollection (UITextField) NSArray *arrayTextFieldCarName;
+    IBOutletCollection (UITextField) NSArray  *arrayTextFieldCarLicence;
+    ButtonSelection carSelection;
+    NSMutableDictionary * arrayCarDetails;
+    BOOL isHaveCorrectSelection;
+    IBOutlet UIButton *buttonSubmitCarDetails;
+    UILabel *labelVisible;
 }
 
 @end
@@ -42,20 +66,124 @@
 
 - (void)viewDidLoad
 {
+    
     [super viewDidLoad];
     [self setUpUi];
     [CAUser sharedUser].userId.length>0 ? [self hideTermsAndConditionCell]:[self addAttributedText];
-    
-    
+    arrayCarDetails = [NSMutableDictionary new];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    NSLog(@"%@",[FBSDKAccessToken currentAccessToken]);
+}
 
 -(void)hideTermsAndConditionCell{
     [cellTMC setHidden:YES];
+}
+- (IBAction)buttonConnectWithFaceBook:(UIButton *)sender {
+    [SVProgressHUD show];
+    FBSDKAccessToken *access = [FBSDKAccessToken currentAccessToken];
+    if (access!=nil)
+    {
+        NSDictionary *params = @{
+                                 @"fields": @"context.fields(mutual_friends),birthday,gender,education,work",
+                                 };
+        //  /* make the API call */
+        
+        
+        FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                      initWithGraphPath:@"me"
+                                      parameters:params
+                                      HTTPMethod:@"GET"];
+        [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                              id result,
+                                              NSError *error) {
+            NSLog(@"result %@",result);
+            NSDictionary *params2 = @{
+                                     @"fields": @"gender,birthday",
+                                     };
+            FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                          initWithGraphPath: [[[result valueForKeyPath:@"context.mutual_friends"] valueForKeyPath:@"data.id"] objectAtIndex:0]
+                                          parameters:params2
+                                          HTTPMethod:@"GET"];
+            [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                                  id result,
+                                                  NSError *error) {
+                [SVProgressHUD showSuccessWithStatus:@"Success"];
+                [SVProgressHUD dismiss];
+                NSLog(@"result %@",result);
+                [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+ 
+                // Handle the result
+            }];
+
+            
+            // Handle the result
+        }];
+    }
+    else
+    {
+        
+        
+        FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+        
+        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
+         
+         
+         {
+
+                             [SVProgressHUD showSuccessWithStatus:@"Success"];
+             [SVProgressHUD dismiss];
+             if (error)
+             {
+                 [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+
+                 // Process error
+             }
+             else if (result.isCancelled)
+             {
+                 [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+
+                 // Handle cancellations
+             }
+             else
+             {
+                 
+                 ///me/mutualfriends/[OTHER ID]/?fields=name,picture
+                 NSDictionary *params = @{
+                                          @"fields": @"context.fields(mutual_friends)",@"fields":@"education",
+                                          };
+                 /* make the API call */
+                 
+                 FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                               initWithGraphPath:@"me"
+                                               parameters:params
+                                               HTTPMethod:@"GET"];
+                 [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                                       id result,
+                                                       NSError *error) {
+                                     [SVProgressHUD dismiss];
+                     NSLog(@"result %@",result);
+                     [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+
+                     
+                     // Handle the result
+                 }];
+                 if ([result.grantedPermissions containsObject:@"email"])
+                 {
+                     NSLog(@"result is:%@",result);
+                 }
+             }
+         }];
+        
+    }
+
 }
 
 -(void)addAttributedText{
@@ -67,18 +195,25 @@
 
 -(void)setUpUi
 {
-    
+
+    [buttonConnectWithFacebook setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tap];
-    
-    NSArray *images=@[@"username",@"emailId",@"mobile",@"password",@"username"];
+    for (UIButton *object in arrayButtonCar) {
+        object.layer.cornerRadius = object.frame.size.width / 2;
+        object.clipsToBounds = YES;
+        [object.layer setBorderColor:[UIColor whiteColor].CGColor];
+        [object.layer setBorderWidth:2];
+    }
+    NSArray *images=@[@"username",@"emailId",@"mobile",@"password",@"username",@"smoke",@"nosmoke"];
     category = @[@"Driver",@"Passenger"];
+    smokeStatus = @[@"Non-Smoker",@"Smoker"];
     [textFieldSignUp enumerateObjectsUsingBlock:^(UITextField *textField, NSUInteger idx, BOOL *stop) {
         [textField setDelegate:self];
         textField.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"textField_bg"]];
         UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 0,18, 18)];
         [imgView setContentMode:UIViewContentModeScaleAspectFit];
-        imgView.image = [UIImage imageNamed:images[idx]];
+        imgView.image = [UIImage imageNamed:idx==5 && [CAUser sharedUser].smoker.integerValue == 0 ?  images[idx+1] : images[idx]];
         
         UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, 22)];
         [paddingView addSubview:imgView];
@@ -87,6 +222,14 @@
         [textField setValue:[UIColor whiteColor] forKeyPath:@"_placeholderLabel.textColor"];
        }];
     
+    UITextField *textFieldMobile = (UITextField *)textFieldSignUp[2];
+    labelVisible = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, textFieldMobile.frame.size.width/4, 22)];
+    [textFieldMobile setRightView:labelVisible];
+    labelVisible.text = [CAUser sharedUser].visibility.integerValue == 0 ? @"Not Visible" : @"Visible";
+    [labelVisible setFont:[UIFont systemFontOfSize:[UIFont smallSystemFontSize]]];
+    [labelVisible setTextAlignment:NSTextAlignmentLeft];
+    labelVisible.textColor = [UIColor whiteColor];
+    [textFieldMobile setRightViewMode:UITextFieldViewModeAlways];
     
     self.tableView.backgroundView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]];
     if([CAUser sharedUser].userId.length>0){//Edit Profile
@@ -99,13 +242,24 @@
         [textFieldSignUp[3] setText:[CAUser sharedUser].password];
         [textFieldSignUp[4] setText:[CAUser sharedUser].category];
         [textViewAboutMe setText:[[[CAUser sharedUser] about_me] length] ? [[CAUser sharedUser] about_me] :@"Bio" ];
+        [textFieldSignUp[5] setText:[CAUser sharedUser].smoker.integerValue == 0 ? @"Non-Smoker" :@"Smoker"];
         [textFieldSignUp[0] setUserInteractionEnabled:NO];
          [textFieldSignUp[1] setUserInteractionEnabled:NO];
         
         [textFieldSignUp[4] setInputView:[self setPickerView]];
         [textFieldSignUp[4] setInputAccessoryView:[self setPickerToolBar]];
-        
+        [textFieldSignUp[5] setInputView:[self setPickerView]];
+        [textFieldSignUp[5] setInputAccessoryView:[self setPickerToolBar]];
         [profileImage sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
+        [arrayButtonCar enumerateObjectsUsingBlock:^(UIButton *obj, NSUInteger idx, BOOL *stop) {
+            
+            [obj sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",carUrl,[[CAUser sharedUser] valueForKey:[NSString stringWithFormat:@"car_image%d",idx+1]]]] forState:UIControlStateNormal];
+
+            [obj setTitle:[[[CAUser sharedUser] valueForKey:[NSString stringWithFormat:@"car_image%d",idx+1]] length] ? @"" :[NSString stringWithFormat:@"Car%d",idx+1] forState:UIControlStateNormal];
+            [arrayTextFieldCarName[idx] setText:[[CAUser sharedUser] valueForKey:[NSString stringWithFormat:@"car_name%d",idx+1]]];
+            [arrayTextFieldCarLicence[idx] setText:[[CAUser sharedUser] valueForKey:[NSString stringWithFormat:@"car_licence_num%d",idx+1]]];
+            
+        }];
 //        [profileImage setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
         [profileImage setSelected:YES];
        // [profileImage setTitle:@"Change" forState:UIControlStateSelected];
@@ -176,8 +330,122 @@
                                            action:@selector(backButtonPressed:)];
 }
 
-
 #pragma mark - UIBarButtonItem Callbacks
+
+- (IBAction)buttonDeletePressed:(id)sender {
+    if ([sender tag]==0) {
+        [sender setTag:1];
+        [arrayButtonCar enumerateObjectsUsingBlock:^(UIButton * obj, NSUInteger idx, BOOL *stop) {
+            
+            UIButton *buttonDelete = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMinX(obj.frame)-3, CGRectGetMinY(obj.frame)-10, 20, 20)];
+            [buttonDelete setTitle:/*—*/@"-" forState:UIControlStateNormal];
+            [buttonDelete setBackgroundColor:[UIColor redColor]];
+            [buttonDelete.layer setCornerRadius:10];
+            [buttonDelete.layer setBorderColor:[UIColor whiteColor].CGColor];
+            [buttonDelete.layer setBorderWidth:2];
+            [buttonDelete addTarget:self action:@selector(buttonDeleteImageWithIndex:) forControlEvents:UIControlEventTouchUpInside];
+            [buttonDelete setTag:idx];
+            [scrollViewCar addSubview:buttonDelete];
+        }];
+    }
+    else
+    {
+        [[scrollViewCar subviews] enumerateObjectsUsingBlock:^(UIButton * obj, NSUInteger idx, BOOL *stop) {
+            
+            if (obj.frame.size.width == 20) {
+                [obj removeFromSuperview];
+            }
+        }];
+         [sender setTag:0];
+    }
+    
+}
+- (IBAction)buttonDeleteImageWithIndex:(UIButton *)sender {
+    
+    [arrayButtonCar[sender.tag] setBackgroundImage:nil forState:UIControlStateNormal];
+    [arrayButtonCar[sender.tag] setTitle:[NSString stringWithFormat:@"Car%d",sender.tag+1] forState:UIControlStateNormal];
+    [(UITextField *)arrayTextFieldCarLicence[sender.tag] setText:@""];
+    [(UITextField *)arrayTextFieldCarName[sender.tag] setText:@""];
+
+    }
+- (IBAction)buttonKgModalDismiss:(UIButton *)sender {
+    __block BOOL isClear;
+    if (sender.tag == 0) {
+        
+        [arrayButtonCar enumerateObjectsUsingBlock:^(UIButton * obj, NSUInteger idx, BOOL *stop) {
+           
+            if ([obj backgroundImageForState:UIControlStateNormal] && [[(UITextField *)arrayTextFieldCarName[idx] text] length] && [[(UITextField *)arrayTextFieldCarLicence[idx] text] length])
+            {
+                [arrayCarDetails setObject:@[[arrayButtonCar[idx] backgroundImageForState:UIControlStateNormal],[(UITextField *)arrayTextFieldCarName[idx] text],[(UITextField *)arrayTextFieldCarLicence[idx] text]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]];
+                isClear=  YES;
+            }
+            else if (![obj backgroundImageForState:UIControlStateNormal] && ![[(UITextField *)arrayTextFieldCarName[idx] text] length] && ![[(UITextField *)arrayTextFieldCarLicence[idx] text] length])
+            {
+                isClear=  YES;
+            }
+            else
+            {
+                [[[UIAlertView alloc] initWithTitle:@"" message:@"Please fill all the field" delegate:self cancelButtonTitle:@"ok" otherButtonTitles: nil] show];
+                isClear = NO;
+                *stop = YES;
+                return;
+                
+            }
+            if (idx == 2) {
+                
+                isClear ? [[arrayCarDetails allKeys] count] ? [[CAUser sharedUser] setArrayCar:[[CAUser sharedUser] setArrayCarFromUpdate:arrayCarDetails]] :[[[UIAlertView alloc] initWithTitle:@"" message:@"Please give car details" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show] : nil;
+                isClear ? [[arrayCarDetails allKeys] count] ? [[KGModal sharedInstance] hideAnimated:YES] : nil : nil;
+            }
+            
+        }];
+        
+      }
+    else
+    {
+        [[KGModal sharedInstance] hideAnimated:YES];
+    }
+    
+    
+
+}
+
+
+- (IBAction)buttonAddCar:(UIButton *)sender {
+    [[KGModal sharedInstance] showWithContentView:scrollViewCar andAnimated:YES];
+}
+- (IBAction)buttonCarPressed:(UIButton *)sender {
+    
+    switch (sender.tag) {
+        case 0:
+            carSelection = buttonCar1;
+            break;
+        case 1:
+            carSelection = buttonCar2;
+            if (![[arrayCarDetails allKeys] containsObject:@"car1Details"]) {
+                [[[UIAlertView alloc] initWithTitle:@"" message:@"Give car1 details to fill car2 details" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                return;
+            }
+
+            break;
+        case 2:
+            carSelection = buttonCar3;
+            if (![[arrayCarDetails allKeys] containsObject:@"car2Details"]) {
+                [[[UIAlertView alloc] initWithTitle:@"" message:@"Give car2 details to fill car3 details" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+                return;
+            }
+            break;
+        default:
+            break;
+    }
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]
+                                  initWithTitle:@""
+                                  delegate:self
+                                  cancelButtonTitle:@"Cancel"
+                                  destructiveButtonTitle:nil
+                                  otherButtonTitles:@"Camera",@"Gallery", nil];
+    
+     [actionSheet showInView:[UIApplication sharedApplication].keyWindow];
+}
 
 - (void)backButtonPressed:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
@@ -216,6 +484,15 @@
     user.phoneNumber=[textFieldSignUp[2] text];
     user.password=[textFieldSignUp[3] text];
     user.about_me = [textViewAboutMe.text isEqualToString:@"Bio"]?@"":textViewAboutMe.text;
+    user.smoker = [[textFieldSignUp[5] text] isEqualToString:@"Smoker"] ? @"1" : @"0";
+    [arrayButtonCar enumerateObjectsUsingBlock:^(UIButton * obj, NSUInteger idx, BOOL *stop) {
+        
+        [user setValue:[obj backgroundImageForState:UIControlStateNormal] forKey:[NSString stringWithFormat:@"car_image%d",idx+1]];
+        
+        [user setValue:[arrayTextFieldCarName[idx] text]  forKey:[NSString stringWithFormat:@"car_name%d",idx+1]];
+        [user setValue:[arrayTextFieldCarLicence[idx] text]  forKey:[NSString stringWithFormat:@"car_licence_num%d",idx+1]];
+        
+    }];
     
     user.profile_Image=[profileImage.currentBackgroundImage fixOrientation];
     [user signUpwithCompletionBlock:^(BOOL success, NSError *error) {
@@ -241,6 +518,8 @@
 
 -(void)parseUpdateProfile{
     [SVProgressHUD showWithStatus:@"Updating profile..." maskType:SVProgressHUDMaskTypeClear];
+    
+   // NSArray *arrayCar = [[[CAUser sharedUser] arrayCar] mutableCopy];
     CAUser *user=[[CAUser alloc]init];
     user.userName=[textFieldSignUp[0] text];
     user.emailId=[textFieldSignUp[1] text];
@@ -248,7 +527,58 @@
     user.password=[textFieldSignUp[3] text];
     user.category = [textFieldSignUp[4] text];
     user.about_me=[textViewAboutMe.text isEqualToString:@"Bio"]?@"":textViewAboutMe.text;
+    user.smoker = [[textFieldSignUp[5] text] isEqualToString:@"Smoker"] ? @"1" : @"0";
     user.profile_Image=[profileImage.currentBackgroundImage fixOrientation];
+    user.visibility = [CAUser sharedUser].visibility;
+    [arrayButtonCar enumerateObjectsUsingBlock:^(UIButton *obj, NSUInteger idx, BOOL *stop) {
+        
+        [user setValue:[obj backgroundImageForState:UIControlStateNormal] forKey:[NSString stringWithFormat:@"car_image%d",idx+1]];
+        [user setValue:[arrayTextFieldCarName[idx] text] forKey:[NSString stringWithFormat:@"car_name%d",idx+1]];
+        [user setValue:[arrayTextFieldCarLicence[idx] text] forKey:[NSString stringWithFormat:@"car_licence_num%d",idx+1]];
+    }];
+/*    [(NSDictionary *)arrayCar enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+//        if (arrayCar.count==1) {
+//            user.car_image1 = obj[0];
+//            user.car_name1 =  obj[1];
+//            user.car_licence_num1 = obj[2];
+//            
+//        }
+//        else if(arrayCar.count==2)
+//        {
+//            user.car_image1 = obj[0];
+//            user.car_name1 =  obj[1];
+//            user.car_licence_num1 = obj[2];
+//            user.car_image2 = obj[0];
+//            user.car_name2=  obj[1];
+//            user.car_licence_num2 = obj[2];
+//        }
+//        else if(arrayCar.count == 3)
+//        {
+//            user.car_image1 = obj[0];
+//            user.car_name1 =  obj[1];
+//            user.car_licence_num1 = obj[2];
+//            user.car_image2 = obj[0];
+//            user.car_name2=  obj[1];
+//            user.car_licence_num2 = obj[2];
+//            user.car_image3 = obj[0];
+//            user.car_name3 =  obj[1];
+//            user.car_licence_num3 = obj[2];
+//        }
+//        else
+//        {
+//            user.car_image1 = @"";
+//            user.car_name1 =  @"";
+//            user.car_licence_num1 = @"";
+//            user.car_image2 = @"";
+//            user.car_name2=  @"";
+//            user.car_licence_num2 = @"";
+//            user.car_image3 = @"";
+//            user.car_name3 =  @"";
+//            user.car_licence_num3 = @"";
+//        }
+        
+    }];
+*/
     [user updateUserProfileWithCompletionBlock:^(BOOL success, NSError *error){
         if(success)
         {
@@ -270,15 +600,16 @@
 }
 
 -(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
-    return category.count;
+    return [textFieldSignUp[5] isFirstResponder] ? smokeStatus.count : category.count;
 }
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
-    return category[row];
+    return [textFieldSignUp[5] isFirstResponder] ? smokeStatus[row] : category[row];
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
-    [(UITextField *) textFieldSignUp[4] setText:category[row]];
+    [textFieldSignUp[5] isFirstResponder] ?  [(UITextField *) textFieldSignUp[5] setText:smokeStatus[row]] : [(UITextField *) textFieldSignUp[4] setText:category[row]];
+    [textFieldSignUp[5] isFirstResponder] && row == 0 ? [(UIImageView *)[[(UITextField *) textFieldSignUp[5] leftView] subviews][0] setImage:[UIImage imageNamed:@"nosmoke"]] : [textFieldSignUp[5] isFirstResponder] && row == 1 ? [(UIImageView *)[[(UITextField *) textFieldSignUp[5] leftView] subviews][0] setImage:[UIImage imageNamed:@"smoke"]] : nil;
 }
 
 #pragma mark Textfield Delegates
@@ -288,14 +619,55 @@
     [textField resignFirstResponder];
     return YES;
 }
+-(void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if (textField.tag ==111) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Message" message:@"You want disclose your number or not" delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
+        [alert setTag:111];
+        [alert show];
+    }
+    if ([arrayTextFieldCarLicence containsObject:textField] || [arrayTextFieldCarName containsObject:textField] ) {
+        [arrayButtonCar enumerateObjectsUsingBlock:^(UIButton * obj, NSUInteger idx, BOOL *stop) {
+            
+            if ([obj backgroundImageForState:UIControlStateNormal] && [[(UITextField *)arrayTextFieldCarName[idx] text] length] && [[(UITextField *)arrayTextFieldCarLicence[idx] text] length])
+            {
+                [arrayCarDetails setObject:@[[arrayButtonCar[idx] backgroundImageForState:UIControlStateNormal],[(UITextField *)arrayTextFieldCarName[idx] text],[(UITextField *)arrayTextFieldCarLicence[idx] text]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]];
+            }
+            else if (![obj backgroundImageForState:UIControlStateNormal] && ![[(UITextField *)arrayTextFieldCarName[idx] text] length] && ![[(UITextField *)arrayTextFieldCarLicence[idx] text] length])
+            {
+            }
+            else
+            {
+               
+                *stop = YES;
+                return;
+                
+            }
+            
+        }];
+        
+    }
+
+
+}
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
     textFiledActive = textField;
 }
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag ==111) {
+        
+        buttonIndex == 0 ? [[CAUser sharedUser] setVisibility:@"1"] : [[CAUser sharedUser] setVisibility:@"0"];
+        labelVisible.text = [CAUser sharedUser].visibility.integerValue == 0 ? @"Not Visible" : @"Visible";
 
--(void)showAlertMessage:(NSString *)message
+    }
+}
+
+-(BOOL)showAlertMessage:(NSString *)message
 {
     [[[UIAlertView alloc]initWithTitle:@"Message" message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil]show];
+    return true;
 }
 
 - (void)textViewDidBeginEditing:(UITextView *)textView{
@@ -338,7 +710,7 @@
                                   otherButtonTitles:@"Camera",@"Gallery", nil];
     
     [actionSheet showInView:[UIApplication sharedApplication].keyWindow];
-    
+    carSelection = profileButton;
  }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -375,19 +747,53 @@
     [imagePickerController setDelegate:self];
     imagePickerController.sourceType = (actionSheetIndex==0)?UIImagePickerControllerSourceTypeCamera:UIImagePickerControllerSourceTypePhotoLibrary;
     imagePickerController.allowsEditing=YES;
+    [[KGModal sharedInstance] hideAnimated:carSelection != profileButton ? YES : NO];
     [self presentViewController:imagePickerController animated:YES completion:nil];
     
 }
 
 #pragma UIImagePickerController Delegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
-    
     UIImage *selectedImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-    [profileImage setBackgroundImage:selectedImage forState:UIControlStateNormal];
-    [profileImage setBackgroundImage:selectedImage forState:UIControlStateSelected];
-    [profileImage setSelected:YES];
+
+    switch (carSelection) {
+        case 0:
+        {
+            [arrayButtonCar[carSelection] setBackgroundImage:selectedImage forState:UIControlStateNormal];
+            [(UIButton *)arrayButtonCar[carSelection] setTitle:@"" forState:UIControlStateNormal];
+        }
+            break;
+        case 1:
+        {
+            [arrayButtonCar[carSelection] setBackgroundImage:selectedImage forState:UIControlStateNormal];
+            [(UIButton *)arrayButtonCar[carSelection] setTitle:@"" forState:UIControlStateNormal];
+            
+        }
+            break;
+        case 2:
+        {
+            [arrayButtonCar[carSelection] setBackgroundImage:selectedImage forState:UIControlStateNormal];
+            [(UIButton *)arrayButtonCar[carSelection] setTitle:@"" forState:UIControlStateNormal];
+        }
+            break;
+            case 3:
+        {
+            [profileImage setBackgroundImage:selectedImage forState:UIControlStateNormal];
+            [profileImage setBackgroundImage:selectedImage forState:UIControlStateSelected];
+            [profileImage setSelected:YES];
+
+        }
+            break;
+            
+        default:
+            break;
+    }
+    
     [self dismissViewControllerAnimated:YES completion:nil];
-}
+    
+    carSelection != profileButton ? [[KGModal sharedInstance] showWithContentView:scrollViewCar] : nil;
+    
+   }
 
 -(void)dismissKeyboard{
     [textFiledActive resignFirstResponder];

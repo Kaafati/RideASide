@@ -16,6 +16,10 @@
 #import "CAUser.h"
 #import "PayPalMobile.h"
 #import "CAInitialMapViewController.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <FacebookSDK/FacebookSDK.h>
+#import "CAIntoPageViewController.h"
 @import iAd;
 @implementation CAAppDelegate
 
@@ -25,6 +29,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"FontNAme" size:12], NSFontAttributeName, nil]];
     
@@ -36,9 +41,13 @@
     [self checkPushNotification:application];
     [self checkAutoLogin];
     self.window.backgroundColor = [UIColor darkGrayColor];
-    
-    return YES;
+//     [[FBSDKApplicationDelegate sharedInstance] application:application
+//                                    didFinishLaunchingWithOptions:launchOptions];
+  //  [FBSDKProfile enableUpdatesOnAccessTokenChange:YES];
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                    didFinishLaunchingWithOptions:launchOptions];
 }
+
 -(void)checkPushNotification:(UIApplication *)application{
     if ([application respondsToSelector:@selector(isRegisteredForRemoteNotifications)])
     {
@@ -71,9 +80,11 @@
 
 -(void)setRootPage
 {
+    
     UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:Nil];
+    CAIntoPageViewController *introPage =[storyBoard instantiateViewControllerWithIdentifier:@"CAIntoPageViewController"];
     CALoginViewController *loginViewController=[storyBoard instantiateViewControllerWithIdentifier:@"loginView"];
-    CANavigationController *navigationController=[[CANavigationController alloc]initWithRootViewController:loginViewController];
+    CANavigationController *navigationController=[[CANavigationController alloc]initWithRootViewController:!_isFromLogout ? introPage : loginViewController];
     [self.window setRootViewController:navigationController];
     
 }
@@ -99,7 +110,9 @@
 -(void)didLogout{
     [CAUser logout];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:kLoggeduserdetails];
+    _isFromLogout = YES;
     [self checkAutoLogin];
+    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -122,8 +135,8 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
      [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-     [[FBSession activeSession] handleDidBecomeActive];
-
+    // [[FBSession activeSession] handleDidBecomeActive];
+    [FBSDKAppEvents activateApp];
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
@@ -136,8 +149,11 @@
 
 
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
-    
-    return [[FBSession activeSession] handleOpenURL:url];
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                                 openURL:url
+                                                       sourceApplication:sourceApplication
+                                                              annotation:annotation];
+//    return [[FBSession activeSession] handleOpenURL:url];
 }
 
 - (void)saveContext

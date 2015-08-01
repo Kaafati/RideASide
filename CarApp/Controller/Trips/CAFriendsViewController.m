@@ -15,6 +15,8 @@
 #import "CATrip.h"
 #import "UIImageView+WebCache.h"
 #import "UIButton+WebCache.h"
+#import "CAUser.h"
+#import "CAContactCell.h"
 @import MessageUI;
 
 @interface CAFriendsViewController ()<MFMessageComposeViewControllerDelegate>
@@ -23,6 +25,7 @@
     __weak IBOutlet UITableView *tableViewFriends;
     NSMutableArray *arraySelectedFriends;
     NSMutableArray *arrayTrip,*arrayAppUsers;
+    IBOutlet UIImageView *imageViewBackGround;
 
 }
 @end
@@ -32,10 +35,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Friends";
-    [self fetchtrip];
-    [self fetchAppUsers];
-   // NSLog(@"%@",[CAContacts getcontact]);
+    [imageViewBackGround setImage:[UIImage imageNamed:@"background"]];
+//    [imageViewBackGround sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
     arrayContact = [CAContacts getcontact];
+[tableViewFriends reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self fetchtrip];
+   // NSLog(@"%@",[CAContacts getcontact]);
     [self setupMenuBarButtonItems];
     arraySelectedFriends = [NSMutableArray new];
     // Do any additional setup after loading the view.
@@ -44,9 +49,9 @@
 {
     CATrip *trip=[[CATrip alloc]init];
     arrayTrip = [NSMutableArray new];
-    [SVProgressHUD showWithStatus:@"Fetching Posts..." maskType:SVProgressHUDMaskTypeBlack];
-    [trip getTripDetailswithPath:@"view_trip.php" withSearchString:@"" withIndex:0 withOptionForTripDetailIndex:0 withCompletionBlock:^(BOOL success, id result, NSError *error) {
-        [SVProgressHUD dismiss];
+    [SVProgressHUD show];
+    [trip getTripDetailswithPath:@"view_trip.php" withSearchString:@"" withIndex:0 withMiles:40 withOptionForTripDetailIndex:0  withCompletionBlock:^(BOOL success, id result,id result2, NSError *error) {
+        [self fetchAppUsers];
         NSArray *arrayDataList=(NSArray *)result;
         if (success) {
             
@@ -54,17 +59,17 @@
                 [arrayTrip addObject:obj];
             }];
         }
-        [tableViewFriends reloadData];
+        [tableViewFriends reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationAutomatic];
         
     }];
 
 }
 -(void)fetchAppUsers
 {
-    CATrip *trip=[[CATrip alloc]init];
     arrayAppUsers = [NSMutableArray new];
-    [SVProgressHUD showWithStatus:@"Fetching Posts..." maskType:SVProgressHUDMaskTypeBlack];
-    [trip getTripDetailswithPath:@"view_all_trip.php" withSearchString:@"" withIndex:0 withOptionForTripDetailIndex:0 withCompletionBlock:^(BOOL success, id result, NSError *error) {
+    [CAUser listTheAppUserwithCompletionBlock:^(bool success, id result, NSError * error) {
+        NSLog(@"result %@",result);
+
         [SVProgressHUD dismiss];
         NSArray *arrayDataList=(NSArray *)result;
         if (success) {
@@ -73,9 +78,21 @@
                 [arrayAppUsers addObject:obj];
             }];
         }
-        [tableViewFriends reloadData];
-        
+         [tableViewFriends reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationAutomatic];
     }];
+//    [trip getTripDetailswithPath:@"view_all_trip.php" withSearchString:@"" withIndex:0 withOptionForTripDetailIndex:0 withCompletionBlock:^(BOOL success, id result,id  result2, NSError *error) {
+//        
+//        [SVProgressHUD dismiss];
+//        NSArray *arrayDataList=(NSArray *)result;
+//        if (success) {
+//            
+//            [arrayDataList enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//                [arrayAppUsers addObject:obj];
+//            }];
+//        }
+//        [tableViewFriends reloadData];
+//        
+//    }];
 
 }
 - (void)setupMenuBarButtonItems {
@@ -124,7 +141,7 @@
     }
     
     [arraySelectedFriends addObjectsFromArray:@[[arrayTrip filteredArrayUsingPredicate:predicateTrip],[arrayContact filteredArrayUsingPredicate:predicateContact],[arrayAppUsers filteredArrayUsingPredicate:predicateAppUser]]];
-    NSLog(@"Selected %@",arraySelectedFriends);
+   // NSLog(@"Selected %@",arraySelectedFriends);
 //    if (![arrayContact filteredArrayUsingPredicate:predicateContact].count) {
 //        [[[UIAlertView alloc] initWithTitle:@"" message:@"Please select the contacts" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
 //        return;
@@ -137,7 +154,7 @@
     else if ([arraySelectedFriends count] && ![arraySelectedFriends[1] count] && [arraySelectedFriends[2] count]) {
         
         CATrip *numberOfSeats = (CATrip *)arraySelectedFriends[0][0];
-        NSLog(@"%@",[[arraySelectedFriends[2] valueForKey:@"UserId"] componentsJoinedByString:@","]);
+        NSLog(@"%@",[[arraySelectedFriends[2] valueForKey:@"userId"] componentsJoinedByString:@","]);
         if(numberOfSeats.SeatsAvailable.integerValue ==0)
         {
             [[[UIAlertView alloc] initWithTitle:@"" message:@"Seats not available" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
@@ -147,16 +164,20 @@
         else
         {
            
-            numberOfSeats.SeatsAvailable.integerValue >= [arraySelectedFriends[2] count] ? [self inviteAppUserWithTripId:numberOfSeats.tripId andAppUserId:[[arraySelectedFriends[2] valueForKey:@"UserId"] componentsJoinedByString:@","]] : [[UIAlertView alloc] initWithTitle:@"" message:numberOfSeats.SeatsAvailable.integerValue >1 ? [NSString stringWithFormat:@"%lu seats are not available \n Please select %@ person",(unsigned long)[arraySelectedFriends[2] count],numberOfSeats.SeatsAvailable] : [NSString stringWithFormat:@"%lu seat is not available \n Please select %@ person",(unsigned long)[arraySelectedFriends[2] count],numberOfSeats.SeatsAvailable]  delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil].show;
+            numberOfSeats.SeatsAvailable.integerValue >= [arraySelectedFriends[2] count] ? [self inviteAppUserWithTripId:numberOfSeats.tripId andAppUserId:[[arraySelectedFriends[2] valueForKey:@"userId"] componentsJoinedByString:@","]] : [[UIAlertView alloc] initWithTitle:@"" message:numberOfSeats.SeatsAvailable.integerValue >1 ? [NSString stringWithFormat:@"%lu seats are not available \n Please select %@ person",(unsigned long)[arraySelectedFriends[2] count],numberOfSeats.SeatsAvailable] : [NSString stringWithFormat:@"%lu seat is not available \n Please select %@ person",(unsigned long)[arraySelectedFriends[2] count],numberOfSeats.SeatsAvailable]  delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil].show;
         }
     }
-    else
+    else if (![arraySelectedFriends[1] count] && ![arraySelectedFriends[2] count])
     {
-        [[[UIAlertView alloc] initWithTitle:@"" message:@"Can not send invites to multiple groups" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        [[[UIAlertView alloc] initWithTitle:@"" message:@"Please Select the User from contact or app user" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
         return;
  
     }
-   
+   else
+   {
+       [[[UIAlertView alloc] initWithTitle:@"" message:@"Can not send invites to multiple groups" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+       return;
+   }
     
    
     
@@ -197,6 +218,8 @@
 {
     return 50;
 }
+
+
 //- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 //{
 //        return section == 0 ? @"Contacts" : @"Rides";
@@ -205,24 +228,33 @@
 -(UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     UILabel *label = [[UILabel alloc] init];
-    label.text=section == 0 ?  @"Contacts" : section ==1 ? @"Rides" : @"AppUser";
+    label.text=section == 0 ?  @"Contacts" : section ==1 ? @"Rides" : @"App User";
     label.backgroundColor=[UIColor clearColor];
     label.textColor=[UIColor whiteColor];
     label.textAlignment= NSTextAlignmentCenter;
+    [label setBackgroundColor:[UIColor colorWithRed:25.0/255 green:124.0/255 blue:204.0/255 alpha:1]];
     return label;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.section==0) {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+        CAContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CAContactCell"];
+//        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
         CAContacts *contact = arrayContact[indexPath.row];
     
-        cell.textLabel.text = [NSString stringWithFormat:@"Name : %@ %@",contact.firstName,contact.lastName];
+        cell.labelContactName.text = [NSString stringWithFormat:@"Name : %@ %@",contact.firstName,contact.lastName];
         
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"Phone Number : %@",contact.phoneNumber];
+        cell.labelContactPhoneNumber.text = [NSString stringWithFormat:@"Phone Number : %@",contact.phoneNumber];
         cell.accessoryType =  contact.isContactSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
         // Configure the cell...
+       
+        cell.imageViewContact.image = (UIImage *)contact.image;
+        cell.imageViewContact.layer.cornerRadius = cell.imageViewContact.frame.size.height / 2;
+        cell.imageViewContact.clipsToBounds = YES;
+        [cell.imageViewContact.layer setBorderColor:[UIColor whiteColor].CGColor];
+        cell.imageViewContact.layer.borderWidth=2;
 
+        
         return cell;
     }
     else if(indexPath.section ==1)
@@ -244,15 +276,15 @@
     else
     {
         CATripCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellAppUser"];
-        CATrip *trip = arrayAppUsers[indexPath.row];
+        CAUser *appUsers = arrayAppUsers[indexPath.row];
 
-        cell.labelTrip.text = trip.name;
-        [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"] ];
+        cell.labelTrip.text = appUsers.userName;
+        [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,appUsers.profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"] ];
         cell.imageUserPicture.layer.cornerRadius = cell.imageUserPicture.frame.size.height / 2;
         cell.imageUserPicture.clipsToBounds=YES;
         [cell.imageUserPicture.layer setBorderColor:[UIColor whiteColor].CGColor];
         cell.imageUserPicture.layer.borderWidth=2;
-        cell.accessoryType =  trip.isSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+        cell.accessoryType =  appUsers.isSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
 
         return cell;
     }
@@ -263,7 +295,7 @@
 {
     if (indexPath.section==0) {
 
-        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        CAContactCell *cell = (CAContactCell *)[tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryType =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? UITableViewCellAccessoryNone : UITableViewCellAccessoryCheckmark;
         CAContacts *contact = arrayContact[indexPath.row];
         contact.isContactSelected =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? YES : NO;
@@ -303,7 +335,7 @@
     {
         CATripCell *cell = (CATripCell *)[tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryType =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? UITableViewCellAccessoryNone : UITableViewCellAccessoryCheckmark;
-        CATrip *trip = arrayAppUsers[indexPath.row];
+        CAUser *trip = arrayAppUsers[indexPath.row];
         
         trip.isSelected =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? YES : NO;
     }

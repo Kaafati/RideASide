@@ -17,14 +17,13 @@
 #import "CAContainerViewController.h"
 #import "CAServiceManager.h"
 #import "CARequestsViewController.h"
-#import "CAFriendsViewController.h"
 @implementation SideMenuViewController{
     NSArray *arrayMenus;
     UIView *headerView ;
     UIImageView  *imageView;
 }
 -(void)viewDidLoad{
-    arrayMenus=@[@"Home",@"Edit Profile",@"Requests",@"Review History",@"Friends",@"Logout"];
+    arrayMenus=@[@"Home",@"Edit Profile",@"Requests",@"Review History",@"Logout"];
     self.tableView.backgroundColor=[UIColor darkGrayColor];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTableView)  name:
      @"updateProfileImage" object:nil];
@@ -123,15 +122,11 @@
         }
             break;
         case 4:{
-             CAFriendsViewController *friends=[storyBoard instantiateViewControllerWithIdentifier:@"CAFriendsViewController"];
-         [controllers addObject:friends];
-        }
-            break;
-        case 5:{
-            [SVProgressHUD showWithStatus:@"Logging out..." maskType:SVProgressHUDMaskTypeBlack];
+             [SVProgressHUD showWithStatus:@"Logging out..." maskType:SVProgressHUDMaskTypeBlack];
             [self parseLogout];
         }
             break;
+        
             
         default:
             break;

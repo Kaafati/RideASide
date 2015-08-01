@@ -42,7 +42,7 @@
 }
 #pragma mark-Actions
 -(void)setUpUi{
-    mapView = [[MapView alloc] initWithFrame:CGRectMake(0,60, 320, self.view.frame.size.height)];
+    mapView = [[MapView alloc] initWithFrame:CGRectMake(0,self.navigationController.navigationBar.bounds.size.height + [UIApplication sharedApplication].statusBarFrame.size.height, self.view.frame.size.width, self.view.frame.size.height)];
     [mapView setDelegate:self];
     [self.view addSubview:mapView];
     [SVProgressHUD showWithStatus:@"Drawing Routes" maskType:SVProgressHUDMaskTypeBlack];
@@ -78,6 +78,13 @@
 }
 
 -(void)postAnnotationsInTrip{
+    
+//    Place* home = [[Place alloc] init] ;
+//    home.name = obj.userName;
+//    home.latitude =obj.latitude.floatValue;
+//    home.longitude =obj.longitude.floatValue;
+//    home.userId=obj.userId;
+//    [mapView addAnnotation:home];
     [tripUsers enumerateObjectsUsingBlock:^(CAUser  *obj, NSUInteger idx, BOOL *stop) {
         Place* home = [[Place alloc] init] ;
         home.name = obj.userName;
@@ -85,7 +92,22 @@
         home.longitude =obj.longitude.floatValue;
         home.userId=obj.userId;
         [mapView addAnnotation:home];
+        
     }];
+
+    if (_trips.UserId.integerValue == [CAUser sharedUser].userId.integerValue) {
+        Place* home = [[Place alloc] init] ;
+        home.name = [CAUser sharedUser].userName;
+        home.latitude =[CAUser sharedUser].latitude.floatValue;
+        home.longitude =[CAUser sharedUser].longitude.floatValue;
+        home.userId=[CAUser sharedUser].userId;
+        home.categoryWhenRideCreated = [_trips.addedBy isEqualToString:@"Passenger"] ? 0 : 1;
+        
+        [mapView addAnnotation:home];
+    }
+
+
+    
 }
 
 #pragma mark - Actions

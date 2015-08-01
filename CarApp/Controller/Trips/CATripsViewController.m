@@ -29,7 +29,7 @@
     UILabel *labelLoading;
     UIRefreshControl *refreshControl;
     BOOL ISPullToRefresh;
-    NSInteger segmentIndex;
+    NSInteger segmentIndex,segmentMilesIndex;
     NSString *searchString;
 }
 
@@ -101,7 +101,7 @@
     self.tableView.backgroundView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]];
     tableArray=[NSMutableArray new];
     segmentIndex=0;
-    
+    segmentMilesIndex=3;
     
     isLoadMoreData=YES;
     startCount=0;
@@ -117,12 +117,12 @@
     
     
 //    [SVProgressHUD showWithStatus:@"Fetching Posts..." maskType:SVProgressHUDMaskTypeBlack];
-    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:@"" WithrideIndex:segmentIndex];
+    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:@"" WithrideIndex:segmentIndex WithMilesIndex:segmentMilesIndex*10+10];
     
     
     
 }
--(void)parseMyTrips:(NSInteger)indexOfTab WithSearchString:(NSString *)searchText WithrideIndex:(NSInteger)rideIndex
+-(void)parseMyTrips:(NSInteger)indexOfTab WithSearchString:(NSString *)searchText WithrideIndex:(NSInteger)rideIndex WithMilesIndex:(NSInteger)milesIndex
 {
     NSString *pathName;
     switch (self.tabBarController.selectedIndex) {
@@ -141,7 +141,7 @@
     CATrip *trip=[[CATrip alloc]init];
     NSLog(@"PathName =%@",pathName);
     [SVProgressHUD showWithStatus:@"Fetching Posts..." maskType:SVProgressHUDMaskTypeBlack];
-    [trip getTripDetailswithPath:pathName withSearchString:[searchText isKindOfClass:[NSNull class]]?@"":searchText withIndex:startCount withOptionForTripDetailIndex:rideIndex withCompletionBlock:^(BOOL success, id result, NSError *error) {
+    [trip getTripDetailswithPath:pathName withSearchString:[searchText isKindOfClass:[NSNull class]]?@"":searchText withIndex:startCount withMiles:milesIndex withOptionForTripDetailIndex:rideIndex withCompletionBlock:^(BOOL success, id result,id result2, NSError *error) {
         [SVProgressHUD dismiss];
         [_activityIndicatorView stopAnimating];
         [labelLoading setHidden:YES];
@@ -150,6 +150,10 @@
         if (success) {
             
             [arrayDataList enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                [tableArray addObject:obj];
+            }];
+            [(NSArray *)result2 enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+               
                 [tableArray addObject:obj];
             }];
         }
@@ -197,13 +201,13 @@
     CATrip *trip=tableArray[indexPath.row];
     cell.backgroundColor=[UIColor clearColor];
     cell.labelTrip.textColor=[UIColor whiteColor];
-    [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"] ];
+    [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].userId.integerValue != trip.UserId.integerValue ? trip.imageName : [CAUser sharedUser].profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"] ];
     
 //    [cell.imageUserPicture setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] placeholderImage:[UIImage imageNamed:@"placeholder"] ];
 //    [cell.imageUserPicture setImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]]];
     cell.imageUserPicture.layer.cornerRadius = 25.0f;
     cell.imageUserPicture.clipsToBounds=YES;
-    cell.labelTrip.text=[NSString stringWithFormat:@"%@ posted %@.",trip.name,trip.tripName];
+    cell.labelTrip.text=[NSString stringWithFormat:@"%@ posted %@.",[CAUser sharedUser].userId.integerValue != trip.UserId.integerValue ? trip.name : [CAUser sharedUser].userName,trip.tripName];
     cell.imageUserPicture.tag=indexPath.row;
     cell.labelTrip.font=[UIFont fontWithName:@"Arial" size:12];
     [cell.imageUserPicture.layer setBorderColor:[UIColor whiteColor].CGColor];
@@ -239,7 +243,7 @@
     {
         [self.view setUserInteractionEnabled:NO];
         startCount=[self countToParseNextData:tableArray];
-        [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex];
+        [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex WithMilesIndex:segmentMilesIndex];
         [self setLoadingFooter];
     }
 }
@@ -247,15 +251,22 @@
 -(void)goToProfilePage:(UIButton *)sender{
     CATrip *trip=tableArray[sender .tag];
 //    CAProfileTableViewController *profile=[self.storyboard instantiateViewControllerWithIdentifier:@"profileView"];
+    if(trip.UserId.integerValue != [CAUser sharedUser].userId.integerValue)
+    {
     CAProfileAndRatingViewController *profile=[self.storyboard instantiateViewControllerWithIdentifier:@"profileAndRatingView"];
     [profile setUserId:trip.UserId];
     [self.navigationController pushViewController:profile animated:YES];
+    }
+    else
+    {
+        [self.tabBarController setSelectedIndex:0];
+    }
 }
 - (void)handleRefresh : (UIRefreshControl*)sender{
     [self.view setUserInteractionEnabled:NO];
     isLoadMoreData=YES;
     startCount=0;
-    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex];
+    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex WithMilesIndex:segmentMilesIndex];
     ISPullToRefresh=YES;
     
     
@@ -296,7 +307,7 @@
 -(void)addTrip:(CATrip *)trip{
     isLoadMoreData=YES;
     startCount=0;
-    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex];
+    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex WithMilesIndex:segmentMilesIndex];
 }
 
 -(UIView *)setUpHeaderView{
@@ -321,21 +332,31 @@
 
 -(UIView *)setUpSecondTabBarHeaderView{
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0,self.view.frame.size.width, 100)];
-    NSArray *itemArray = [NSArray arrayWithObjects: @"All rides", @"Upcoming Rides", @"Finished Rides", nil];
+    NSArray *itemArray = [NSArray arrayWithObjects: @"Rides Near Me",  @"Finished Rides", nil];
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:itemArray];
-    segmentedControl.frame = CGRectMake(10, 10, headerView.frame.size.width-18, 30);
+    segmentedControl.frame = CGRectMake(10, 10, headerView.frame.size.width-20, 30);
     [segmentedControl addTarget:self action:@selector(segmentControlAction:) forControlEvents: UIControlEventValueChanged];
     segmentedControl.selectedSegmentIndex = 0;
     segmentedControl.tintColor=[UIColor whiteColor];
     
-    UISearchBar *search_Bar=[[UISearchBar alloc] initWithFrame:CGRectMake(0, 40,headerView.frame.size.width, 44)];
+    UISegmentedControl *segmentedControl2 = [[UISegmentedControl alloc] initWithItems:@[@"10 Miles",@"20 Miles",@"30 Miles",@"40 Miles"]];
+    segmentedControl2.frame = CGRectMake(10, CGRectGetMaxY(segmentedControl.frame)+10, headerView.frame.size.width-20, 30);
+    [segmentedControl2 addTarget:self action:@selector(segmentControlMiles:) forControlEvents: UIControlEventValueChanged];
+    segmentedControl2.selectedSegmentIndex = 3;
+    segmentedControl2.tintColor=[UIColor whiteColor];
+    [headerView addSubview:segmentedControl];
+    [headerView addSubview:segmentedControl2];
+    
+    
+    UISearchBar *search_Bar=[[UISearchBar alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(segmentedControl2.frame)+10,headerView.frame.size.width, 44)];
     search_Bar.autocorrectionType = UITextAutocorrectionTypeNo;
     search_Bar.placeholder = @"Enter the place to search";
     search_Bar.delegate = self;
     search_Bar.tintColor=[UIColor whiteColor];
     search_Bar.searchBarStyle = UISearchBarStyleMinimal;
       [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
-    [headerView addSubview:segmentedControl];
+    
+
     [headerView addSubview:search_Bar];
    
     return headerView;
@@ -343,25 +364,39 @@
 }
 
 -(UIView *)setUpThirdTabBarHeaderView{
-    
-    UISearchBar *searchBar=[[UISearchBar alloc] initWithFrame:CGRectMake(0, 0,320, 44)];
+      UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0,self.view.frame.size.width, 100)];
+    UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"10 Miles",@"20 Miles",@"30 Miles",@"40 Miles"]];
+    segmentedControl.frame = CGRectMake(10, 0, headerView.frame.size.width-20, 30);
+    [segmentedControl addTarget:self action:@selector(segmentControlMiles:) forControlEvents: UIControlEventValueChanged];
+    segmentedControl.selectedSegmentIndex = 3;
+    segmentedControl.tintColor=[UIColor whiteColor];
+
+    UISearchBar *searchBar=[[UISearchBar alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(segmentedControl.frame)+10,headerView.frame.size.width, 44)];
     searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
     searchBar.placeholder = @"Enter the place to search";
     searchBar.delegate = self;
     searchBar.tintColor=[UIColor whiteColor];
     searchBar.searchBarStyle = UISearchBarStyleMinimal;
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
-    return searchBar;
+    [headerView addSubview:segmentedControl];
+    [headerView addSubview:searchBar];
+    return headerView;
     
 }
 
 -(void)segmentControlAction:(UISegmentedControl *)segmentedControl{
     segmentIndex=segmentedControl.selectedSegmentIndex;
     startCount=0;
-    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex];
+    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex == 0 ? segmentIndex : segmentIndex+1 WithMilesIndex:segmentMilesIndex];//It's for we removed the upcoming rides so to fetch the finished result we set the status 2
     
 }
-
+-(void)segmentControlMiles:(UISegmentedControl *)segmentedControl
+{
+    segmentMilesIndex=segmentedControl.selectedSegmentIndex*10+10;
+    NSLog(@"segment %d",segmentMilesIndex);
+    startCount=0;
+    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex == 0 ? segmentIndex : segmentIndex+1 WithMilesIndex:segmentMilesIndex];//It's for we removed the upcoming rides so to fetch the finished result we set the status 2
+}
 #pragma mark-Search Bar Delegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [searchBar setShowsCancelButton:YES animated:YES];
@@ -373,7 +408,7 @@
     [searchBar setShowsCancelButton:NO animated:YES];
     startCount=0;
      [SVProgressHUD showWithStatus:@"Fetching" maskType:SVProgressHUDMaskTypeBlack];
-    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex];
+    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex WithMilesIndex:segmentMilesIndex];
     [searchBar resignFirstResponder];
 }
 
@@ -382,7 +417,7 @@
     [searchBar setShowsCancelButton:NO animated:YES];
     [SVProgressHUD showWithStatus:@"Searching" maskType:SVProgressHUDMaskTypeBlack];
     startCount=0;
-    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex];
+    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex WithMilesIndex:segmentMilesIndex];
     [searchBar resignFirstResponder];
 }
 

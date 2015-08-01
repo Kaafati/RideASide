@@ -12,6 +12,7 @@
 #warning "This project uses features only available in iOS SDK 3.0 and later."
 #endif
 #define baseUrl @"http://sicsglobal.com/projects/App_projects/rideaside/upload/"
+#define carUrl @"http://www.sicsglobal.com/projects/App_projects/rideaside/car_images/"
 #ifdef __OBJC__
     #import <UIKit/UIKit.h>
     #import <Foundation/Foundation.h>
