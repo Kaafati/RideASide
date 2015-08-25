@@ -42,14 +42,14 @@
 		12FEC288199F422700C76A71 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12FEC287199F422700C76A71 /* CoreData.framework */; };
 		12FEC28E199F422700C76A71 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 12FEC28C199F422700C76A71 /* InfoPlist.strings */; };
 		12FEC290199F422700C76A71 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 12FEC28F199F422700C76A71 /* main.m */; };
-		12FEC297199F422700C76A71 /* CarApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 12FEC295199F422700C76A71 /* CarApp.xcdatamodeld */; };
+		12FEC297199F422700C76A71 /* RideAside.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 12FEC295199F422700C76A71 /* RideAside.xcdatamodeld */; };
 		12FEC299199F422700C76A71 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 12FEC298199F422700C76A71 /* Images.xcassets */; };
 		12FEC2A0199F422700C76A71 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12FEC29F199F422700C76A71 /* XCTest.framework */; };
 		12FEC2A1199F422700C76A71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12FEC281199F422700C76A71 /* Foundation.framework */; };
 		12FEC2A2199F422700C76A71 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12FEC285199F422700C76A71 /* UIKit.framework */; };
 		12FEC2A3199F422700C76A71 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12FEC287199F422700C76A71 /* CoreData.framework */; };
 		12FEC2AB199F422700C76A71 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 12FEC2A9199F422700C76A71 /* InfoPlist.strings */; };
-		12FEC2AD199F422700C76A71 /* CarAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12FEC2AC199F422700C76A71 /* CarAppTests.m */; };
+		12FEC2AD199F422700C76A71 /* RideAsideTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 12FEC2AC199F422700C76A71 /* RideAsideTests.m */; };
 		4D36DD2719FF666D00EE8809 /* CARequestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36DD2619FF666D00EE8809 /* CARequestsViewController.m */; };
 		4D4143D619ED090900998FAD /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4D4143D319ED090900998FAD /* SVProgressHUD.bundle */; };
 		4D4143D719ED090900998FAD /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4143D519ED090900998FAD /* SVProgressHUD.m */; };
@@ -74,6 +74,7 @@
 		4DF53C6819EE617500CCDEBE /* CAContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DF53C6719EE617500CCDEBE /* CAContainerViewController.m */; };
 		9B0A90C01B6A0CCA007B2307 /* CAIntoPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A90BF1B6A0CCA007B2307 /* CAIntoPageViewController.m */; };
 		9B0A90C61B6A115D007B2307 /* PageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B0A90C51B6A115D007B2307 /* PageContentViewController.m */; };
+		9B0DA2171B749089004D5E87 /* CAMapAnnotationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B0DA2161B749089004D5E87 /* CAMapAnnotationView.m */; };
 		9B1317CE1AF9D6A0002BAC6D /* CAMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317CB1AF9D6A0002BAC6D /* CAMessage.m */; };
 		9B1317CF1AF9D6A0002BAC6D /* CAChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317CD1AF9D6A0002BAC6D /* CAChatCell.m */; };
 		9B1317D31AF9D6D6002BAC6D /* CAChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1317D21AF9D6D6002BAC6D /* CAChatViewController.m */; };
@@ -112,7 +113,12 @@
 		9B603A621A49688A0048DD48 /* UIImageView+HighlightedWebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A501A49688A0048DD48 /* UIImageView+HighlightedWebCache.m */; };
 		9B603A631A49688A0048DD48 /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A521A49688A0048DD48 /* UIImageView+WebCache.m */; };
 		9B603A641A49688A0048DD48 /* UIView+WebCacheOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B603A541A49688A0048DD48 /* UIView+WebCacheOperation.m */; };
+		9B6C631F1B8303C200C4F460 /* CAReviewTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6C631E1B8303C200C4F460 /* CAReviewTableViewController.m */; };
+		9B6C63221B83075000C4F460 /* CAReviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6C63211B83075000C4F460 /* CAReviewCell.m */; };
+		9B6C63281B83526600C4F460 /* CAReviewTripsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6C63271B83526600C4F460 /* CAReviewTripsTableViewController.m */; };
+		9B6C632B1B835AB600C4F460 /* CATripReview.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6C632A1B835AB600C4F460 /* CATripReview.m */; };
 		9B71B0521B4385E000CC926B /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B71B0501B4383ED00CC926B /* iAd.framework */; };
+		9B996B581B7389B900719586 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9B996B571B7389B900719586 /* MessageView.xib */; };
 		9BA5493A19E008F5006D43B2 /* DYRateView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA5493019E008F5006D43B2 /* DYRateView.m */; };
 		9BA5493B19E008F5006D43B2 /* StarEmpty.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493219E008F5006D43B2 /* StarEmpty.png */; };
 		9BA5493C19E008F5006D43B2 /* StarEmpty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493319E008F5006D43B2 /* StarEmpty@2x.png */; };
@@ -127,6 +133,7 @@
 		9BDDCBA919DFB8290010B66A /* CAProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDCBA819DFB8290010B66A /* CAProfileTableViewController.m */; };
 		9BE1A7901A54163F00FCBFB7 /* CAProfileAndRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE1A78F1A54163F00FCBFB7 /* CAProfileAndRatingViewController.m */; };
 		9BE1A7941A542CAA00FCBFB7 /* CARatingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */; };
+		9BEA8FFC1B786C030016B5CF /* CAMapViewAnnotationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEA8FFB1B786C030016B5CF /* CAMapViewAnnotationViewController.m */; };
 		D86F4F031A63C7E40064C3C4 /* Cars.plist in Resources */ = {isa = PBXBuildFile; fileRef = D86F4F021A63C7E40064C3C4 /* Cars.plist */; };
 		D8CEDD9E1A5ABAE7007FA2F2 /* NIDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */; };
 /* End PBXBuildFile section */
@@ -202,22 +209,22 @@
 		12913AF119C999C5000FCE92 /* UIViewController+MFSideMenuAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MFSideMenuAdditions.m"; sourceTree = "<group>"; };
 		12C321B619D43CDF004382F3 /* UIImage+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Utilities.h"; sourceTree = "<group>"; };
 		12C321B719D43CDF004382F3 /* UIImage+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Utilities.m"; sourceTree = "<group>"; };
-		12FEC27E199F422700C76A71 /* CarApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		12FEC27E199F422700C76A71 /* RideAside.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RideAside.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		12FEC281199F422700C76A71 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		12FEC283199F422700C76A71 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		12FEC285199F422700C76A71 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		12FEC287199F422700C76A71 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		12FEC28B199F422700C76A71 /* CarApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CarApp-Info.plist"; sourceTree = "<group>"; };
+		12FEC28B199F422700C76A71 /* RideAside-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RideAside-Info.plist"; sourceTree = "<group>"; };
 		12FEC28D199F422700C76A71 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		12FEC28F199F422700C76A71 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		12FEC291199F422700C76A71 /* CarApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CarApp-Prefix.pch"; sourceTree = "<group>"; };
-		12FEC296199F422700C76A71 /* CarApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CarApp.xcdatamodel; sourceTree = "<group>"; };
+		12FEC291199F422700C76A71 /* RideAside-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RideAside-Prefix.pch"; sourceTree = "<group>"; };
+		12FEC296199F422700C76A71 /* RideAside.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RideAside.xcdatamodel; sourceTree = "<group>"; };
 		12FEC298199F422700C76A71 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		12FEC29E199F422700C76A71 /* CarAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		12FEC29E199F422700C76A71 /* RideAsideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RideAsideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		12FEC29F199F422700C76A71 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		12FEC2A8199F422700C76A71 /* CarAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CarAppTests-Info.plist"; sourceTree = "<group>"; };
+		12FEC2A8199F422700C76A71 /* RideAsideTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RideAsideTests-Info.plist"; sourceTree = "<group>"; };
 		12FEC2AA199F422700C76A71 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		12FEC2AC199F422700C76A71 /* CarAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CarAppTests.m; sourceTree = "<group>"; };
+		12FEC2AC199F422700C76A71 /* RideAsideTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RideAsideTests.m; sourceTree = "<group>"; };
 		12FEC2BD199F42B000C76A71 /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = MainStoryboard.storyboard; path = ../../MainStoryboard.storyboard; sourceTree = "<group>"; };
 		4D36DD2519FF666D00EE8809 /* CARequestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARequestsViewController.h; sourceTree = "<group>"; };
 		4D36DD2619FF666D00EE8809 /* CARequestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CARequestsViewController.m; sourceTree = "<group>"; };
@@ -267,6 +274,8 @@
 		9B0A90BF1B6A0CCA007B2307 /* CAIntoPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAIntoPageViewController.m; sourceTree = "<group>"; };
 		9B0A90C41B6A115D007B2307 /* PageContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageContentViewController.h; path = Trips/PageContentViewController.h; sourceTree = "<group>"; };
 		9B0A90C51B6A115D007B2307 /* PageContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PageContentViewController.m; path = Trips/PageContentViewController.m; sourceTree = "<group>"; };
+		9B0DA2151B749089004D5E87 /* CAMapAnnotationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAMapAnnotationView.h; sourceTree = "<group>"; };
+		9B0DA2161B749089004D5E87 /* CAMapAnnotationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAMapAnnotationView.m; sourceTree = "<group>"; };
 		9B1317CA1AF9D6A0002BAC6D /* CAMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAMessage.h; sourceTree = "<group>"; };
 		9B1317CB1AF9D6A0002BAC6D /* CAMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAMessage.m; sourceTree = "<group>"; };
 		9B1317CC1AF9D6A0002BAC6D /* CAChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAChatCell.h; sourceTree = "<group>"; };
@@ -336,7 +345,16 @@
 		9B603A521A49688A0048DD48 /* UIImageView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+WebCache.m"; sourceTree = "<group>"; };
 		9B603A531A49688A0048DD48 /* UIView+WebCacheOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+WebCacheOperation.h"; sourceTree = "<group>"; };
 		9B603A541A49688A0048DD48 /* UIView+WebCacheOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+WebCacheOperation.m"; sourceTree = "<group>"; };
+		9B6C631D1B8303C200C4F460 /* CAReviewTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAReviewTableViewController.h; sourceTree = "<group>"; };
+		9B6C631E1B8303C200C4F460 /* CAReviewTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAReviewTableViewController.m; sourceTree = "<group>"; };
+		9B6C63201B83075000C4F460 /* CAReviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAReviewCell.h; sourceTree = "<group>"; };
+		9B6C63211B83075000C4F460 /* CAReviewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAReviewCell.m; sourceTree = "<group>"; };
+		9B6C63261B83526600C4F460 /* CAReviewTripsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAReviewTripsTableViewController.h; sourceTree = "<group>"; };
+		9B6C63271B83526600C4F460 /* CAReviewTripsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAReviewTripsTableViewController.m; sourceTree = "<group>"; };
+		9B6C63291B835AB600C4F460 /* CATripReview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATripReview.h; sourceTree = "<group>"; };
+		9B6C632A1B835AB600C4F460 /* CATripReview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATripReview.m; sourceTree = "<group>"; };
 		9B71B0501B4383ED00CC926B /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		9B996B571B7389B900719586 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		9BA5492F19E008F5006D43B2 /* DYRateView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DYRateView.h; sourceTree = "<group>"; };
 		9BA5493019E008F5006D43B2 /* DYRateView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DYRateView.m; sourceTree = "<group>"; };
 		9BA5493219E008F5006D43B2 /* StarEmpty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = StarEmpty.png; sourceTree = "<group>"; };
@@ -357,6 +375,8 @@
 		9BE1A78F1A54163F00FCBFB7 /* CAProfileAndRatingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAProfileAndRatingViewController.m; sourceTree = "<group>"; };
 		9BE1A7921A542CAA00FCBFB7 /* CARatingTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARatingTableViewCell.h; sourceTree = "<group>"; };
 		9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CARatingTableViewCell.m; sourceTree = "<group>"; };
+		9BEA8FFA1B786C030016B5CF /* CAMapViewAnnotationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAMapViewAnnotationViewController.h; sourceTree = "<group>"; };
+		9BEA8FFB1B786C030016B5CF /* CAMapViewAnnotationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAMapViewAnnotationViewController.m; sourceTree = "<group>"; };
 		D86F4F021A63C7E40064C3C4 /* Cars.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Cars.plist; path = "Parsing Classes/Cars.plist"; sourceTree = "<group>"; };
 		D8CEDD9C1A5ABAE7007FA2F2 /* NIDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NIDropDown.h; sourceTree = "<group>"; };
 		D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NIDropDown.m; sourceTree = "<group>"; };
@@ -544,6 +564,8 @@
 			children = (
 				1216666419A32AC1001DE9C8 /* CATrip.h */,
 				1216666519A32AC1001DE9C8 /* CATrip.m */,
+				9B6C63291B835AB600C4F460 /* CATripReview.h */,
+				9B6C632A1B835AB600C4F460 /* CATripReview.m */,
 			);
 			path = Trip;
 			sourceTree = "<group>";
@@ -561,8 +583,15 @@
 			isa = PBXGroup;
 			children = (
 				12FEC2BD199F42B000C76A71 /* MainStoryboard.storyboard */,
+				9B996B571B7389B900719586 /* MessageView.xib */,
+				9B0DA2151B749089004D5E87 /* CAMapAnnotationView.h */,
+				9B0DA2161B749089004D5E87 /* CAMapAnnotationView.m */,
 				9B5702F21B574D2500ADAFDD /* CAContactCell.h */,
 				9B5702F31B574D2500ADAFDD /* CAContactCell.m */,
+				9BEA8FFA1B786C030016B5CF /* CAMapViewAnnotationViewController.h */,
+				9BEA8FFB1B786C030016B5CF /* CAMapViewAnnotationViewController.m */,
+				9B6C63201B83075000C4F460 /* CAReviewCell.h */,
+				9B6C63211B83075000C4F460 /* CAReviewCell.m */,
 				9BE1A7911A542C7D00FCBFB7 /* RatingCell */,
 				121873EF19D1646F000924EB /* TripCell */,
 			);
@@ -743,8 +772,8 @@
 		12FEC27F199F422700C76A71 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				12FEC27E199F422700C76A71 /* CarApp.app */,
-				12FEC29E199F422700C76A71 /* CarAppTests.xctest */,
+				12FEC27E199F422700C76A71 /* RideAside.app */,
+				12FEC29E199F422700C76A71 /* RideAsideTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -792,11 +821,11 @@
 			isa = PBXGroup;
 			children = (
 				9B4387FC1AFC972A002B8D47 /* Terms and Conditions.pdf */,
-				12FEC28B199F422700C76A71 /* CarApp-Info.plist */,
+				12FEC28B199F422700C76A71 /* RideAside-Info.plist */,
 				12FEC28C199F422700C76A71 /* InfoPlist.strings */,
 				12FEC28F199F422700C76A71 /* main.m */,
 				12FEC2A6199F422700C76A71 /* CarAppTests */,
-				12FEC291199F422700C76A71 /* CarApp-Prefix.pch */,
+				12FEC291199F422700C76A71 /* RideAside-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -804,8 +833,8 @@
 		12FEC2A6199F422700C76A71 /* CarAppTests */ = {
 			isa = PBXGroup;
 			children = (
-				12FEC295199F422700C76A71 /* CarApp.xcdatamodeld */,
-				12FEC2AC199F422700C76A71 /* CarAppTests.m */,
+				12FEC295199F422700C76A71 /* RideAside.xcdatamodeld */,
+				12FEC2AC199F422700C76A71 /* RideAsideTests.m */,
 				12FEC2A7199F422700C76A71 /* Supporting Files */,
 			);
 			path = CarAppTests;
@@ -814,7 +843,7 @@
 		12FEC2A7199F422700C76A71 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				12FEC2A8199F422700C76A71 /* CarAppTests-Info.plist */,
+				12FEC2A8199F422700C76A71 /* RideAsideTests-Info.plist */,
 				12FEC2A9199F422700C76A71 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -1078,6 +1107,10 @@
 			children = (
 				9BDDCBA719DFB8290010B66A /* CAProfileTableViewController.h */,
 				9BDDCBA819DFB8290010B66A /* CAProfileTableViewController.m */,
+				9B6C63261B83526600C4F460 /* CAReviewTripsTableViewController.h */,
+				9B6C63271B83526600C4F460 /* CAReviewTripsTableViewController.m */,
+				9B6C631D1B8303C200C4F460 /* CAReviewTableViewController.h */,
+				9B6C631E1B8303C200C4F460 /* CAReviewTableViewController.m */,
 			);
 			path = ProfileView;
 			sourceTree = "<group>";
@@ -1112,9 +1145,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		12FEC27D199F422700C76A71 /* CarApp */ = {
+		12FEC27D199F422700C76A71 /* RideAside */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 12FEC2B0199F422800C76A71 /* Build configuration list for PBXNativeTarget "CarApp" */;
+			buildConfigurationList = 12FEC2B0199F422800C76A71 /* Build configuration list for PBXNativeTarget "RideAside" */;
 			buildPhases = (
 				12FEC27A199F422700C76A71 /* Sources */,
 				12FEC27B199F422700C76A71 /* Frameworks */,
@@ -1124,14 +1157,14 @@
 			);
 			dependencies = (
 			);
-			name = CarApp;
+			name = RideAside;
 			productName = CarApp;
-			productReference = 12FEC27E199F422700C76A71 /* CarApp.app */;
+			productReference = 12FEC27E199F422700C76A71 /* RideAside.app */;
 			productType = "com.apple.product-type.application";
 		};
-		12FEC29D199F422700C76A71 /* CarAppTests */ = {
+		12FEC29D199F422700C76A71 /* RideAsideTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 12FEC2B3199F422800C76A71 /* Build configuration list for PBXNativeTarget "CarAppTests" */;
+			buildConfigurationList = 12FEC2B3199F422800C76A71 /* Build configuration list for PBXNativeTarget "RideAsideTests" */;
 			buildPhases = (
 				12FEC29A199F422700C76A71 /* Sources */,
 				12FEC29B199F422700C76A71 /* Frameworks */,
@@ -1142,9 +1175,9 @@
 			dependencies = (
 				12FEC2A5199F422700C76A71 /* PBXTargetDependency */,
 			);
-			name = CarAppTests;
+			name = RideAsideTests;
 			productName = CarAppTests;
-			productReference = 12FEC29E199F422700C76A71 /* CarAppTests.xctest */;
+			productReference = 12FEC29E199F422700C76A71 /* RideAsideTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -1165,7 +1198,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 12FEC279199F422700C76A71 /* Build configuration list for PBXProject "RoadTrip" */;
+			buildConfigurationList = 12FEC279199F422700C76A71 /* Build configuration list for PBXProject "RideAside" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1177,8 +1210,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				12FEC27D199F422700C76A71 /* CarApp */,
-				12FEC29D199F422700C76A71 /* CarAppTests */,
+				12FEC27D199F422700C76A71 /* RideAside */,
+				12FEC29D199F422700C76A71 /* RideAsideTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1188,6 +1221,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B996B581B7389B900719586 /* MessageView.xib in Resources */,
 				9B4EB1D11B53605F0072624F /* MainStoryboard.storyboard in Resources */,
 				9BA5493B19E008F5006D43B2 /* StarEmpty.png in Resources */,
 				9BA5493D19E008F5006D43B2 /* StarEmptyLarge.png in Resources */,
@@ -1236,6 +1270,7 @@
 				9B1317D91AF9D79D002BAC6D /* HPTextViewInternal.m in Sources */,
 				9B603A591A49688A0048DD48 /* SDWebImageDecoder.m in Sources */,
 				4D72D2E31A88F21A00998B94 /* CATermsAndConditionVC.m in Sources */,
+				9B6C63221B83075000C4F460 /* CAReviewCell.m in Sources */,
 				9B42C59A1B5E1E9D0089D8A0 /* CACarCollectionViewCell.m in Sources */,
 				1216665519A305B9001DE9C8 /* UITableView+TextFieldAdditions.m in Sources */,
 				9B0A90C01B6A0CCA007B2307 /* CAIntoPageViewController.m in Sources */,
@@ -1246,7 +1281,7 @@
 				9B1317CF1AF9D6A0002BAC6D /* CAChatCell.m in Sources */,
 				9B603A551A49688A0048DD48 /* MKAnnotationView+WebCache.m in Sources */,
 				4D36DD2719FF666D00EE8809 /* CARequestsViewController.m in Sources */,
-				12FEC297199F422700C76A71 /* CarApp.xcdatamodeld in Sources */,
+				12FEC297199F422700C76A71 /* RideAside.xcdatamodeld in Sources */,
 				1216663619A303EC001DE9C8 /* CANavigationController.m in Sources */,
 				9BDDCBA919DFB8290010B66A /* CAProfileTableViewController.m in Sources */,
 				4DBE9C671A8252E600C46CC7 /* ZSAnnotation.m in Sources */,
@@ -1256,6 +1291,7 @@
 				9B0A90C61B6A115D007B2307 /* PageContentViewController.m in Sources */,
 				12C321B819D43CDF004382F3 /* UIImage+Utilities.m in Sources */,
 				12FEC290199F422700C76A71 /* main.m in Sources */,
+				9B6C63281B83526600C4F460 /* CAReviewTripsTableViewController.m in Sources */,
 				9B603A621A49688A0048DD48 /* UIImageView+HighlightedWebCache.m in Sources */,
 				9B603A561A49688A0048DD48 /* NSData+ImageContentType.m in Sources */,
 				121873DD19D137AB000924EB /* CAActivityProvider.m in Sources */,
@@ -1271,6 +1307,7 @@
 				4D6020111A7A1886009F5539 /* CAInitialMapViewController.m in Sources */,
 				9B603A5D1A49688A0048DD48 /* SDWebImagePrefetcher.m in Sources */,
 				4D5D937B1A0256DC00187A52 /* CARateViewController.m in Sources */,
+				9B6C631F1B8303C200C4F460 /* CAReviewTableViewController.m in Sources */,
 				12913AF219C999C5000FCE92 /* MFSideMenuContainerViewController.m in Sources */,
 				4DBE9C6A1A8253A300C46CC7 /* ZSPinAnnotation.m in Sources */,
 				9B603A581A49688A0048DD48 /* SDWebImageCompat.m in Sources */,
@@ -1293,9 +1330,12 @@
 				1216663419A303EC001DE9C8 /* CAAppDelegate.m in Sources */,
 				9B603A5B1A49688A0048DD48 /* SDWebImageDownloaderOperation.m in Sources */,
 				1216663719A303EC001DE9C8 /* CASignUpViewController.m in Sources */,
+				9B0DA2171B749089004D5E87 /* CAMapAnnotationView.m in Sources */,
+				9BEA8FFC1B786C030016B5CF /* CAMapViewAnnotationViewController.m in Sources */,
 				9B603A641A49688A0048DD48 /* UIView+WebCacheOperation.m in Sources */,
 				9B367D7D1B2AB6EA0012F9F7 /* CAContacts.m in Sources */,
 				1216665A19A306C0001DE9C8 /* CAUser.m in Sources */,
+				9B6C632B1B835AB600C4F460 /* CATripReview.m in Sources */,
 				9B4E737F1B32A4F300A19EA6 /* CATripSelectionCell.m in Sources */,
 				9B416A4C1B58BEBB00E08757 /* TPKeyboardAvoidingCollectionView.m in Sources */,
 				12253B6819D0175D00014796 /* Place.m in Sources */,
@@ -1312,7 +1352,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				12FEC2AD199F422700C76A71 /* CarAppTests.m in Sources */,
+				12FEC2AD199F422700C76A71 /* RideAsideTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1321,7 +1361,7 @@
 /* Begin PBXTargetDependency section */
 		12FEC2A5199F422700C76A71 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 12FEC27D199F422700C76A71 /* CarApp */;
+			target = 12FEC27D199F422700C76A71 /* RideAside */;
 			targetProxy = 12FEC2A4199F422700C76A71 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1435,8 +1475,8 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
-				INFOPLIST_FILE = "CarApp/CarApp-Info.plist";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/CarApp/RideAside-Prefix.pch";
+				INFOPLIST_FILE = "CarApp/RideAside-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/CarApp/Externals/PayPalMobile";
 				OTHER_LDFLAGS = (
@@ -1444,7 +1484,7 @@
 					"-lc++",
 					"-ObjC",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RideAside;
 				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1465,8 +1505,8 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
-				INFOPLIST_FILE = "CarApp/CarApp-Info.plist";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/CarApp/RideAside-Prefix.pch";
+				INFOPLIST_FILE = "CarApp/RideAside-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/CarApp/Externals/PayPalMobile";
 				OTHER_LDFLAGS = (
@@ -1474,7 +1514,7 @@
 					"-lc++",
 					"-ObjC",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RideAside;
 				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1499,7 +1539,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "CarAppTests/CarAppTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RideAsideTests;
 				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -1521,7 +1561,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
 				INFOPLIST_FILE = "CarAppTests/CarAppTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = RideAsideTests;
 				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -1531,7 +1571,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		12FEC279199F422700C76A71 /* Build configuration list for PBXProject "RoadTrip" */ = {
+		12FEC279199F422700C76A71 /* Build configuration list for PBXProject "RideAside" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				12FEC2AE199F422800C76A71 /* Debug */,
@@ -1540,7 +1580,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		12FEC2B0199F422800C76A71 /* Build configuration list for PBXNativeTarget "CarApp" */ = {
+		12FEC2B0199F422800C76A71 /* Build configuration list for PBXNativeTarget "RideAside" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				12FEC2B1199F422800C76A71 /* Debug */,
@@ -1549,7 +1589,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		12FEC2B3199F422800C76A71 /* Build configuration list for PBXNativeTarget "CarAppTests" */ = {
+		12FEC2B3199F422800C76A71 /* Build configuration list for PBXNativeTarget "RideAsideTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				12FEC2B4199F422800C76A71 /* Debug */,
@@ -1561,14 +1601,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		12FEC295199F422700C76A71 /* CarApp.xcdatamodeld */ = {
+		12FEC295199F422700C76A71 /* RideAside.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				12FEC296199F422700C76A71 /* CarApp.xcdatamodel */,
+				12FEC296199F422700C76A71 /* RideAside.xcdatamodel */,
 			);
-			currentVersion = 12FEC296199F422700C76A71 /* CarApp.xcdatamodel */;
-			name = CarApp.xcdatamodeld;
-			path = ../CarApp/CarApp.xcdatamodeld;
+			currentVersion = 12FEC296199F422700C76A71 /* RideAside.xcdatamodel */;
+			name = RideAside.xcdatamodeld;
+			path = ../CarApp/RideAside.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

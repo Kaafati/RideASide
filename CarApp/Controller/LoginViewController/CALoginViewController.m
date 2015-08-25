@@ -232,6 +232,7 @@
 }
 
 - (IBAction)facebookLogin:(id)sender {
+    [FBSDKAccessToken setCurrentAccessToken:nil];
     [self logingWithfaceBook];
     
   /*  FBSession *session = [[FBSession alloc] initWithPermissions:@[@"public_profile", @"email",@"user_friends"]];
@@ -314,7 +315,7 @@
     else
     {
         FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
+        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends",@"user_about_me",@"user_work_history",@"user_birthday",@"user_education_history"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
          {
              
              [SVProgressHUD showSuccessWithStatus:@"Success"];
@@ -333,7 +334,7 @@
              {
                  ///me/mutualfriends/[OTHER ID]/?fields=name,picture
                  NSDictionary *params = @{
-                                          @"fields": @"context.fields(mutual_friends),birthday,gender,education,work,email,id,name,picture.width(100).height(100)",
+                                          @"fields": @"context.fields(mutual_friends),birthday,gender,education,work,email,id,name,picture.width(200).height(200)",
                                           };
                 /* make the API call */
                  

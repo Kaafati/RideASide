@@ -10,4 +10,6 @@
 
 @interface CAProfileAndRatingViewController : UIViewController
 @property(nonatomic,strong)NSString *userId;
+@property(nonatomic,strong)NSString *userName;
+
 @end

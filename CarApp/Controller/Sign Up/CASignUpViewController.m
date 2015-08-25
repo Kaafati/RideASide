@@ -49,6 +49,10 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
     BOOL isHaveCorrectSelection;
     IBOutlet UIButton *buttonSubmitCarDetails;
     UILabel *labelVisible;
+     UIPickerView *pickerViewVehicle ;
+    NSArray *arraycarMakes,*arraycarModels;
+    NSString *stringCarMakes,*stringCarModels;
+    UITextField *activeTextField;
 }
 
 @end
@@ -68,19 +72,48 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
 {
     
     [super viewDidLoad];
+    arrayCarDetails = [NSMutableDictionary new];
+    [scrollViewCar insertSubview:[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]] atIndex:0];
+
+    [self pickerUI];
     [self setUpUi];
     [CAUser sharedUser].userId.length>0 ? [self hideTermsAndConditionCell]:[self addAttributedText];
-    arrayCarDetails = [NSMutableDictionary new];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
+    [buttonConnectWithFacebook setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+}
+-(void)pickerUI
+{
+    NSDictionary * dict = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Cars" ofType:@"plist"]];
+    arraycarMakes  = [[[dict valueForKey:@"CarMakes"] allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    arraycarModels =    [dict valueForKeyPath:[NSString stringWithFormat:@"CarMakes.%@",arraycarMakes[0]]];
+    
+    
+    pickerViewVehicle  = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.width)];
+    pickerViewVehicle.delegate = self;
+    
+    UILabel *labelCarMakes = [[UILabel alloc]initWithFrame:CGRectMake(0, 15, self.view.frame.size.width/2, 30)];
+    labelCarMakes.text =@"Car Makes";
+    labelCarMakes.textAlignment = NSTextAlignmentCenter;
+    [pickerViewVehicle addSubview:labelCarMakes];
+    UILabel *labelCarModels = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(labelCarMakes.frame)+5, 15, self.view.frame.size.width/2, 30)];
+    labelCarModels.text =@"Car Models";
+    labelCarModels.textAlignment = NSTextAlignmentCenter;
+    [pickerViewVehicle addSubview:labelCarModels];
+}
+
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:YES];
     NSLog(@"%@",[FBSDKAccessToken currentAccessToken]);
+    
 }
 
 -(void)hideTermsAndConditionCell{
@@ -91,6 +124,10 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
     FBSDKAccessToken *access = [FBSDKAccessToken currentAccessToken];
     if (access!=nil)
     {
+        
+        [CAUser connectWithFacebookWithUserId:[CAUser sharedUser].userId andFacebookId:access.userID WithCompletionBlock:^(BOOL success, NSError *error) {
+            
+        }];
         NSDictionary *params = @{
                                  @"fields": @"context.fields(mutual_friends),birthday,gender,education,work",
                                  };
@@ -133,21 +170,25 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
         
         FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
         
-        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
+        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends",@"user_about_me",@"user_work_history",@"user_birthday",@"user_education_history"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
          
          
          {
 
-                             [SVProgressHUD showSuccessWithStatus:@"Success"];
-             [SVProgressHUD dismiss];
+            [SVProgressHUD showSuccessWithStatus:@"Success"];
+             
              if (error)
              {
                  [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+                 [CAUser connectWithFacebookWithUserId:[CAUser sharedUser].userId andFacebookId:[FBSDKAccessToken currentAccessToken].userID WithCompletionBlock:^(BOOL success, NSError *error) {
+                     [SVProgressHUD dismiss];
+                 }];
 
                  // Process error
              }
              else if (result.isCancelled)
              {
+                  [SVProgressHUD dismiss];
                  [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
 
                  // Handle cancellations
@@ -196,6 +237,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
 -(void)setUpUi
 {
 
+    
     [buttonConnectWithFacebook setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tap];
@@ -251,6 +293,11 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
         [textFieldSignUp[5] setInputView:[self setPickerView]];
         [textFieldSignUp[5] setInputAccessoryView:[self setPickerToolBar]];
         [profileImage sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"]];
+        [arrayTextFieldCarName enumerateObjectsUsingBlock:^(UITextField* textField, NSUInteger idx, BOOL *stop) {
+            textField.inputView = pickerViewVehicle;
+            textField.inputAccessoryView = [self setPickerToolBar];
+            
+        }];
         [arrayButtonCar enumerateObjectsUsingBlock:^(UIButton *obj, NSUInteger idx, BOOL *stop) {
             
             [obj sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",carUrl,[[CAUser sharedUser] valueForKey:[NSString stringWithFormat:@"car_image%d",idx+1]]]] forState:UIControlStateNormal];
@@ -258,6 +305,9 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
             [obj setTitle:[[[CAUser sharedUser] valueForKey:[NSString stringWithFormat:@"car_image%d",idx+1]] length] ? @"" :[NSString stringWithFormat:@"Car%d",idx+1] forState:UIControlStateNormal];
             [arrayTextFieldCarName[idx] setText:[[CAUser sharedUser] valueForKey:[NSString stringWithFormat:@"car_name%d",idx+1]]];
             [arrayTextFieldCarLicence[idx] setText:[[CAUser sharedUser] valueForKey:[NSString stringWithFormat:@"car_licence_num%d",idx+1]]];
+            NSLog(@"1 %@  2 %@ 3 %@",[arrayButtonCar[idx] backgroundImageForState:UIControlStateNormal],[(UITextField *)arrayTextFieldCarName[idx] text],[(UITextField *)arrayTextFieldCarLicence[idx] text]);
+            
+            [[(UITextField *)arrayTextFieldCarName[idx] text] length] ? [arrayCarDetails setObject:@[[[CAUser sharedUser] valueForKey:[NSString stringWithFormat:@"car_image%d",idx+1]],[(UITextField *)arrayTextFieldCarName[idx] text],[(UITextField *)arrayTextFieldCarLicence[idx] text]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]] : nil;
             
         }];
 //        [profileImage setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
@@ -305,6 +355,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
 
 -(void)doneButtonAction:(UIBarButtonItem *)sender{
     [self.view endEditing:YES];
+    [textFiledActive resignFirstResponder];
 }
 
 - (void)setupMenuBarButtonItems {
@@ -596,20 +647,51 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
 #pragma mark PickerView Delegates
 
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
-    return 1;
+    return pickerView== pickerViewVehicle ? 2 : 1;
 }
 
 -(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
-    return [textFieldSignUp[5] isFirstResponder] ? smokeStatus.count : category.count;
+    if (pickerView == pickerViewVehicle) {
+        return component == 0 ? arraycarMakes.count : arraycarModels.count;
+    }
+    else return [textFieldSignUp[5] isFirstResponder] ? smokeStatus.count : category.count;
 }
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    if (pickerView == pickerViewVehicle) {
+        if (component==0) {
+            stringCarMakes = arraycarMakes[row];
+            
+        }
+        else
+        {
+            stringCarModels =arraycarModels[row];
+            
+        }
+        textFiledActive.text = [NSString stringWithFormat:@"%@-%@",stringCarMakes,stringCarModels] ;
+        return component==0 ? arraycarMakes[row] : arraycarModels[row];
+
+    }
+    else
+   
+    
+   
     return [textFieldSignUp[5] isFirstResponder] ? smokeStatus[row] : category[row];
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
+    
+    if (pickerView == pickerViewVehicle) {
+        if (component==0) {
+            arraycarModels  =[[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Cars" ofType:@"plist"]] valueForKeyPath:[NSString stringWithFormat:@"CarMakes.%@",arraycarMakes[row]]];
+            [pickerView reloadAllComponents];
+        }
+    }
+    else
+    {
     [textFieldSignUp[5] isFirstResponder] ?  [(UITextField *) textFieldSignUp[5] setText:smokeStatus[row]] : [(UITextField *) textFieldSignUp[4] setText:category[row]];
     [textFieldSignUp[5] isFirstResponder] && row == 0 ? [(UIImageView *)[[(UITextField *) textFieldSignUp[5] leftView] subviews][0] setImage:[UIImage imageNamed:@"nosmoke"]] : [textFieldSignUp[5] isFirstResponder] && row == 1 ? [(UIImageView *)[[(UITextField *) textFieldSignUp[5] leftView] subviews][0] setImage:[UIImage imageNamed:@"smoke"]] : nil;
+    }
 }
 
 #pragma mark Textfield Delegates
@@ -626,6 +708,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
         [alert setTag:111];
         [alert show];
     }
+    
     if ([arrayTextFieldCarLicence containsObject:textField] || [arrayTextFieldCarName containsObject:textField] ) {
         [arrayButtonCar enumerateObjectsUsingBlock:^(UIButton * obj, NSUInteger idx, BOOL *stop) {
             
@@ -807,6 +890,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegEx];
     return [emailTest evaluateWithObject:email];
 }
+
 
 
 @end

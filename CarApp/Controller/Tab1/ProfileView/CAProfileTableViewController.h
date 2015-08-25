@@ -12,5 +12,6 @@
 @interface CAProfileTableViewController : UITableViewController
 @property(nonatomic,strong)NSString *userId;
 @property(nonatomic,strong)CATrip *trip;
+@property(nonatomic,strong) CAUser *userDetails;
 
 @end

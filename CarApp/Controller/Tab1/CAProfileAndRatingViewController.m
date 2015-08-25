@@ -17,7 +17,7 @@
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FacebookSDK/FacebookSDK.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-
+#import "CAReviewTripsTableViewController.h"
 @interface CAProfileAndRatingViewController ()<updateUserDetails,UITableViewDelegate,UITableViewDataSource>{
     NSMutableArray *tableArray;
     IBOutlet UIButton *profileImage;
@@ -29,7 +29,11 @@
     IBOutlet UIButton *buttonMutualFriends;
     IBOutlet UILabel *labelAge;
     IBOutlet UILabel *labelGender;
+    IBOutlet UILabel *labelEducation;
+    IBOutlet UILabel *labelWork;
     IBOutlet UILabel *labelFaceBookWarning;
+    IBOutlet UIView *viewHeader;
+    IBOutlet UILabel *labelMutualFriends;
 }
 @property(nonatomic,strong) IBOutletCollection(UITextField) NSArray *textFieldProfileDetails;
 @end
@@ -105,10 +109,8 @@
 
 #pragma mark - Initial UISetup
 -(void)setUpUi{
-    buttonMutualFriends.hidden = YES;
-    labelAge.hidden = YES;
-    labelGender.hidden = YES;
     
+   
   //  self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]];
     NSArray *images=@[@"username",@"emailId",@"mobile"];
     
@@ -120,7 +122,6 @@
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightbarbutton];
     }
     
-    [self loginWithFaceBookForMutualFriends];
     [profileImage.layer setCornerRadius:50.0f];
     [profileImage setClipsToBounds:YES];
     [profileImage setUserInteractionEnabled:NO];
@@ -163,29 +164,45 @@
         
         
         FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
-                                      initWithGraphPath:@"me"
+                                      initWithGraphPath:userDetails.facebook_id
                                       parameters:params
                                       HTTPMethod:@"GET"];
         [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
                                               id result,
                                               NSError *error) {
             NSLog(@"result %@",result);
-            NSDictionary *params2 = @{
-                                      @"fields": @"gender,birthday",
-                                      };
-            FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
-                                          initWithGraphPath: [[[result valueForKeyPath:@"context.mutual_friends"] valueForKeyPath:@"data.id"] objectAtIndex:0]
-                                          parameters:params2
-                                          HTTPMethod:@"GET"];
-            [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
-                                                  id result,
-                                                  NSError *error) {
-                [SVProgressHUD showSuccessWithStatus:@"Success"];
-                [SVProgressHUD dismiss];
-                NSLog(@"result %@",result);
-                
-                // Handle the result
-            }];
+            labelEducation.text = [NSString stringWithFormat:@"Education : %@ %@",[result[@"education"] lastObject][@"school"][@"name"],[result[@"education"] lastObject][@"type"]];
+            labelAge.text = [NSString stringWithFormat:@"DOB : %@",result[@"birthday"]] ;
+            labelGender.text = [NSString stringWithFormat:@"Gender : %@",result[@"gender"]];
+            labelWork.text  = [NSString stringWithFormat:@"Work : %@ in %@",[result valueForKeyPath:@"work.position.name"][0],[result valueForKeyPath:@"work.employer.name"][0]];
+            [labelMutualFriends setText:[NSString stringWithFormat:@"%@ Mutual friends", [[result valueForKeyPath:@"context.mutual_friends"] valueForKeyPath:@"summary.total_count"]]];
+
+            
+             [SVProgressHUD dismiss];
+            if (!error) {
+                NSDictionary *params2 = @{
+                                          @"fields": @"gender,birthday,education,work,picture.width(100).height(100)",
+                                          };
+                FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                              initWithGraphPath: [[[result valueForKeyPath:@"context.mutual_friends"] valueForKeyPath:@"data.id"] objectAtIndex:0]
+                                              parameters:params2
+                                              HTTPMethod:@"GET"];
+                [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                                      id result,
+                                                      NSError *error) {
+                    if (!error) {
+                        //Here need to show the mutual friend profile pic details
+                        [SVProgressHUD showSuccessWithStatus:@"Success"];
+                        [SVProgressHUD dismiss];
+                        NSLog(@"result %@",result);
+                          [buttonMutualFriends sd_setBackgroundImageWithURL:[NSURL URLWithString:result[@"picture"][@"data"][@"url"]] forState:UIControlStateNormal];
+                    }
+                    
+                    
+                    // Handle the result
+                }];
+
+            }
             
             
             // Handle the result
@@ -194,7 +211,7 @@
     else
     {
         FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
+        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends",@"user_about_me",@"user_work_history",@"user_birthday",@"user_education_history"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
          {
              
              [SVProgressHUD showSuccessWithStatus:@"Success"];
@@ -209,27 +226,62 @@
              }
              else
              {
-                 ///me/mutualfriends/[OTHER ID]/?fields=name,picture
+                 
+                 
+                 
+                 
                  NSDictionary *params = @{
-                                          @"fields": @"context.fields(mutual_friends)",@"fields":@"education",
+                                          @"fields": @"context.fields(mutual_friends),birthday,gender,education,work",
                                           };
-                 /* make the API call */
+                 //  /* make the API call */
+                 
                  
                  FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
-                                               initWithGraphPath:@"me"
+                                               initWithGraphPath:userDetails.facebook_id
                                                parameters:params
                                                HTTPMethod:@"GET"];
                  [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
                                                        id result,
                                                        NSError *error) {
-                     [SVProgressHUD dismiss];
                      NSLog(@"result %@",result);
+                     
+                     
+                     if (!error) {
+                         labelEducation.text = [NSString stringWithFormat:@"Education : %@ %@",[result[@"education"] lastObject][@"school"][@"name"],[result[@"education"] lastObject][@"type"]];
+                         labelAge.text = [NSString stringWithFormat:@"DOB : %@",result[@"birthday"]] ;
+                         labelGender.text = [NSString stringWithFormat:@"Gender : %@",result[@"gender"]];
+                         labelWork.text  = [NSString stringWithFormat:@"Work : %@ in %@",[result valueForKeyPath:@"work.position.name"][0],[result valueForKeyPath:@"work.employer.name"][0]];
+                          [labelMutualFriends setText:[NSString stringWithFormat:@"%@ Mutual friends", [[result valueForKeyPath:@"context.mutual_friends"] valueForKeyPath:@"summary.total_count"]]];
+                         NSDictionary *params2 = @{
+                                                   @"fields": @"gender,birthday,picture.width(100).height(100)",
+                                                   };
+                         FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
+                                                       initWithGraphPath: [[[result valueForKeyPath:@"context.mutual_friends"] valueForKeyPath:@"data.id"] objectAtIndex:0]
+                                                       parameters:params2
+                                                       HTTPMethod:@"GET"];
+                         [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection,
+                                                               id result,
+                                                               NSError *error) {
+                             if (!error) {
+                                 //Here need to show the mutual friend profile pic details
+                                 [SVProgressHUD showSuccessWithStatus:@"Success"];
+                                 [SVProgressHUD dismiss];
+                                 [buttonMutualFriends sd_setBackgroundImageWithURL:[NSURL URLWithString:result[@"picture"][@"data"][@"url"]] forState:UIControlStateNormal];
+                                 [CAUser connectWithFacebookWithUserId:[CAUser sharedUser].userId andFacebookId:[FBSDKAccessToken currentAccessToken].userID WithCompletionBlock:^(BOOL success, NSError *error) {
+                                     
+                                 }];
+                                 NSLog(@"result %@",result);
+                             }
+                             
+                             
+                             // Handle the result
+                         }];
+                         
+                     }
+                     
+                     
                      // Handle the result
                  }];
-                 if ([result.grantedPermissions containsObject:@"email"])
-                 {
-                     NSLog(@"result is:%@",result);
-                 }
              }
          }];
         
@@ -241,9 +293,22 @@
 -(void)fetchUserProfileDetails{
     CAUser *user=[[CAUser alloc]init];
     [user fetchProfileDetailsWithUserId:_userId WithCompletionBlock:^(BOOL success, id result, NSError *error) {
-        [SVProgressHUD dismiss];
+       
         CAUser *user_Detail=(CAUser *)result[0];
         [self setUserDetails:user_Detail];
+        userDetails.facebook_id.length ? [self loginWithFaceBookForMutualFriends] :  ({
+             [SVProgressHUD dismiss];
+            buttonMutualFriends.hidden = YES;
+            labelMutualFriends.hidden = YES;
+            labelAge.hidden = YES;
+            labelGender.hidden = YES;
+            labelWork.hidden = YES;
+            labelEducation.hidden = YES;
+            labelFaceBookWarning.hidden = NO;
+            labelFaceBookWarning.text = [NSString stringWithFormat:@"%@ is not connected in facebook",userDetails.userName];
+            
+        });
+
     }];
     
 }
@@ -318,6 +383,7 @@
     return tableArray.count;
 }
 
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CARatingTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ratingCell"];
@@ -337,6 +403,13 @@
     
     
     return cell;
+}
+- (IBAction)buttonViewReview:(UIButton *)sender
+{
+    CAReviewTripsTableViewController *review = [self.storyboard instantiateViewControllerWithIdentifier:@"CAReviewTripsTableViewController"];
+    review.userId  = self.userId;
+    review.userName = self.userName;
+    [self.navigationController pushViewController:review animated:YES];
 }
 
 @end

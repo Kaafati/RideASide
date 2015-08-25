@@ -41,6 +41,7 @@
 @property NSUInteger discloseNumber;
 -(id)setArrayCarFromUpdate:(id)arrayCar;
 -(id)setArray:(id)dictionary;
+-(id)initWithUserDetails:(NSDictionary *)userDetails;
 
 +(CAUser *)sharedUser;
 +(void)logout;
@@ -63,6 +64,8 @@
 +(void)fetchUsersTotalRatingCountWithCompletion:(void(^)(bool success,id result,NSError *error))completion;
 +(void)forgotPasswordWithEmailId:(NSString *)emialId withCompletionBlock:(void (^)(bool, id, NSError *))completion;
 +(void)listTheAppUserwithCompletionBlock:(void (^)(bool, id, NSError *))completion;
++(void)connectWithFacebookWithUserId:(NSString *)userId andFacebookId:(NSString *)facebookId WithCompletionBlock:(void (^)(BOOL, NSError*))completionBlock;
+
 //http://sicsglobal.com/projects/App_projects/rideaside/sum_rating.php?user_id=2 ViewTotalRating Of User
 //http://sicsglobal.com/projects/App_projects/rideaside/add_location.php?id=3&latitude=36.114646&longitude=-115.172816 -Adding Location
 //http://sicsglobal.com/projects/App_projects/rideaside/signin.php?name=user1@gmail.com&password=pass  //Sign
@@ -81,4 +84,5 @@
 //http://sicsglobal.com/projects/App_projects/rideaside/facebooklogin.php?facebook_id=43546&email=reref@gg.com&name=redft&file= SignUp with facebook
 //http://sicsglobal.com/projects/App_projects/rideaside/forgotpassword.php?user_id=25&email_id=dorad686@yahoo.com
 //http://sicsglobal.com/projects/App_projects/rideaside/list_users.php?userId=14&lattitude=8.487500&longitude=76.952500
+//http://sicsglobal.com/projects/App_projects/rideaside/connect_with_fb.php?userId=5&fbId=254689422
 @end

@@ -255,6 +255,7 @@
     {
     CAProfileAndRatingViewController *profile=[self.storyboard instantiateViewControllerWithIdentifier:@"profileAndRatingView"];
     [profile setUserId:trip.UserId];
+    [profile setUserName:trip.name];
     [self.navigationController pushViewController:profile animated:YES];
     }
     else
@@ -266,7 +267,7 @@
     [self.view setUserInteractionEnabled:NO];
     isLoadMoreData=YES;
     startCount=0;
-    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex WithMilesIndex:segmentMilesIndex];
+    [self parseMyTrips:self.tabBarController.selectedIndex WithSearchString:searchString WithrideIndex:segmentIndex WithMilesIndex:segmentMilesIndex*10+10];
     ISPullToRefresh=YES;
     
     

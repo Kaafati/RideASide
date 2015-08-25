@@ -6,6 +6,10 @@
 //
 
 #import "MapView.h"
+#import "CALoginViewController.h"
+#import "CAMapViewController.h"
+#import "CAMapViewAnnotationViewController.h"
+#import "UIImageView+WebCache.h"
 /////
 @interface MapView()
 
@@ -15,6 +19,7 @@
 -(void) centerMap;
 @property(nonatomic,strong)NSString* saddr;
 @property(nonatomic,strong) NSString* daddr;
+@property(nonatomic,strong) UIPopoverController *popover;
 @end
 
 @implementation MapView
@@ -56,7 +61,12 @@
     
     return polylineView;
 }
-
+- (UIViewController *)viewController {
+    if ([self.superview.nextResponder isKindOfClass:UIViewController.class])
+        return (UIViewController *)self.superview.nextResponder;
+    else
+        return nil;
+}
 - (CLLocationCoordinate2D)coordinateWithLocation:(NSDictionary*)location
 {
     double latitude = [[location objectForKey:@"lat"] doubleValue];
@@ -84,50 +94,59 @@
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
         
-        NSError *error = nil;
-        NSDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-        
-        NSArray *routes = [result objectForKey:@"routes"];
-        
-        NSDictionary *firstRoute = [routes objectAtIndex:0];
-        
-        NSDictionary *leg =  [[firstRoute objectForKey:@"legs"] objectAtIndex:0];
-        
-        NSDictionary *end_location = [leg objectForKey:@"end_location"];
-        
-        double latitude = [[end_location objectForKey:@"lat"] doubleValue];
-        double longitude = [[end_location objectForKey:@"lng"] doubleValue];
-        
-        CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
-        
-        MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
-        point.coordinate = coordinate;
-        point.title =  [leg objectForKey:@"end_address"];
-      //  point.subtitle = @"I'm here!!!";
-        
-        [mapView addAnnotation:point];
-        
-        NSArray *steps = [leg objectForKey:@"steps"];
-        
-        int stepIndex = 0;
-        
-        CLLocationCoordinate2D stepCoordinates[1  + [steps count] + 1];
-        
-        stepCoordinates[stepIndex] = CLLocationCoordinate2DMake([[[leg objectForKey:@"start_location"] objectForKey:@"lat"] doubleValue], [[[leg objectForKey:@"start_location"] objectForKey:@"lng"] doubleValue]);
-        
-        for (NSDictionary *step in steps) {
+        @try {
+            NSError *error = nil;
+            NSDictionary *result = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
             
-            NSDictionary *start_location = [step objectForKey:@"start_location"];
-            stepCoordinates[++stepIndex] = [self coordinateWithLocation:start_location];
+            NSArray *route = [result objectForKey:@"routes"];
             
-            if ([steps count] == stepIndex){
-                NSDictionary *end_location = [step objectForKey:@"end_location"];
-                stepCoordinates[++stepIndex] = [self coordinateWithLocation:end_location];
+            NSDictionary *firstRoute = [route objectAtIndex:0];
+            
+            NSDictionary *leg =  [[firstRoute objectForKey:@"legs"] objectAtIndex:0];
+            
+            NSDictionary *end_location = [leg objectForKey:@"end_location"];
+            
+            double latitude = [[end_location objectForKey:@"lat"] doubleValue];
+            double longitude = [[end_location objectForKey:@"lng"] doubleValue];
+            
+            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(latitude, longitude);
+            
+            MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
+            point.coordinate = coordinate;
+            point.title =  [leg objectForKey:@"end_address"];
+            //  point.subtitle = @"I'm here!!!";
+            
+            // [mapView addAnnotation:point];
+            
+            NSArray *steps = [leg objectForKey:@"steps"];
+            
+            int stepIndex = 0;
+            
+            CLLocationCoordinate2D stepCoordinates[1  + [steps count] + 1];
+            
+            stepCoordinates[stepIndex] = CLLocationCoordinate2DMake([[[leg objectForKey:@"start_location"] objectForKey:@"lat"] doubleValue], [[[leg objectForKey:@"start_location"] objectForKey:@"lng"] doubleValue]);
+            
+            for (NSDictionary *step in steps) {
+                
+                NSDictionary *start_location = [step objectForKey:@"start_location"];
+                stepCoordinates[++stepIndex] = [self coordinateWithLocation:start_location];
+                
+                if ([steps count] == stepIndex){
+                    NSDictionary *end_location = [step objectForKey:@"end_location"];
+                    stepCoordinates[++stepIndex] = [self coordinateWithLocation:end_location];
+                }
             }
+            
+            MKPolyline *polyLine = [MKPolyline polylineWithCoordinates:stepCoordinates count:1 + stepIndex];
+            [mapView addOverlay:polyLine];
+
         }
-        
-        MKPolyline *polyLine = [MKPolyline polylineWithCoordinates:stepCoordinates count:1 + stepIndex];
-        [mapView addOverlay:polyLine];
+        @catch (NSException *exception) {
+            
+        }
+        @finally {
+            
+        }
         
         //  CLLocationCoordinate2D centerCoordinate = CLLocationCoordinate2DMake((userLocation.location.coordinate.latitude + coordinate.latitude)/2, (userLocation.location.coordinate.longitude + coordinate.longitude)/2);
         
@@ -137,14 +156,15 @@
 }
 -(void)addAnnotation:(Place *)tripUserLocation{
     PlaceMark* tripUser = [[PlaceMark alloc] initWithPlace:tripUserLocation] ;
+    tripUser.place.tag = 0;
     [mapView addAnnotation:tripUser];
 }
 
 -(void) showRouteFrom: (Place*) f to:(Place*) t {
     
-    if(routes) {
-        [mapView removeAnnotations:[mapView annotations]];
-    }
+//    if(routes) {
+//        [mapView removeAnnotations:[mapView annotations]];
+//    }
     
     PlaceMark* from = [[PlaceMark alloc] initWithPlace:f] ;
     PlaceMark* to = [[PlaceMark alloc] initWithPlace:t] ;
@@ -163,21 +183,76 @@
     mypin.backgroundColor = [UIColor clearColor];
     PlaceMark *selectedAnnotation =[annotation isKindOfClass:[PlaceMark class]] ? annotation : nil;
    
-   
     if(selectedAnnotation.place.userId.length>0){
         
+       
         UIButton *goToDetail = [UIButton buttonWithType:UIButtonTypeInfoDark];
       mypin.rightCalloutAccessoryView = goToDetail;
-        UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed: selectedAnnotation.place.categoryWhenRideCreated ==0 ?@"passengerMap" : @"car"]];
+        UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed: selectedAnnotation.place.categoryWhenRideCreated == 0 ?@"passengerMap" : @"carMap"]];
         [image setFrame:CGRectMake(0, CGRectGetMinY(mypin.frame), image.frame.size.width, image.frame.size.height)];
         [mypin addSubview:image];
+        
+        
+        UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+        CAMapViewAnnotationViewController *viewAnnotations = [storyBoard instantiateViewControllerWithIdentifier:@"CAMapViewAnnotationViewController"];
+        viewAnnotations.mapViewAnnotationView = viewAnnotations.view.subviews[0];
+
+        viewAnnotations.labelName.text = [NSString stringWithFormat:@"Name : %@ ",selectedAnnotation.place.name];
+        viewAnnotations.labelEmail.text = [NSString stringWithFormat:@"Email : %@ ",selectedAnnotation.place.email];
+        viewAnnotations.labelPhoneNumber.text = [NSString stringWithFormat:@"Phone Number : %@ ",selectedAnnotation.place.phoneNumber];
+        viewAnnotations.rateView.rate = selectedAnnotation.place.rating.integerValue;
+        [viewAnnotations.imageProfile sd_setImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].userId.integerValue != selectedAnnotation.place.userId.integerValue ? selectedAnnotation.place.imageName : [CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+        if (selectedAnnotation.place.carName.length) {
+            
+            [viewAnnotations.imageCar sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://sicsglobal.com/projects/App_projects/rideaside/vehicle_images/%@",selectedAnnotation.place.carImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+            viewAnnotations.labelCarName.text = [NSString stringWithFormat:@"Car Name : %@",selectedAnnotation.place.carName];
+            viewAnnotations.labelCarLicenceNumber.text = [NSString stringWithFormat:@"Plate Number : %@",selectedAnnotation.place.carLiceneNumber];;
+        }
+        else
+        {
+                        viewAnnotations.imageCar.hidden = YES;
+                        viewAnnotations.labelCarLicenceNumber.hidden = YES;
+                        viewAnnotations.labelCarName.hidden = YES;
+            
+        }
+
+//        labelname.text = selectedAnnotation.place.name;
+        [viewAnnotations.mapViewAnnotationView setFrame:CGRectMake(-viewAnnotations.mapViewAnnotationView.frame.size.width/2.6, CGRectGetMinY(image.frame)-viewAnnotations.mapViewAnnotationView.frame.size.height, viewAnnotations.mapViewAnnotationView.frame.size.width, [viewAnnotations.mapViewAnnotationView frame].size.height)];
+         [mypin addSubview:viewAnnotations.mapViewAnnotationView];
+        viewAnnotations.mapViewAnnotationView.hidden = YES;
+
+
+        
     }
     mypin.draggable = NO;
     mypin.highlighted = YES;
     mypin.animatesDrop = TRUE;
     mypin.canShowCallout = YES;
+    
     return mypin;
 }
+
+-(void)punch
+{
+    
+}
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
+{
+     PlaceMark *selectedAnnotation =[view.annotation isKindOfClass:[PlaceMark class]] ? view.annotation : nil;
+    if (selectedAnnotation && selectedAnnotation.place.userId) {
+        UIView *viewAnnotation = view.subviews[1];
+        
+        viewAnnotation.hidden =  selectedAnnotation.place.tag == 0 ? NO : YES;
+        
+         [mapView deselectAnnotation:[view annotation] animated:NO];
+        
+        
+        selectedAnnotation.place.tag = selectedAnnotation.place.tag == 0 ?  1 : 0;
+        
+    }
+
+}
+
 /*
 
 -(NSMutableArray *)decodePolyLine: (NSMutableString *)encoded {

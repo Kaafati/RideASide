@@ -13,7 +13,7 @@
 @protocol goingToUserProfilePageDelegate <NSObject>
 -(void)goToProfilePageWithUserId:(NSString *)userId;
 @end
-@interface MapView : UIView<MKMapViewDelegate> {
+@interface MapView : UIView<MKMapViewDelegate,UIPopoverControllerDelegate> {
 
 	MKMapView* mapView;
 	UIImageView* routeView;

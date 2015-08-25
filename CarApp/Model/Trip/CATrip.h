@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
+#import "CAUser.h"
 @interface CATrip : NSObject
 @property(nonatomic,strong)NSString *StartingPlace;
 @property(nonatomic,strong)NSString *UserId;
@@ -17,6 +18,8 @@
 @property(nonatomic,strong)NSString *TotalKilometer;
 @property(nonatomic,strong)NSString *Vehicle;
 @property(nonatomic,strong)NSString *SeatsAvailable;
+@property(nonatomic,strong)NSString *email;
+@property(nonatomic,strong)NSString *phoneNumber;
 @property(nonatomic,strong)NSString *date;
 @property(nonatomic,strong)CLLocation *startPlaceLocation;
 @property(nonatomic,strong)CLLocation *endPlaceLocation;
@@ -30,7 +33,14 @@
 @property(nonatomic,strong)NSString *tripStartTimeForNotification;
 @property(nonatomic,strong)NSString *category;
 @property(nonatomic,strong)NSString *addedBy;
+@property(nonatomic,strong)NSString *carImageName;
+@property(nonatomic,strong)UIImage *imageCar;
+@property(nonatomic,strong)NSString *rateValue;
 @property(nonatomic,strong)NSString *visibility;
+@property(nonatomic,strong)NSString *latitude;
+@property(nonatomic,strong)NSString *longitude;
+@property(nonatomic,strong)NSString *facebookId;
+@property(nonatomic,strong)NSArray *arrayJoinees;
 @property BOOL isSelected;
 
 -(id)initWithDictionary :(NSMutableDictionary *)dictionary;
@@ -44,6 +54,8 @@
 +(void)selectDriverForTrip:(CATrip*)trip completion:(void(^)(BOOL,NSError*))completion;
 +(void)editTrip:(CATrip *)trip completion:(void(^)(BOOL,id result, NSError *))completion;
 +(void)inviteTripWithTripId:(NSString *)tripId andAppuserId:(NSString *)userId completion:(void(^)(BOOL,id result, NSError *))completion;
++(void)submitReviewWithRatedUserId:(NSString *)ratedUserId withtripId:(NSString *)tripId answer:(NSString *)answer completion:(void (^)(BOOL, id, NSError *))completion;
++(void)fetchReviewWithUserId:(NSString *)userId completion:(void (^)(BOOL, id, NSError *))completion;
 
 //http://sicsglobal.com/projects/App_projects/rideaside/PendingTrip.php?UserId=25-Pending Requests
 //http://sicsglobal.com/projects/App_projects/rideaside/view_all_trip.php?index=0&search=&userid=25 //Passenger Tab
@@ -59,5 +71,6 @@
 //[14/10/14 4:36:57 pm] Leeja .: status=2----->completed rides with 10 index
 
 //http://sicsglobal.com/projects/App_projects/rideaside/inviite_frnds.php?trip_id=1&phone_num=123456789 Invite 
-//
+//http://sicsglobal.com/projects/App_projects/rideaside/review.php?userId=1&rateduserId=2&tripId=1&questionId=1,2,3,4&answer=Always,No,Not%20at%20al,Amazing
+//http://sicsglobal.com/projects/App_projects/rideaside/view_reviews.php?userId=2
 @end

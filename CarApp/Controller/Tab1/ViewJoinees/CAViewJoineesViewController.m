@@ -41,8 +41,10 @@
     [super viewDidLoad];
     [self setUpUi];
     [self setupMenuBarButtonItems];
-
-    [_trips.category isEqualToString:@"Passenger"] ? [self fetchDriversList]: [self fetchJoineesList];
+ 
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId != %@",_trips.UserId];
+    tripUsers =  [_trips.arrayJoinees filteredArrayUsingPredicate:predicate];
+  //  [_trips.category isEqualToString:@"Passenger"] ? [self fetchDriversList]: [self fetchJoineesList];
     //[self fetchJoineesList];
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -108,6 +110,7 @@
 #pragma mark-Parsing
 -(void)fetchJoineesList{
     CAUser *user=[[CAUser alloc]init];
+    
     [user fetchJoineesListInTripWithTripId:_trips.tripId WithCompletionBlock:^(BOOL success, id result, NSError *error) {
         tripUsers=(NSArray *)result;
         [self.tableView reloadData];
@@ -260,8 +263,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     CAUser *user=tripUsers[indexPath.row];
     CAProfileTableViewController *profile=[self.storyboard instantiateViewControllerWithIdentifier:@"profileView"];
-    [profile setUserId:user.userId];
     [profile setTrip:_trips];
+
+    [profile setUserId:user.userId];
+    [profile setUserDetails:user];
+    
     [self.navigationController pushViewController:profile animated:YES];
     
 }

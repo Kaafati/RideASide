@@ -29,7 +29,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"FontNAme" size:12], NSFontAttributeName, nil]];
     
@@ -112,6 +111,7 @@
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:kLoggeduserdetails];
     _isFromLogout = YES;
     [self checkAutoLogin];
+    FBSDKAccessToken.currentAccessToken = nil;
     
 }
 

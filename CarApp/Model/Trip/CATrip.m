@@ -11,7 +11,7 @@
 #import "NSMutableData+PostDataAdditions.h"
 #import "CAServiceManager.h"
 #import "NSDate+TimeZone.h"
-
+#import "CATripReview.h"
 
 
 @implementation CATrip
@@ -22,6 +22,37 @@
 {
     self=[super init];
     if (self) {
+        if ([dictionary[@"UserId"] integerValue] == [CAUser sharedUser].userId.integerValue) {
+            self.StartingPlace=dictionary[@"StartingPlace"];
+            self.UserId=dictionary[@"UserId"];
+            self.EndPlace=dictionary[@"EndPlace"];
+            self.FuelExpenses=dictionary[@"FuelExpenses"];
+            self.TollBooth=dictionary[@"TollBooth"];
+            self.TotalKilometer=dictionary[@"TotalKilometer"];
+            self.Vehicle=dictionary[@"Vehicle"];
+            self.SeatsAvailable=dictionary[@"SeatsAvailable"];
+            self.date=[[NSDate alloc]changeServerTimeZoneToLocalForDate:dictionary[@"DateTime"]];
+            self.startPlaceLocation=dictionary[@"startPlaceLocation"];
+            self.email = [CAUser sharedUser].emailId;
+            self.endPlaceLocation=dictionary[@"endPlaceLocation"];
+            self.name=[CAUser sharedUser].userName;
+            self.imageName=[CAUser sharedUser].profile_ImageName;
+            self.tripId=dictionary[@"TripId"];
+            self.tripName=dictionary[@"Tripname"];
+            self.cost=dictionary[@"Cost"];
+            self.vehicleNumber=dictionary[@"VehicleNumber"];
+            self.tripPostedById=dictionary[@"OwnerId"];
+            self.tripStartTimeForNotification=dictionary[@"StartTimeNotification"];
+            self.category = dictionary[@"addedBy"] ? :dictionary[@"addedBy"];
+            self.visibility = [CAUser sharedUser].visibility;
+            self.phoneNumber = [CAUser sharedUser].phoneNumber;
+            self.carImageName = dictionary[@"Vehicle_image"];
+            self.facebookId = dictionary[@"facebook_id"];
+            self.latitude = dictionary[@"latitude"] ;
+            self.longitude = dictionary[@"longitude"];
+        }
+        else
+        {
         self.StartingPlace=dictionary[@"StartingPlace"];
         self.UserId=dictionary[@"UserId"];
         self.EndPlace=dictionary[@"EndPlace"];
@@ -32,6 +63,7 @@
         self.SeatsAvailable=dictionary[@"SeatsAvailable"];
         self.date=[[NSDate alloc]changeServerTimeZoneToLocalForDate:dictionary[@"DateTime"]];
         self.startPlaceLocation=dictionary[@"startPlaceLocation"];
+        self.email = dictionary[@"email_id"];
         self.endPlaceLocation=dictionary[@"endPlaceLocation"];
         self.name=dictionary[@"name"]?dictionary[@"name"]:dictionary[@"Name"];
         self.imageName=dictionary[@"image"]?dictionary[@"image"]:dictionary[@"Image"];
@@ -41,9 +73,83 @@
         self.vehicleNumber=dictionary[@"VehicleNumber"];
         self.tripPostedById=dictionary[@"OwnerId"];
         self.tripStartTimeForNotification=dictionary[@"StartTimeNotification"];
-        self.category = dictionary[@"Category"] ? :dictionary[@"category"];
+        self.category = dictionary[@"addedBy"] ? :dictionary[@"addedBy"];
         self.visibility = dictionary[@"visibility"];
-                  
+        self.phoneNumber = dictionary[@"MobileNumber"];
+            self.carImageName = dictionary[@"Vehicle_image"];
+            NSLog(@"%@    %@",self.carImageName,dictionary[@"Vehicle_image"]);
+        self.latitude = dictionary[@"latitude"] ;
+        self.longitude = dictionary[@"longitude"];
+            self.rateValue = dictionary[@"Rating"];
+            self.facebookId = dictionary[@"facebook_id"];
+
+        }
+        if ([[dictionary objectForKey:@"joinees"] isKindOfClass:[NSArray class]]) {
+            if ([[dictionary objectForKey:@"joinees"] count]) {
+                NSMutableArray *arrayUser = [NSMutableArray new];
+                [[dictionary objectForKey:@"joinees"] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                    
+                    
+                    CAUser *joinees =  [[CAUser alloc] init];
+                    joinees.userId=self.UserId;
+                    joinees.userName=self.name;
+                    joinees.emailId=self.email;
+                    joinees.phoneNumber=self.phoneNumber;
+                    joinees.profile_ImageName=self.imageName;
+                    joinees.latitude= self.latitude;
+                    joinees.longitude=self.longitude;
+                    joinees.category = self.category;
+                    joinees.car_image1 = self.carImageName;
+                    NSLog(@"%@",joinees.car_image1);
+                    joinees.car_name1 = self.Vehicle;
+                    joinees.car_licence_num1 = self.vehicleNumber;
+                    joinees.rateValue = self.rateValue;
+                    joinees.facebook_id = self.facebookId;
+                    [arrayUser addObject:joinees];
+                    if ([[dictionary objectForKey:@"joinees"] count]) {
+                        CAUser *joinees =  [[CAUser alloc] init];
+                        joinees.userId=obj[@"joine_id"];
+                        joinees.userName=obj[@"joinee_name"];
+                        joinees.emailId=obj[@"joinee_email"];
+                        joinees.phoneNumber=obj[@"joinee_mobile"];
+                        joinees.profile_ImageName=obj[@"joinee_image"];
+                        joinees.latitude=obj[@"lattitude"];
+                        joinees.longitude=obj[@"longitude"];
+                        joinees.category = obj[@"category"];
+                        joinees.rateValue = obj[@"joinee_rating"];
+                        joinees.facebook_id = obj[@"joinee_facebook_id"];
+                        [arrayUser addObject:joinees];
+                        
+                    }
+                    
+                }];
+                self.arrayJoinees = arrayUser.mutableCopy;
+            }
+
+        }
+        else
+        {
+            NSMutableArray *arrayUser = [NSMutableArray new];
+            CAUser *joinees =  [[CAUser alloc] init];
+            joinees.userId=self.UserId;
+            joinees.userName=self.name;
+            joinees.emailId=self.email;
+            joinees.phoneNumber=self.phoneNumber;
+            joinees.profile_ImageName=self.imageName;
+            joinees.latitude= self.latitude;
+            joinees.longitude=self.longitude;
+            joinees.category=self.category;
+            joinees.car_image1 = self.carImageName;
+                                NSLog(@"%@",joinees.car_image1);
+            joinees.car_name1 = self.Vehicle;
+            joinees.car_licence_num1 = self.vehicleNumber;
+            joinees.rateValue = self.rateValue;
+            joinees.facebook_id = self.facebookId;
+            [arrayUser addObject:joinees];
+            self.arrayJoinees = arrayUser.mutableCopy;
+            
+        }
+        
     }
     return self;
 }
@@ -63,7 +169,8 @@
     [body addValue:[NSString stringWithFormat:@"%ld",(long)milesIndex] forKey:@"distance"];
     [body addValue:[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]] forKey:@"date"];
     
-    NSLog(@"http://sicsglobal.com/projects/App_projects/rideaside/%@?userid=%@&index=%ld&search=%@&status=%lu&date=%@",path,[CAUser sharedUser].userId,(long)index,searchString.length>0?searchString:@"",(unsigned long)indexOfTripDetailIndex,[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]]);
+    NSLog(@"http://sicsglobal.com/projects/App_projects/rideaside/%@?userid=%@&index=%ld&search=%@&status=%lu&date=%@&distance=%ld",path,[CAUser sharedUser].userId,(long)index,searchString.length>0?searchString:@"",(unsigned long)indexOfTripDetailIndex,[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]],(long)milesIndex);
+    
     
     [CAServiceManager fetchDataFromService:path withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
      {
@@ -147,7 +254,9 @@
     [body addValue:trip.vehicleNumber forKey:@"vehicle_number"];
     [body addValue:trip.cost forKey:@"cost"];
     [body addValue:trip.tripStartTimeForNotification forKey:@"alert_date"];
-    
+    NSString *fileName = [CATrip makeFileName];
+
+     [body addValue:UIImageJPEGRepresentation(trip.imageCar, 0.5) forKey:@"vehicle_image" withFileName:fileName];
     [CAServiceManager fetchDataFromService:@"edit_trip.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
      {
          NSLog(@"FETCH RESULT - %@",result);
@@ -155,6 +264,20 @@
          
      }];
 
+}
++(NSString *)makeFileName
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    [dateFormatter setDateFormat:@"yyMMddHHmmssSSS"];
+    
+    NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
+    
+    int randomValue = arc4random() % 1000;
+    
+    NSString *fileName = [NSString stringWithFormat:@"%@%d.jpg",dateString,randomValue];
+    
+    return fileName;
 }
 -(void)addTripWithDataWithTrip:(CATrip*)trip  CompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock;{
     NSMutableData *body=[NSMutableData postData];
@@ -172,6 +295,9 @@
     [body addValue:trip.cost forKey:@"cost"];
     [body addValue:trip.tripStartTimeForNotification forKey:@"alert_date"];
     [body addValue:trip.addedBy forKey:@"addedBy"];
+    NSString *fileName = [CATrip makeFileName];
+    
+    [body addValue:UIImageJPEGRepresentation(trip.imageCar, 0.5) forKey:@"vehicle_image" withFileName:fileName];
     [CAServiceManager fetchDataFromService:@"addtripyy.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
      {
          NSLog(@"FETCH RESULT - %@",result);
@@ -216,6 +342,9 @@
     NSMutableData *body=[NSMutableData postData];
     [body addValue:trip.tripId forKey:@"tripid"];
     [body addValue:[CAUser sharedUser].userId forKey:@"joineeid"];
+    [body addValue:[CAUser sharedUser].latitude forKey:@"lattitude"];
+    [body addValue:[CAUser sharedUser].longitude forKey:@"longitude"];
+    [body addValue:[CAUser sharedUser].category forKey:@"category"];
     [body addValue:status forKey:@"status"];
     
     
@@ -279,5 +408,51 @@
     }];
     
 }
++(void)submitReviewWithRatedUserId:(NSString *)ratedUserId withtripId:(NSString *)tripId answer:(NSString *)answer completion:(void (^)(BOOL, id, NSError *))completion
+{
+    //http://sicsglobal.com/projects/App_projects/rideaside/review.php?userId=1&rateduserId=2&tripId=1&questionId=1,2,3,4&answer=Always,No,Not%20at%20al,Amazing
+    NSMutableData *body=[NSMutableData postData];
+    [body addValue:[CAUser sharedUser].userId forKey:@"userId"];
+    [body addValue:ratedUserId forKey:@"rateduserId"];
+    [body addValue:tripId forKey:@"tripId"];
+    [body addValue:@"1,2,3,4" forKey:@"questionId"];
+    [body addValue:answer forKey:@"answer"];
+    
+    [CAServiceManager fetchDataFromService:@"review.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error){
 
+        
+        success ? [result[@"result"] isEqualToString:@"success"] ? completion(YES,result,nil) : completion(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"Message"]?result[@"Message"]:result[@"error"]}]) : completion(NO,nil,error);
+        
+    }];
+}
+
++(void)fetchReviewWithUserId:(NSString *)userId completion:(void (^)(BOOL, id, NSError *))completion
+{
+    //http://sicsglobal.com/projects/App_projects/rideaside/view_reviews.php?userId=2
+    NSMutableData *body=[NSMutableData postData];
+    [body addValue:userId forKey:@"userId"];
+    [CAServiceManager fetchDataFromService:@"view_reviews.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error){
+        
+        
+        success ? [result[@"result"] isEqualToString:@"success"] ? completion(YES,[CATrip getRating:result],nil) : completion(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"Message"]?result[@"Message"]:result[@"error"]}]) : completion(NO,nil,error);
+        
+    }];
+}
++(NSArray *)getRating:(id)result
+{
+    
+   
+    
+    NSMutableArray *arrayReview = [NSMutableArray new];
+    
+    [result[@"Trips"] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSDictionary *dictRatings1 = [[obj valueForKey:@"user_category"] isEqualToString:@"passenger"] ?  @{@"reviewQuestion1":@"Was the passenger respectful?",@"reviewQuestion2":@"Was it difficult to set up the trip with the passenger?",@"reviewQuestion3" :@"Did you have any Problems with receiving your payment from the passenger?",@"reviewQuestion4":@"How was your RideAside experience with this Passenger?"} : @{@"reviewQuestion1" :@"Was the driver Respectful?",@"reviewQuestion2":@"Was the Driver a Safe Driver?",@"reviewQuestion3":@"Does the driver speed?",@"reviewQuestion4":@"How was your RideAside experience with the Driver?"};
+        CATripReview *reviewTrip = [[CATripReview alloc] initWithDictionary:obj andQuestion:dictRatings1];
+//    CAReview *review = [[CAReview alloc] initWithDictionary:result andQuestion:dictRatings1];
+        [arrayReview addObject:reviewTrip];
+    }];
+    
+    
+    return arrayReview;
+}
 @end

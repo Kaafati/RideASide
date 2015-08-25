@@ -8,11 +8,11 @@
 
 #import <XCTest/XCTest.h>
 
-@interface RoadTripTests : XCTestCase
+@interface RideAsideTests : XCTestCase
 
 @end
 
-@implementation RoadTripTests
+@implementation RideAsideTests
 
 - (void)setUp
 {

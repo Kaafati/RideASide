@@ -70,11 +70,13 @@
 
 -(void)fetchTripUsers{
     CAUser *user=[[CAUser alloc]init];
-    [user fetchUsersAroundTripwithTripId:_trips.tripId WithCompletionBlock:^(BOOL success, id result, NSError *error) {
-        tripUsers=(NSArray *)result;
-        [self postAnnotationsInTrip];
-        
-    }];
+    tripUsers = _trips.arrayJoinees;
+    [self postAnnotationsInTrip];
+//    [user fetchUsersAroundTripwithTripId:_trips.tripId WithCompletionBlock:^(BOOL success, id result, NSError *error) {
+//        tripUsers=(NSArray *)result;
+//        [self postAnnotationsInTrip];
+//        
+//    }];
 }
 
 -(void)postAnnotationsInTrip{
@@ -85,26 +87,51 @@
 //    home.longitude =obj.longitude.floatValue;
 //    home.userId=obj.userId;
 //    [mapView addAnnotation:home];
+    
+    
     [tripUsers enumerateObjectsUsingBlock:^(CAUser  *obj, NSUInteger idx, BOOL *stop) {
         Place* home = [[Place alloc] init] ;
         home.name = obj.userName;
-        home.latitude =obj.latitude.floatValue;
-        home.longitude =obj.longitude.floatValue;
+        
+        NSString * latitu = [NSString stringWithFormat:@"%f",_trips.startPlaceLocation.coordinate.latitude];
+        NSString  *lat = [NSString stringWithFormat:@"%@",[latitu substringFromIndex:latitu.length-3]];
+        
+        NSMutableString *stri = [NSMutableString stringWithFormat:@"%f",_trips.startPlaceLocation.coordinate.latitude];
+        
+        NSString *someText = @"Goat";
+        NSRange range = NSMakeRange(0,1);
+        NSString *newText = [someText stringByReplacingCharactersInRange:range withString:@"B"];
+        NSLog(@"%@",newText);
+        [stri replaceCharactersInRange:NSMakeRange(5, 1) withString:[NSString stringWithFormat:@"%f",lat.floatValue+1]];
+        [stri stringByReplacingCharactersInRange:NSMakeRange(5, 1) withString:[NSString stringWithFormat:@"%f",lat.floatValue+1]];
+        home.latitude = idx == 0 ? _trips.startPlaceLocation.coordinate.latitude + 0.0001 : obj.latitude.floatValue;
+        home.longitude =idx == 0 ? _trips.startPlaceLocation.coordinate.longitude  : obj.longitude.floatValue;
         home.userId=obj.userId;
+        home.email = obj.emailId;
+        home.imageName = obj.profile_ImageName;
+        home.phoneNumber = obj.phoneNumber;
+        home.categoryWhenRideCreated = [obj.category isEqualToString:@"Passenger"] || [obj.category isEqualToString:@"passenger"]  ? 0 : 1;
+        home.carImageName = obj.car_image1;
+        home.carName = obj.car_name1;
+        home.carLiceneNumber = obj.car_licence_num1;
+        home.rating = obj.rateValue;
         [mapView addAnnotation:home];
         
     }];
 
-    if (_trips.UserId.integerValue == [CAUser sharedUser].userId.integerValue) {
-        Place* home = [[Place alloc] init] ;
-        home.name = [CAUser sharedUser].userName;
-        home.latitude =[CAUser sharedUser].latitude.floatValue;
-        home.longitude =[CAUser sharedUser].longitude.floatValue;
-        home.userId=[CAUser sharedUser].userId;
-        home.categoryWhenRideCreated = [_trips.addedBy isEqualToString:@"Passenger"] ? 0 : 1;
-        
-        [mapView addAnnotation:home];
-    }
+//    if (_trips.UserId.integerValue == [CAUser sharedUser].userId.integerValue) {
+//        Place* home = [[Place alloc] init] ;
+//        home.name = [CAUser sharedUser].userName;
+//        home.latitude =[CAUser sharedUser].latitude.floatValue;
+//        home.longitude =[CAUser sharedUser].longitude.floatValue;
+//        home.userId=[CAUser sharedUser].userId;
+//        home.email = [CAUser sharedUser].emailId;
+//        home.imageName = [CAUser sharedUser].profile_ImageName;
+//        home.phoneNumber = [CAUser sharedUser].phoneNumber;
+//        home.categoryWhenRideCreated = [_trips.addedBy isEqualToString:@"Passenger"] ? 0 : 1;
+//        
+//        [mapView addAnnotation:home];
+//    }
 
 
     

@@ -36,7 +36,7 @@
     UITextField *activeTextField;
     IBOutlet UIButton *addTripOrViewJoiness;
     IBOutlet UIButton *acceptTrip;
-    
+    UIImage *imageCar;
     IBOutletCollection(UIButton) NSArray *buttonsInfoArray;
     __weak IBOutlet UIButton *buttonChatOrEdit;
     __weak IBOutlet UIButton *rejectButton;
@@ -75,6 +75,12 @@
     (_trip.tripPostedById.length>0&&!_isFromRequestPage)?[self leftSideNavigationBar]: [self setupMenuBarButtonItems];
     [self setUI];
    
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
+    [collectionCar reloadData];
+
 }
 - (IBAction)showView:(UIButton *)sender {
     
@@ -160,17 +166,20 @@
     milegae=0;
     self.tableView.backgroundView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]];
     NSArray *images=@[@"tripName",@"startingplace",@"end",@"distance",@"vehicle",@"vehicleNumber",@"cost",@"seats",@"date"];
-    if(_trip.TollBooth.length>0){
+    if(_trip)
+    {
         self.title=@"Trip Details";
         [buttonChatOrEdit setTitle:[_trip.UserId isEqualToString:[CAUser sharedUser].userId]  ? @"Edit Trip Detail" : @"Chat" forState:UIControlStateNormal];
-        if ([_trip.category isEqualToString:@"Passenger"]) {
-            [addTripOrViewJoiness setTitle:@"View Drivers" forState:UIControlStateNormal];
-            
-            
-            
-        }else{
         [addTripOrViewJoiness setTitle:@"View Joinees" forState:UIControlStateNormal];
-        }
+
+//        if ([_trip.category isEqualToString:@"Passenger"]) {
+//            [addTripOrViewJoiness setTitle:@"View Drivers" forState:UIControlStateNormal];
+//            
+//            
+//            
+//        }else{
+//        [addTripOrViewJoiness setTitle:@"View Joinees" forState:UIControlStateNormal];
+//        }
 //        [addTripOrViewJoiness setFrame:CGRectMake(35, 0, 115, 40)];
 //        UIButton *btnViewDrivers = [[UIButton alloc]initWithFrame:CGRectMake(170, 0, 115, 40)];
 //        [btnViewDrivers setTitle:@"View Drivers" forState:UIControlStateNormal];
@@ -179,18 +188,22 @@
 //        [btnViewDrivers addTarget:self action:@selector(addTripOrViewJoinees:) forControlEvents:UIControlEventTouchUpInside];
 //        [cellArray[0] addSubview:btnViewDrivers];
     }
-    else{
+    else
+    {
         self.title=@"Add Trip";
         [addTripOrViewJoiness setTitle:@"Add Trip" forState:UIControlStateNormal];
     }
 //    [textFieldTripDetails[3] setInputAccessoryView:toolBar];
     [textFieldTripDetails[3] setInputAccessoryView:toolBar];
     [textFieldTripDetails[4] setInputAccessoryView:toolBar];
+    [textFieldTripDetails[5] setInputAccessoryView:toolBar];
     [textFieldTripDetails[6] setInputAccessoryView:toolBar];
-    
+
+    [(UITextField *)textFieldTripDetails[4] setInputView:collectionCar];
+    [(UITextField *)textFieldTripDetails[5] setInputView:collectionCar];
     [textFieldTripDetails enumerateObjectsUsingBlock:^(UITextField *textField, NSUInteger idx, BOOL *stop) {
         
-        if(_trip.TollBooth.length>0){
+        if(_trip){
             textField.userInteractionEnabled= NO;
             
         }
@@ -211,7 +224,7 @@
         
     }];
     
-    if(_trip.TollBooth.length>0)//View Trip
+    if(_trip)//View Trip
     {
         
         [textFieldTripDetails[0] setText:_trip.tripName];
@@ -227,7 +240,8 @@
         [stepper setHidden:YES];
         [segmentControl setHidden:YES];
         [acceptTrip setEnabled:YES];
-        
+       
+
         if(_trip.tripPostedById.length>0){
             [cellArray[0] setHidden:YES];
         }
@@ -235,9 +249,9 @@
            
             
 
-            [acceptTrip setFrame:CGRectMake(addTripOrViewJoiness.frame.origin.x,10, addTripOrViewJoiness.bounds.size.width , addTripOrViewJoiness.frame.size.height)];
-            [acceptTrip setTitle:@"Pay For Trip" forState:UIControlStateNormal];
-            [rejectButton setHidden:YES];
+         //   [acceptTrip setFrame:CGRectMake(addTripOrViewJoiness.frame.origin.x,10, addTripOrViewJoiness.bounds.size.width , addTripOrViewJoiness.frame.size.height)];
+//            [acceptTrip setTitle:@"Pay For Trip" forState:UIControlStateNormal];
+//            [rejectButton setHidden:YES];
             //[cellArray[1] setHidden:YES];
         }
         
@@ -296,7 +310,7 @@
 -(IBAction)addTripOrViewJoinees:(UIButton *)sender
 {
     [activeTextField resignFirstResponder];
-    if(_trip.TollBooth.length>0){
+    if(_trip){
         [self viewJoinees];
     }
     else{
@@ -342,6 +356,7 @@
     [self performSelector:@selector(doneSelectingDate:) withObject:nil];
     trip.tripStartTimeForNotification=dateForPushNotification;
     trip.tripId = _trip.tripId;
+    trip.imageCar = imageCar;
     [buttonChatOrEdit setTitle:@"Edit Trip Detail" forState:UIControlStateNormal];
     [CATrip editTrip:trip completion:^(BOOL success, id result, NSError *error) {
         [SVProgressHUD dismiss];
@@ -510,6 +525,8 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
     trip.date=dateOfTrip;
     trip.tripStartTimeForNotification=dateForPushNotification;
     trip.addedBy = [CAUser sharedUser].category;
+    trip.imageCar = imageCar;
+
     [trip addTripWithDataWithTrip:trip
                   CompletionBlock:^(BOOL success, id result, NSError *error) {
                       [SVProgressHUD dismiss];
@@ -559,20 +576,23 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
         textField.text=@"";
     }
     activeTextField=textField;
-    if (activeTextField.tag==777 ) {
+    if (activeTextField.tag==777 || textField == textFieldTripDetails[4]) {
         if ([[[CAUser sharedUser] arrayCar] count]) {
-            activeTextField.inputView = collectionCar;
+                       textField.inputView = collectionCar;
 
         }
         else
         {
-            activeTextField.inputView = pickerViewVehicle;
+            [textField resignFirstResponder];
+            [[[UIAlertView alloc] initWithTitle:@"" message:@"Please add your car in your profile" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+            
+//            activeTextField.inputView = pickerViewVehicle;
 
         }
     }
-    if ((textField == textFieldTripDetails[5]) && ([[[CAUser sharedUser] arrayCar] count])) {
-        textField.inputView = collectionCar;
-    }
+//    if ((textField == textFieldTripDetails[5]) && ([[[CAUser sharedUser] arrayCar] count])) {
+//        textField.inputView = collectionCar;
+//    }
     if(activeTextField.tag==1001||activeTextField.tag==1002){
         [self presentSearchViewControllerWithTag:activeTextField.tag withText:activeTextField.text];
          [activeTextField resignFirstResponder];
@@ -629,7 +649,7 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
             }
             else if ([acceptTrip.titleLabel.text isEqualToString:@"Reject"])
             {
-                 [self parseAcceptTrip:@"Reject"];
+                 [self parseAcceptTrip:@"Decline"];
             }
             else{
                 [_trip.category isEqualToString:@"Passenger"] ? [self parseAcceptDriverOnTrip:@"Added"] :[self parseAcceptTrip:@"Pending"];
@@ -637,7 +657,7 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
             break;
         case 1002:
             NSLog(@"_trip.category %@",_trip.category);
-            [self parseAcceptTrip:@"Reject"];
+            [self parseAcceptTrip:@"Decline"];
          //   [_trip.category isEqualToString:@"Passenger"] ? [self parseAcceptDriverOnTrip:@"reject"] :[self parseAcceptTrip:@"Reject"];
             break;
             
@@ -661,7 +681,7 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
                     [self.navigationController popViewControllerAnimated:YES];
                 }
                 else{
-                    [[[UIAlertView alloc]initWithTitle:@"Message" message:@"Trip request rejected" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
+                    [[[UIAlertView alloc]initWithTitle:@"Message" message:@"You have added in the trip" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil]show];
                     [self goToHomePage];
                 }
             }
@@ -995,7 +1015,14 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     CACarCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CACarCollectionViewCell" forIndexPath:indexPath];
+    NSLog(@"Url %@",[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",carUrl,[[[[CAUser sharedUser] arrayCar]  valueForKey:[NSString stringWithFormat:@"car%dDetails",indexPath.row+1]] objectAtIndex:0]]]);
+    if ([[[[[CAUser sharedUser] arrayCar] valueForKey:@"car1Details"] objectAtIndex:0] isKindOfClass:[UIImage class]]) {
+        [cell.buttonCar setBackgroundImage:[[[CAUser sharedUser] arrayCar] valueForKey:[NSString stringWithFormat:@"car%dDetails",indexPath.row+1]][0] forState:UIControlStateNormal];
+    }
+    else
+    {
     [cell.buttonCar sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",carUrl,[[[[CAUser sharedUser] arrayCar]  valueForKey:[NSString stringWithFormat:@"car%dDetails",indexPath.row+1]] objectAtIndex:0]]] forState:UIControlStateNormal];
+    }
    // [cell.buttonCar setBackgroundImage:[[[[CAUser sharedUser] arrayCar] valueForKey:@"car1Details"] objectAtIndex:0] forState:UIControlStateNormal];
     cell.textFieldcarName.text = [[[[CAUser sharedUser] arrayCar]  valueForKey:[NSString stringWithFormat:@"car%dDetails",indexPath.row+1]] objectAtIndex:1];
     cell.textFieldCarLicencePlate.text = [[[[CAUser sharedUser] arrayCar]  valueForKey:[NSString stringWithFormat:@"car%dDetails",indexPath.row+1]]  objectAtIndex:2];
@@ -1009,6 +1036,7 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
     CACarCollectionViewCell *cell = (CACarCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
     [(UITextField *)textFieldTripDetails[4] setText:cell.textFieldcarName.text];
         [(UITextField *)textFieldTripDetails[5] setText:cell.textFieldCarLicencePlate.text];
+    imageCar = [cell.buttonCar backgroundImageForState:UIControlStateNormal];
     [self.view endEditing:YES];
 }
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section

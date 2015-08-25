@@ -13,7 +13,7 @@
 @synthesize name;
 @synthesize description;
 @synthesize latitude;
-@synthesize longitude;
+@synthesize longitude,imageName,phoneNumber,email;
 
 - (void) dealloc
 {

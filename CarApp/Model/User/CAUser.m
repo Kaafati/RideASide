@@ -13,6 +13,26 @@ static CAUser *_user = nil;
 
 @implementation CAUser
 
++(CAUser*)sharedUser{
+    
+    @synchronized([CAUser class]) {
+        
+        return _user?_user:[[self alloc] init];
+        
+    }
+    return nil;
+}
+
++(CAUser *)userWithDetails:(NSDictionary *) userDetails{
+    
+    @synchronized([CAUser class]) {
+        [CAUser saveLoggedUser:userDetails];
+        _user=[[self alloc] initWithUserDetails:userDetails];
+        return _user;
+        
+    }
+    return nil;
+}
 +(void)logout{
     _user = nil;
 }
@@ -57,6 +77,7 @@ static CAUser *_user = nil;
     self.car_licence_num3 = dictionary[@"car_licence_num3"];
     self.visibility = dictionary[@"visibility"];
     self.smoker = dictionary[@"smoker"];
+    self.facebook_id = dictionary[@"facebook_id"];
 //   __block NSMutableDictionary *array = [NSMutableDictionary new];
 //   [@[dictionary[@"car_name1"],dictionary[@"car_name1"],dictionary[@"car_name1"]] enumerateObjectsUsingBlock:^(NSString * obj, NSUInteger idx, BOOL *stop) {
 //       [array setObject:@[dictionary[@"car_image1"],obj,dictionary[@"car_licence_num1"]] forKey:[NSString stringWithFormat:@"car%dDetails",idx+1]];
@@ -215,26 +236,7 @@ static CAUser *_user = nil;
 
 }
 
-+(CAUser*)sharedUser{
-    
-    @synchronized([CAUser class]) {
-        
-        return _user?_user:[[self alloc] init];
-        
-    }
-    return nil;
-}
 
-+(CAUser *)userWithDetails:(NSDictionary *) userDetails{
-    
-    @synchronized([CAUser class]) {
-        [CAUser saveLoggedUser:userDetails];
-        _user=[[self alloc] initWithUserDetails:userDetails];
-        return _user;
-        
-    }
-    return nil;
-}
 
 +(void)loginWithUsername:(NSString *)username password:(NSString *)password withCompletionBlock:(void (^)(BOOL,  CAUser *, NSError*))completionBlock{
     
@@ -655,5 +657,18 @@ if (self.car_image2) {
     [[NSUserDefaults standardUserDefaults] setObject:data forKey:kLoggeduserdetails];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
++(void)connectWithFacebookWithUserId:(NSString *)userId andFacebookId:(NSString *)facebookId WithCompletionBlock:(void (^)(BOOL, NSError*))completionBlock
+{
+    //http://sicsglobal.com/projects/App_projects/rideaside/connect_with_fb.php?userId=5&fbId=254689422
+    NSMutableData *body=[NSMutableData postData];
+    [body addValue:userId forKey:@"userId"];
+    [body addValue:facebookId forKey:@"fbId"];
+    [CAServiceManager fetchDataFromService:@"connect_with_fb.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error){
+        success ? [result[@"result"] isEqualToString:@"success"] ? completionBlock(YES,nil) : completionBlock(NO,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:result[@"Message"]?result[@"Message"]:result[@"error"]}]) : completionBlock(NO,error);
+        
+    }];
+
+}
+
 
 @end
