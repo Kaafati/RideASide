@@ -12,19 +12,19 @@
 #import "MFSideMenu.h"
 
 @interface CAContainerViewController (){
-    NSArray *allViewControllers;
 }
 
 @end
 
 @implementation CAContainerViewController
-
+@synthesize allViewControllers;
 - (void)viewDidLoad {
     [super viewDidLoad];
+     
     CASignUpViewController *signUpViewController=[self.storyboard instantiateViewControllerWithIdentifier:kSignUpStoryboard];
     CATripsViewController *tripsViewController=[self.storyboard instantiateViewControllerWithIdentifier:kTripListStoryBoard];
     [self setupMenuBarButtonItems];
-  
+   
       allViewControllers = @[signUpViewController,tripsViewController];
       [self cycleFromViewController:self.childViewControllers[0] toViewController:allViewControllers[0]];
     
@@ -74,8 +74,9 @@
 - (void) cycleFromViewController: (UIViewController*) oldC
                 toViewController: (UIViewController*) newC
 {
-    //viewcontroller switching
+        //viewcontroller switching
     [oldC willMoveToParentViewController:nil];
+    
     [self.childViewControllers enumerateObjectsUsingBlock:^(UIViewController *obj, NSUInteger idx, BOOL *stop) {
         [obj willMoveToParentViewController:nil];
     }];
@@ -83,7 +84,13 @@
     [self addChildViewController:newC];
     
     newC.view.frame = oldC.view.frame;                       // 2
-    
+    if ([newC isKindOfClass:[CATripsViewController class]]) {
+        
+        CATripsViewController *tripViewController = (CATripsViewController *)newC;
+        [tripViewController.tableViewTrip setFrame:CGRectMake(0, 0, tripViewController.view.frame.size.width, tripViewController.view.frame.size.height)];
+        
+    }
+
     [self transitionFromViewController: oldC toViewController: newC   // 3
                               duration: 0 options:0
                             animations:^{

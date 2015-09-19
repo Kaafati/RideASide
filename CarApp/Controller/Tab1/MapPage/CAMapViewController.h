@@ -11,6 +11,8 @@
 #import "CAMapAnnotationView.h"
 @interface CAMapViewController : UIViewController
 @property(nonatomic,strong)CATrip *trips;
+@property BOOL isFromTripDetails;
+@property(nonatomic,strong)NSMutableArray *arrayPendingTrips;
 @property (strong, nonatomic) IBOutlet UIView *viewAnnotation;
 @property (strong, nonatomic) IBOutlet UIImageView *imageAnotation;
 @property (strong, nonatomic) IBOutlet CAMapAnnotationView *mapViewAnnotation;

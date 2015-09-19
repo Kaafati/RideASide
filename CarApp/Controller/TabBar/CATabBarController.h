@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface CATabBarController : UITabBarController
+-(void)setMoreNavigationViewControllerUI;
 
 @end

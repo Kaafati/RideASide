@@ -49,6 +49,7 @@ static CAUser *_user = nil;
     return self;
 }
 
+
 -(void)setValueInObject:(NSDictionary *)dictionary
 {
     self.userId=dictionary[@"UserId"]?dictionary[@"UserId"]:self.userId;

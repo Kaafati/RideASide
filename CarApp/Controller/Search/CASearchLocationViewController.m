@@ -59,8 +59,10 @@
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
     searchQuery.input = searchBar.text;
+    [SVProgressHUD show];
     [searchQuery fetchPlaces:^(NSArray *places, NSError *error) {
         
+            [SVProgressHUD dismiss];
         if (error) {
             SPPresentAlertViewWithErrorAndTitle(error, @"Could not fetch Places");
         }

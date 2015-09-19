@@ -11,5 +11,5 @@
 @interface CAProfileAndRatingViewController : UIViewController
 @property(nonatomic,strong)NSString *userId;
 @property(nonatomic,strong)NSString *userName;
-
+@property (nonatomic,strong)NSString *faceBookIDFromCollection;
 @end

@@ -40,12 +40,12 @@
         MKCoordinateSpan span = MKCoordinateSpanMake(0.005, 0.005);
         MKCoordinateRegion region = MKCoordinateRegionMake(mapView.userLocation.location.coordinate, span);
         
-        [mapView setRegion:region];
         
         [mapView setCenterCoordinate:mapView.userLocation.coordinate animated:YES];
 		self.lineColor = [UIColor greenColor];
         
-        [mapView setRegion:region];
+        [mapView setRegion:region animated:YES];
+
         
 
         
@@ -54,6 +54,18 @@
 	return self;
 }
 
+- (void)mapView:(MKMapView *)aMapView didUpdateUserLocation:(MKUserLocation *)aUserLocation {
+    MKCoordinateRegion region;
+    MKCoordinateSpan span;
+    span.latitudeDelta = 0.005;
+    span.longitudeDelta = 0.005;
+    CLLocationCoordinate2D location;
+    location.latitude = aUserLocation.coordinate.latitude;
+    location.longitude = aUserLocation.coordinate.longitude;
+    region.span = span;
+    region.center = location;
+    [aMapView setRegion:region animated:YES];
+}
 - (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id <MKOverlay>)overlay {
     MKPolylineView *polylineView = [[MKPolylineView alloc] initWithPolyline:overlay];
     polylineView.strokeColor = [UIColor colorWithRed:204/255. green:45/255. blue:70/255. alpha:1.0];
@@ -245,7 +257,40 @@
         viewAnnotation.hidden =  selectedAnnotation.place.tag == 0 ? NO : YES;
         
          [mapView deselectAnnotation:[view annotation] animated:NO];
+     
+        if ((selectedAnnotation.place.userId.length) && selectedAnnotation.place.tag == 0 ) {
+        @try {
+            
+            NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL( id evaluteObject, NSDictionary *bindings) {
+                return [evaluteObject isKindOfClass:[MKPinAnnotationView class]];
+            }];
+            
+         
+            [[[[view superview] subviews] filteredArrayUsingPredicate:predicate] enumerateObjectsUsingBlock:^(MKPinAnnotationView *obj, NSUInteger idx, BOOL *stop) {
+                
+                
+                    
+                    if (((PlaceMark *)obj.annotation).place.userId.length && selectedAnnotation != ((PlaceMark *)obj.annotation)) {
+                        PlaceMark *placeToBeHidden = (PlaceMark *)obj.annotation;
+                        Place *place = placeToBeHidden.place;
+                        placeToBeHidden.place.tag = 0;
+                        [(UIView *)obj.subviews[1] setHidden:YES];
+                        [mapView deselectAnnotation:[obj annotation] animated:NO];
+                    
+
+                }
+                
+            }];
+        }
+        @catch (NSException *exception) {
+            
+        }
+        @finally {
+            
+        }
+        }
         
+
         
         selectedAnnotation.place.tag = selectedAnnotation.place.tag == 0 ?  1 : 0;
         

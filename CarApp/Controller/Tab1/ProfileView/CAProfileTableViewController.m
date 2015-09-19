@@ -211,12 +211,21 @@
 }
 - (IBAction)buttonSubmitReview:(UIButton *)sender {
     
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSDate *date = [dateFormatter dateFromString:trip.date];
+    
+   
     [arrayTextFieldRating enumerateObjectsUsingBlock:^(UITextField * textField, NSUInteger idx, BOOL *stop) {
         
         if (!textField.text.length) {
             [[[UIAlertView alloc] initWithTitle:@"" message:@"Please fill all the field" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
             *stop = YES;
 
+        }
+        else if ([date timeIntervalSinceNow] > 0.0) {
+            [[[UIAlertView alloc] initWithTitle:@"" message:@"The trip is not completed" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+            *stop = YES;
         }
         else if(idx == arrayTextFieldRating.count-1)
         {

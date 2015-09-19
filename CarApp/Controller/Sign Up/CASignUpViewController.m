@@ -19,7 +19,8 @@
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FacebookSDK/FacebookSDK.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-
+#import "CAFacebookPicturesCollectionViewController.h"
+#import "CAProtocol.h"
 typedef NS_ENUM(NSInteger, ButtonSelection) {
     buttonCar1,
     buttonCar2,
@@ -27,7 +28,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
     profileButton
 };
 
-@interface CASignUpViewController ()<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIActionSheetDelegate, UITextViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource,UIAlertViewDelegate>
+@interface CASignUpViewController ()<UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIActionSheetDelegate, UITextViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource,UIAlertViewDelegate,CAProtocolFacebookPicture>
 {
     IBOutlet UIButton *buttonConnectWithFacebook;
     IBOutlet TPKeyboardAvoidingScrollView *scrollViewCar;
@@ -53,6 +54,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
     NSArray *arraycarMakes,*arraycarModels;
     NSString *stringCarMakes,*stringCarModels;
     UITextField *activeTextField;
+    BOOL isFromFacebookProfilePicture;
 }
 
 @end
@@ -129,7 +131,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
             
         }];
         NSDictionary *params = @{
-                                 @"fields": @"context.fields(mutual_friends),birthday,gender,education,work",
+                                 @"fields": @"context.fields(mutual_friends),birthday,gender,education,work,albums,name,picture.width(100).height(100)",
                                  };
         //  /* make the API call */
         
@@ -142,6 +144,10 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
                                               id result,
                                               NSError *error) {
             NSLog(@"result %@",result);
+            NSArray *filtered = [[result valueForKeyPath:@"albums.data"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"name == %@", @"Profile Pictures"]];
+            
+            
+            
             NSDictionary *params2 = @{
                                      @"fields": @"gender,birthday",
                                      };
@@ -155,8 +161,29 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
                 [SVProgressHUD showSuccessWithStatus:@"Success"];
                 [SVProgressHUD dismiss];
                 NSLog(@"result %@",result);
-                [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
- 
+                [buttonConnectWithFacebook setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+                
+                
+                FBSDKGraphRequest *requestFacebookAlbum = [[FBSDKGraphRequest alloc] initWithGraphPath:[filtered valueForKey:@"id"][0] parameters:@{@"fields":@"photos{picture.width(200).height(200)}"} HTTPMethod:@"GET"];
+                
+                [requestFacebookAlbum startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                    
+                    NSArray *arrayFaceBookProfilePictures = [result valueForKeyPath:@"photos.data.picture"];
+                    [CAUser sharedUser].arrayFacebookProfilePicture = arrayFaceBookProfilePictures;
+
+                    isFromFacebookProfilePicture ? (
+                                                    {
+                                                        CAFacebookPicturesCollectionViewController *facebookPictureViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CAFacebookPicturesCollectionViewController"];
+                                                        facebookPictureViewController.arrayProfilePictures = [CAUser sharedUser].arrayFacebookProfilePicture;
+                                                        facebookPictureViewController.delegateFacebookProfilePicture = (id<CAProtocolFacebookPicture>)self;
+                                                        [self.navigationController pushViewController:facebookPictureViewController animated:YES];
+                                                    }
+                                                    ) : nil;
+                    
+                }];
+                
+               
+                
                 // Handle the result
             }];
 
@@ -170,7 +197,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
         
         FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
         
-        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends",@"user_about_me",@"user_work_history",@"user_birthday",@"user_education_history"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
+        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends",@"user_about_me",@"user_work_history",@"user_birthday",@"user_education_history",@"user_photos"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
          
          
          {
@@ -179,17 +206,14 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
              
              if (error)
              {
-                 [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
-                 [CAUser connectWithFacebookWithUserId:[CAUser sharedUser].userId andFacebookId:[FBSDKAccessToken currentAccessToken].userID WithCompletionBlock:^(BOOL success, NSError *error) {
-                     [SVProgressHUD dismiss];
-                 }];
+                 
 
                  // Process error
              }
              else if (result.isCancelled)
              {
                   [SVProgressHUD dismiss];
-                 [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+                 [buttonConnectWithFacebook setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
 
                  // Handle cancellations
              }
@@ -198,7 +222,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
                  
                  ///me/mutualfriends/[OTHER ID]/?fields=name,picture
                  NSDictionary *params = @{
-                                          @"fields": @"context.fields(mutual_friends)",@"fields":@"education",
+                                          @"fields": @"context.fields(mutual_friends)",@"fields":@"education,albums,name,picture.width(100).height(100)}",
                                           };
                  /* make the API call */
                  
@@ -211,8 +235,36 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
                                                        NSError *error) {
                                      [SVProgressHUD dismiss];
                      NSLog(@"result %@",result);
-                     [sender setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+                     [buttonConnectWithFacebook setTitle:[FBSDKAccessToken currentAccessToken] ? @"Connected With Facebook" : @"Connect With Facebook" forState:UIControlStateNormal];
+                     
+                     NSArray *filtered = [[result valueForKeyPath:@"albums.data"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"name == %@", @"Profile Pictures"]];
+                     NSArray *arrayFaceBookProfilePictures = [[filtered valueForKeyPath:@"photos.data"] objectAtIndex:0];
+                     
+                     FBSDKGraphRequest *requestFacebookAlbum = [[FBSDKGraphRequest alloc] initWithGraphPath:[filtered valueForKey:@"id"][0] parameters:@{@"fields":@"photos{picture.width(200).height(200)}"} HTTPMethod:@"GET"];
+                     
+                     [requestFacebookAlbum startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                         
+                         NSArray *arrayFaceBookProfilePictures = [result valueForKeyPath:@"photos.data.picture"];
+                         [CAUser sharedUser].arrayFacebookProfilePicture = arrayFaceBookProfilePictures;
+                         isFromFacebookProfilePicture ? (
+                                                         {
+                                                             CAFacebookPicturesCollectionViewController *facebookPictureViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CAFacebookPicturesCollectionViewController"];
+                                                             facebookPictureViewController.arrayProfilePictures = [CAUser sharedUser].arrayFacebookProfilePicture;
+                                                             facebookPictureViewController.delegateFacebookProfilePicture = (id<CAProtocolFacebookPicture>)self;
+                                                             [self.navigationController pushViewController:facebookPictureViewController animated:YES];
+                                                         }
+                                                         ) : nil;
+                         
+                     }];
 
+                     
+                     
+                     [CAUser sharedUser].arrayFacebookProfilePicture = arrayFaceBookProfilePictures;
+                     
+                     [CAUser connectWithFacebookWithUserId:[CAUser sharedUser].userId andFacebookId:[FBSDKAccessToken currentAccessToken].userID WithCompletionBlock:^(BOOL success, NSError *error) {
+                         [SVProgressHUD dismiss];
+                     }];
+                     
                      
                      // Handle the result
                  }];
@@ -322,7 +374,16 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
     }
     else{ //Sign Up
         [textFieldSignUp[4] setHidden:YES];
+        [textFieldSignUp[4] setInputView:[self setPickerView]];
+        [textFieldSignUp[4] setInputAccessoryView:[self setPickerToolBar]];
+        [textFieldSignUp[5] setInputView:[self setPickerView]];
+        [textFieldSignUp[5] setInputAccessoryView:[self setPickerToolBar]];
         self.title = @"Register";
+        [arrayTextFieldCarName enumerateObjectsUsingBlock:^(UITextField* textField, NSUInteger idx, BOOL *stop) {
+            textField.inputView = pickerViewVehicle;
+            textField.inputAccessoryView = [self setPickerToolBar];
+            
+        }];
         [profileImage setBackgroundImage:[UIImage imageNamed:@"placeholder"] forState:UIControlStateNormal];
         [profileImage setBackgroundImage:[UIImage imageNamed:@"placeholder"] forState:UIControlStateSelected];
         //        [profileImage setTitle:@"Add" forState:UIControlStateNormal];
@@ -489,7 +550,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
             break;
     }
     UIActionSheet *actionSheet = [[UIActionSheet alloc]
-                                  initWithTitle:@""
+                                  initWithTitle:@"Car Photos"
                                   delegate:self
                                   cancelButtonTitle:@"Cancel"
                                   destructiveButtonTitle:nil
@@ -659,16 +720,14 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
     if (pickerView == pickerViewVehicle) {
-        if (component==0) {
-            stringCarMakes = arraycarMakes[row];
-            
-        }
-        else
-        {
-            stringCarModels =arraycarModels[row];
-            
-        }
-        textFiledActive.text = [NSString stringWithFormat:@"%@-%@",stringCarMakes,stringCarModels] ;
+//        component == 0 ? ({
+//            
+//            
+//            stringCarMakes = arraycarMakes[row];
+//        }) :({stringCarModels =arraycarModels[row];
+//});
+//       
+//        textFiledActive.text = [NSString stringWithFormat:@"%@-%@",stringCarMakes,stringCarModels] ;
         return component==0 ? arraycarMakes[row] : arraycarModels[row];
 
     }
@@ -685,13 +744,16 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
         if (component==0) {
             arraycarModels  =[[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Cars" ofType:@"plist"]] valueForKeyPath:[NSString stringWithFormat:@"CarMakes.%@",arraycarMakes[row]]];
             [pickerView reloadAllComponents];
+            
         }
+         textFiledActive.text = [NSString stringWithFormat:@"%@-%@",[arraycarMakes objectAtIndex:[pickerView selectedRowInComponent:0]],[arraycarModels objectAtIndex:[pickerView selectedRowInComponent:1]]] ;
     }
     else
     {
     [textFieldSignUp[5] isFirstResponder] ?  [(UITextField *) textFieldSignUp[5] setText:smokeStatus[row]] : [(UITextField *) textFieldSignUp[4] setText:category[row]];
     [textFieldSignUp[5] isFirstResponder] && row == 0 ? [(UIImageView *)[[(UITextField *) textFieldSignUp[5] leftView] subviews][0] setImage:[UIImage imageNamed:@"nosmoke"]] : [textFieldSignUp[5] isFirstResponder] && row == 1 ? [(UIImageView *)[[(UITextField *) textFieldSignUp[5] leftView] subviews][0] setImage:[UIImage imageNamed:@"smoke"]] : nil;
     }
+    
 }
 
 #pragma mark Textfield Delegates
@@ -786,11 +848,11 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
 -(void)profileImageButtonAction{
     [textFiledActive resignFirstResponder];
     UIActionSheet *actionSheet = [[UIActionSheet alloc]
-                                  initWithTitle:@"Share"
+                                  initWithTitle:@"Profile Picture"
                                   delegate:self
                                   cancelButtonTitle:@"Cancel"
                                   destructiveButtonTitle:nil
-                                  otherButtonTitles:@"Camera",@"Gallery", nil];
+                                  otherButtonTitles:@"Camera",@"Gallery",@"Facebook Profile Pictures", nil];
     
     [actionSheet showInView:[UIApplication sharedApplication].keyWindow];
     carSelection = profileButton;
@@ -809,6 +871,7 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
+    
     switch (buttonIndex)
     {
         case 0:
@@ -818,6 +881,27 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
             [self showCamera:buttonIndex];
             break;
         case 2:
+        {
+            if ([actionSheet.title isEqualToString:@"Profile Picture"] ) {
+                if ([CAUser sharedUser].arrayFacebookProfilePicture) {
+                    CAFacebookPicturesCollectionViewController *facebookPictureViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CAFacebookPicturesCollectionViewController"];
+                    facebookPictureViewController.arrayProfilePictures = [CAUser sharedUser].arrayFacebookProfilePicture;
+                    facebookPictureViewController.delegateFacebookProfilePicture = (id<CAProtocolFacebookPicture>)self;
+                    [self.navigationController pushViewController:facebookPictureViewController animated:YES];
+                }
+                
+                
+                else
+                {
+                    isFromFacebookProfilePicture = YES;
+                    [self performSelector:@selector(buttonConnectWithFaceBook:) withObject:nil];
+                }
+
+            }
+            
+            
+            
+        }
             break;
             
         default:
@@ -835,7 +919,15 @@ typedef NS_ENUM(NSInteger, ButtonSelection) {
     
 }
 
-#pragma UIImagePickerController Delegate
+#pragma mark-facebookImagePickerDelegate
+
+-(void)facebookPicturesDidFinishPickingImage:(UIImage *)image
+{
+    [profileImage setBackgroundImage:image forState:UIControlStateNormal];
+    
+}
+
+#pragma mark -UIImagePickerController Delegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     UIImage *selectedImage = [info objectForKey:UIImagePickerControllerOriginalImage];
 

@@ -25,6 +25,16 @@
     [_imageCar.layer setBorderColor:[UIColor whiteColor].CGColor];
     [_imageCar.layer setBorderWidth:2];
 
+    _imageViewTripCar.layer.cornerRadius = _imageViewTripCar.frame.size.width / 2;
+    _imageViewTripCar.clipsToBounds = YES;
+    [_imageViewTripCar.layer setBorderColor:[UIColor whiteColor].CGColor];
+    [_imageViewTripCar.layer setBorderWidth:2];
+    
+    _imageviewTripUser.layer.cornerRadius = _imageviewTripUser.frame.size.width / 2;
+    _imageviewTripUser.clipsToBounds = YES;
+    [_imageviewTripUser.layer setBorderColor:[UIColor whiteColor].CGColor];
+    [_imageviewTripUser.layer setBorderWidth:2];
+    
    _rateView= [[DYRateView alloc] initWithFrame:CGRectMake(0, _mapViewAnnotationView.frame.size.height-80, _mapViewAnnotationView.bounds.size.width, 40)];
     _rateView.alignment = RateViewAlignmentCenter;
     [_mapViewAnnotationView addSubview:_rateView];

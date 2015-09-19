@@ -68,6 +68,7 @@
     if ([[NSUserDefaults standardUserDefaults]objectForKey:kLoggeduserdetails])
     {
         NSDictionary *userDetails = [NSKeyedUnarchiver unarchiveObjectWithData:(NSData *)[[NSUserDefaults standardUserDefaults] objectForKey:kLoggeduserdetails]];
+        
         [CAUser userWithDetails:userDetails];
         
         [self setInitialMapView];
@@ -104,6 +105,8 @@
                                                     leftMenuViewController:leftMenuViewController
                                                     rightMenuViewController:nil];
     self.window.rootViewController = container;
+    [tabView setSelectedIndex:2] ;
+
 }
 
 -(void)didLogout{

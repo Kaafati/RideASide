@@ -26,6 +26,7 @@
 @property(nonatomic,strong)NSArray *othersLocation;
 @property(nonatomic,strong)NSArray *contacts;
 @property(nonatomic,strong)NSArray *arrayCar;
+@property(nonatomic,strong)NSArray *arrayFacebookProfilePicture;
 @property(nonatomic,strong)id car_image1;
 @property(nonatomic,strong)NSString *car_name1;
 @property(nonatomic,strong)NSString *car_licence_num1;

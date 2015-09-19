@@ -157,7 +157,7 @@ static CGFloat messageTextSize = 17.0f;
 - (void)setUpTapGestureToShowPicture:(UITapGestureRecognizer *)gestureRecognizer {
     [_cellDelegate didTapImage:((UIImageView *)gestureRecognizer.view).image];
 }
-
+ 
 #pragma mark TapMenu
 - (void)handleLongPress:(UILongPressGestureRecognizer *)longPressRecognizer {
     /*When a LongPress is recognized, the copy-menu will be displayed.*/

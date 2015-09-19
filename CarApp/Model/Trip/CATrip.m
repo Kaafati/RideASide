@@ -30,9 +30,12 @@
             self.TollBooth=dictionary[@"TollBooth"];
             self.TotalKilometer=dictionary[@"TotalKilometer"];
             self.Vehicle=dictionary[@"Vehicle"];
-            self.SeatsAvailable=dictionary[@"SeatsAvailable"];
+            self.SeatsAvailable= dictionary[@"SeatsAvailable"];
             self.date=[[NSDate alloc]changeServerTimeZoneToLocalForDate:dictionary[@"DateTime"]];
+            self.alertDate = dictionary[@"AlertDate"] ? dictionary[@"AlertDate"] : dictionary[@"Alert_date"];
             self.startPlaceLocation=dictionary[@"startPlaceLocation"];
+            NSLog(@"self.startPlaceLocation %@",self.startPlaceLocation);
+            NSLog(@"asdfas%f",self.startPlaceLocation.coordinate.latitude);
             self.email = [CAUser sharedUser].emailId;
             self.endPlaceLocation=dictionary[@"endPlaceLocation"];
             self.name=[CAUser sharedUser].userName;
@@ -50,6 +53,8 @@
             self.facebookId = dictionary[@"facebook_id"];
             self.latitude = dictionary[@"latitude"] ;
             self.longitude = dictionary[@"longitude"];
+            self.dateTripAlert = [self getDateFromString:self.alertDate];
+            
         }
         else
         {
@@ -82,45 +87,46 @@
         self.longitude = dictionary[@"longitude"];
             self.rateValue = dictionary[@"Rating"];
             self.facebookId = dictionary[@"facebook_id"];
-
+            self.alertDate = dictionary[@"AlertDate"] ? dictionary[@"AlertDate"] : dictionary[@"Alert_date"];;
+            self.date = dictionary[@"DateTime"];
+            self.dateTripAlert = [self getDateFromString:self.alertDate];
         }
         if ([[dictionary objectForKey:@"joinees"] isKindOfClass:[NSArray class]]) {
             if ([[dictionary objectForKey:@"joinees"] count]) {
                 NSMutableArray *arrayUser = [NSMutableArray new];
                 [[dictionary objectForKey:@"joinees"] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                     
-                    
-                    CAUser *joinees =  [[CAUser alloc] init];
-                    joinees.userId=self.UserId;
-                    joinees.userName=self.name;
-                    joinees.emailId=self.email;
-                    joinees.phoneNumber=self.phoneNumber;
-                    joinees.profile_ImageName=self.imageName;
-                    joinees.latitude= self.latitude;
-                    joinees.longitude=self.longitude;
-                    joinees.category = self.category;
-                    joinees.car_image1 = self.carImageName;
-                    NSLog(@"%@",joinees.car_image1);
-                    joinees.car_name1 = self.Vehicle;
-                    joinees.car_licence_num1 = self.vehicleNumber;
-                    joinees.rateValue = self.rateValue;
-                    joinees.facebook_id = self.facebookId;
-                    [arrayUser addObject:joinees];
-                    if ([[dictionary objectForKey:@"joinees"] count]) {
+                    if (idx==0) {
                         CAUser *joinees =  [[CAUser alloc] init];
-                        joinees.userId=obj[@"joine_id"];
-                        joinees.userName=obj[@"joinee_name"];
-                        joinees.emailId=obj[@"joinee_email"];
-                        joinees.phoneNumber=obj[@"joinee_mobile"];
-                        joinees.profile_ImageName=obj[@"joinee_image"];
-                        joinees.latitude=obj[@"lattitude"];
-                        joinees.longitude=obj[@"longitude"];
-                        joinees.category = obj[@"category"];
-                        joinees.rateValue = obj[@"joinee_rating"];
-                        joinees.facebook_id = obj[@"joinee_facebook_id"];
+                        joinees.userId=self.UserId;
+                        joinees.userName=self.name;
+                        joinees.emailId=self.email;
+                        joinees.phoneNumber=self.phoneNumber;
+                        joinees.profile_ImageName=self.imageName;
+                        joinees.latitude= self.latitude;
+                        joinees.longitude=self.longitude;
+                        joinees.category = self.category;
+                        joinees.car_image1 = self.carImageName;
+                        NSLog(@"%@",joinees.car_image1);
+                        joinees.car_name1 = self.Vehicle;
+                        joinees.car_licence_num1 = self.vehicleNumber;
+                        joinees.rateValue = self.rateValue;
+                        joinees.facebook_id = self.facebookId;
                         [arrayUser addObject:joinees];
-                        
                     }
+                    CAUser *joineesOther =  [[CAUser alloc] init];
+                    joineesOther.userId=obj[@"joine_id"];
+                    joineesOther.userName=obj[@"joinee_name"];
+                    joineesOther.emailId=obj[@"joinee_email"];
+                    joineesOther.phoneNumber=obj[@"joinee_mobile"];
+                    joineesOther.profile_ImageName=obj[@"joinee_image"];
+                    joineesOther.latitude=obj[@"lattitude"];
+                    joineesOther.longitude=obj[@"longitude"];
+                    joineesOther.category = obj[@"category"];
+                    joineesOther.rateValue = obj[@"joinee_rating"];
+                    joineesOther.facebook_id = obj[@"joinee_facebook_id"];
+                    [arrayUser addObject:joineesOther];
+
                     
                 }];
                 self.arrayJoinees = arrayUser.mutableCopy;
@@ -152,6 +158,12 @@
         
     }
     return self;
+}
+-(NSDate *)getDateFromString:(NSString *)stringDate
+{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"yyyy-mm-dd HH:mm:ss"];
+return  [formatter dateFromString:stringDate];
 }
 
 -(void)getTripDetailswithPath:(NSString *)path withSearchString:(NSString *)searchString withIndex:(NSInteger)index withMiles:(NSInteger)milesIndex withOptionForTripDetailIndex:(NSUInteger)indexOfTripDetailIndex withCompletionBlock:(void (^)(BOOL,id,id, NSError*))completionBlock
@@ -214,14 +226,18 @@
     
     NSMutableData *body = [NSMutableData postData];
     [body addValue:[CAUser sharedUser].userId forKey:@"UserId"];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 
+    [body addValue:[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]] forKey:@"date"];
+    [body addValue:index forKey:@"index"];
     [CAServiceManager fetchDataFromService:path withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
      {
          if(success)
          {
-             if ([result[@"Result"] isEqualToString:@"Success"])
+             if ([result[@"status"] isEqualToString:@"success"])
              {
-                 [result[@"Details"] isKindOfClass:[NSArray class]]? completionBlock(success,[self gettTripArray:result[@"Details"]],error):  completionBlock(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Trips Not Available"}]);
+                 [result[@"result"] isKindOfClass:[NSArray class]]? completionBlock(success,[self gettTripArray:result[@"result"]],error):  completionBlock(NO,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Trips Not Available"}]);
              }
              else
              {
@@ -454,5 +470,45 @@
     
     
     return arrayReview;
+}
+
+-(void)fetchPendingTripwithCompletionBlock:(void (^)(BOOL,id,id, NSError*))completionBlock
+{
+   // http://sicsglobal.com/projects/App_projects/rideaside/available_seats.php?userId=1&date=2015-09-01%2010:20:01
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateStyle = NSDateFormatterMediumStyle;
+    
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+    NSMutableData *body = [NSMutableData postData];
+    [body addValue:[CAUser sharedUser].userId forKey:@"userId"];
+       [body addValue:[CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]] forKey:@"date"];
+    
+    
+    NSLog(@"Url %@",[NSString stringWithFormat:@"http://sicsglobal.com/projects/App_projects/rideaside/available_seats.php?userId=%@&date=%@",[CAUser sharedUser].userId,
+                    [CATrip changeLocalTimeZoneToServerForDate:[dateFormatter stringFromDate:[NSDate date]]]]);
+    [CAServiceManager fetchDataFromService:@"available_seats.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
+     {
+         NSLog(@"resulr  %@",result);
+         if(success)
+         {
+             if ([result[@"status"] isEqualToString:@"success"])
+             {
+                 // NSLog(@"Rsult trip list %@",result);
+                 
+                 [result[@"result"] isKindOfClass:[NSArray class]]? completionBlock(success,[self gettTripArray:result[@"result"]],[self gettTripArray:result[@"created_rides"]],error):  completionBlock(NO,nil,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Trips Not Available"}]);
+             }
+             else
+             {
+                 
+                 [result[@"created_rides"] isKindOfClass:[NSArray class]] && [result[@"created_rides"] count] ?  completionBlock(success,nil,[self gettTripArray:result[@"created_rides"]],error) :completionBlock(NO,nil,nil,[NSError errorWithDomain:@"" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Post Not Available"}]);
+             }
+         }
+         else{
+             
+             completionBlock(success,nil,nil,error);
+         }
+         
+     }];
 }
 @end

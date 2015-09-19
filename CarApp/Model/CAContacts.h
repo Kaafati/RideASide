@@ -12,6 +12,7 @@
 @interface CAContacts : NSObject
 @property (nonatomic,strong) NSString *firstName;
 @property (nonatomic,strong) NSString *lastName;
+@property (nonatomic,strong) NSString *fullName;
 @property (nonatomic,strong) NSString *phoneNumber;
 @property (nonatomic,strong) UIImage *image;
 @property BOOL isContactSelected;

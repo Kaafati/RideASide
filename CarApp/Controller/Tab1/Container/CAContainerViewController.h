@@ -9,5 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface CAContainerViewController : UIViewController
+- (void) cycleFromViewController: (UIViewController*) oldC
+                toViewController: (UIViewController*) newC;
+@property(nonatomic,strong) NSArray *allViewControllers;
+- (IBAction)SwitchToViewController:(UISegmentedControl *)sender;
 
 @end

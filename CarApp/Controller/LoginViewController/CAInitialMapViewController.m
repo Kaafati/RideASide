@@ -28,7 +28,14 @@
     [initialMapVw setDelegate:self];
     [self addAnnotation];
     [self zoomToWorldAnimated:YES];
-    [self performSelector:@selector(pushToMainViewController) withObject:Nil afterDelay:6];
+    UIButton *buttonSkip = [[UIButton alloc] initWithFrame:CGRectMake( initialMapVw.frame.size.width - 5  - initialMapVw.frame.size.width/6  , initialMapVw.frame.size.height-35, initialMapVw.frame.size.width/6, 30)];
+    [buttonSkip setTitle:@"Skip" forState:UIControlStateNormal];
+    [buttonSkip setBackgroundColor:[UIColor colorWithRed:25/255.0 green:124/255.0 blue:204/255.0 alpha:1]];
+    buttonSkip.layer.cornerRadius = 10;
+    buttonSkip.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    [initialMapVw addSubview:buttonSkip];
+    [buttonSkip addTarget:self action:@selector(pushToMainViewController) forControlEvents:UIControlEventTouchUpInside];
+  //  [self performSelector:@selector(pushToMainViewController) withObject:Nil afterDelay:6];
     // Do any additional setup after loading the view.
 }
 

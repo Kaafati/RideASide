@@ -275,7 +275,7 @@
         [SVProgressHUD showWithStatus:@"Signing up..." maskType:SVProgressHUDMaskTypeBlack];
 
         NSDictionary *params = @{
-                                 @"fields": @"context.fields(mutual_friends),birthday,gender,education,work,email,id,name,picture.width(200).height(200)",
+                                 @"fields": @"context.fields(mutual_friends),birthday,gender,education,work,email,id,name,picture.width(200).height(200),albums{photos,name,profile_pictures,picture.width(100).height(100)}",
                                  };
         //  /* make the API call */
         
@@ -292,10 +292,21 @@
                 
                 NSLog(@"result %@",result);
                 
+                NSArray *filtered = [[result valueForKeyPath:@"albums.data"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"name == %@", @"Profile Pictures"]];
+                
+                
+                
+                
                                          [CAUser signUpWithFB:[result objectForKey:@"id"] email:[result objectForKey:@"email"] name:[result objectForKey:@"name"] profileImg:[result valueForKeyPath:@"picture.data.url"] withCompletionBlock:^(BOOL success, CAUser *signUpUser, NSError *error) {
                                              [SVProgressHUD dismiss];
                                              if (success) {
-                
+                                                 FBSDKGraphRequest *requestFacebookAlbum = [[FBSDKGraphRequest alloc] initWithGraphPath:[filtered valueForKey:@"id"][0] parameters:@{@"fields":@"photos{picture.width(200).height(200)}"} HTTPMethod:@"GET"];
+                                                 
+                                                 [requestFacebookAlbum startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                                                     
+                                                     NSArray *arrayFaceBookProfilePictures = [result valueForKeyPath:@"photos.data.picture"];
+                                                     [CAUser sharedUser].arrayFacebookProfilePicture = arrayFaceBookProfilePictures;
+                                                 }];
                                                  CAAppDelegate * appDelegate = (CAAppDelegate*)[UIApplication sharedApplication].delegate;
                                                  [appDelegate setHomePage];
                 
@@ -315,7 +326,7 @@
     else
     {
         FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends",@"user_about_me",@"user_work_history",@"user_birthday",@"user_education_history"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
+        [login logInWithReadPermissions:@[@"public_profile", @"email",@"user_friends",@"user_about_me",@"user_work_history",@"user_birthday",@"user_education_history",@"user_photos"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error)
          {
              
              [SVProgressHUD showSuccessWithStatus:@"Success"];
@@ -334,10 +345,13 @@
              {
                  ///me/mutualfriends/[OTHER ID]/?fields=name,picture
                  NSDictionary *params = @{
-                                          @"fields": @"context.fields(mutual_friends),birthday,gender,education,work,email,id,name,picture.width(200).height(200)",
+                                          @"fields": @"context.fields(mutual_friends),birthday,gender,education,work,email,id,name,picture.width(200).height(200),albums{photos,name,profile_pictures,picture.width(100).height(100)}",
+                                          
+                                          
+                                          
                                           };
                 /* make the API call */
-                 
+
                  FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc]
                                                initWithGraphPath:@"me"
                                                parameters:params
@@ -348,12 +362,23 @@
                      [SVProgressHUD dismiss];
                      if (!error) {
                          NSLog(@"result %@",result);
+                        
+                         NSArray *filtered = [[result valueForKeyPath:@"albums.data"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"name == %@", @"Profile Pictures"]];
+                         
 
                          [SVProgressHUD showWithStatus:@"Signing up..." maskType:SVProgressHUDMaskTypeBlack];
                          [CAUser signUpWithFB:[result objectForKey:@"id"] email:[result objectForKey:@"email"] name:[result objectForKey:@"name"] profileImg:[result valueForKeyPath:@"picture.data.url"] withCompletionBlock:^(BOOL success, CAUser *signUpUser, NSError *error) {
                              [SVProgressHUD dismiss];
                              if (success) {
+                                 FBSDKGraphRequest *requestFacebookAlbum = [[FBSDKGraphRequest alloc] initWithGraphPath:[filtered valueForKey:@"id"][0] parameters:@{@"fields":@"photos{picture.width(200).height(200)}"} HTTPMethod:@"GET"];
                                  
+                                 [requestFacebookAlbum startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                                     
+                                     NSArray *arrayFaceBookProfilePictures = [result valueForKeyPath:@"photos.data.picture"];
+                                     [CAUser sharedUser].arrayFacebookProfilePicture = arrayFaceBookProfilePictures;
+                                 }];
+
+
                                  CAAppDelegate * appDelegate = (CAAppDelegate*)[UIApplication sharedApplication].delegate;
                                  [appDelegate setHomePage];
                                  

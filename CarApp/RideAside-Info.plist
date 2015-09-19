@@ -30,13 +30,18 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.12</string>
+	<string>1.17</string>
 	<key>FacebookAppID</key>
 	<string>1588838464683699</string>
 	<key>FacebookDisplayName</key>
 	<string>Ride Aside</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string></string>
 	<key>NSLocationWhenInUseUsageDescription</key>

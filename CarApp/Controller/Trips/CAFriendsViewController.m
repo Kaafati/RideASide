@@ -17,6 +17,7 @@
 #import "UIButton+WebCache.h"
 #import "CAUser.h"
 #import "CAContactCell.h"
+#import "CATabBarController.h"
 @import MessageUI;
 
 @interface CAFriendsViewController ()<MFMessageComposeViewControllerDelegate>
@@ -34,21 +35,35 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+       // Do any additional setup after loading the view.
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
     self.title = @"Friends";
+    arraySelectedFriends ? [arraySelectedFriends removeAllObjects] : ({arraySelectedFriends = [NSMutableArray new]; });
+    
+    arrayTrip ? [arrayTrip removeAllObjects] :({ arrayTrip  = [NSMutableArray new];});
+    arrayAppUsers ? [arrayAppUsers removeAllObjects] : ({ arrayAppUsers = [NSMutableArray new];});
     [imageViewBackGround setImage:[UIImage imageNamed:@"background"]];
-//    [imageViewBackGround sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
-    arrayContact = [CAContacts getcontact];
-[tableViewFriends reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+    //    [imageViewBackGround sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,[CAUser sharedUser].profile_ImageName]] placeholderImage:[UIImage imageNamed:@"placeholder"]];
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"fullName" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
+    arrayContact = [[CAContacts getcontact] sortedArrayUsingDescriptors:@[sort]];
+    
+    
+    
+    [tableViewFriends reloadData];
     [self fetchtrip];
-   // NSLog(@"%@",[CAContacts getcontact]);
+    // NSLog(@"%@",[CAContacts getcontact]);
     [self setupMenuBarButtonItems];
-    arraySelectedFriends = [NSMutableArray new];
-    // Do any additional setup after loading the view.
+   
+
+
 }
 -(void)fetchtrip
 {
     CATrip *trip=[[CATrip alloc]init];
-    arrayTrip = [NSMutableArray new];
+   
     [SVProgressHUD show];
     [trip getTripDetailswithPath:@"view_trip.php" withSearchString:@"" withIndex:0 withMiles:40 withOptionForTripDetailIndex:0  withCompletionBlock:^(BOOL success, id result,id result2, NSError *error) {
         [self fetchAppUsers];
@@ -59,15 +74,14 @@
                 [arrayTrip addObject:obj];
             }];
         }
-        [tableViewFriends reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [tableViewFriends reloadData];
         
     }];
 
 }
 -(void)fetchAppUsers
 {
-    arrayAppUsers = [NSMutableArray new];
-    [CAUser listTheAppUserwithCompletionBlock:^(bool success, id result, NSError * error) {
+       [CAUser listTheAppUserwithCompletionBlock:^(bool success, id result, NSError * error) {
         NSLog(@"result %@",result);
 
         [SVProgressHUD dismiss];
@@ -78,7 +92,7 @@
                 [arrayAppUsers addObject:obj];
             }];
         }
-         [tableViewFriends reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [tableViewFriends reloadData];
     }];
 //    [trip getTripDetailswithPath:@"view_all_trip.php" withSearchString:@"" withIndex:0 withOptionForTripDetailIndex:0 withCompletionBlock:^(BOOL success, id result,id  result2, NSError *error) {
 //        
@@ -117,7 +131,13 @@
     return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"back-arrow"]
                                             style:UIBarButtonItemStylePlain
                                            target:self
-                                           action:@selector(popViewControllerAnimated:)];
+                                           action:@selector(popViewController)];
+}
+-(void)popViewController
+{
+     UINavigationController *navigation = self.tabBarController.moreNavigationController;
+    [navigation popViewControllerAnimated:NO];
+    
 }
 - (UIBarButtonItem *)rightMenuBarButtonItem {
     return  [[UIBarButtonItem alloc] initWithTitle:@"Invite" style:UIBarButtonItemStyleBordered target:self action:@selector(inviteuser:)];
@@ -242,7 +262,7 @@
 //        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
         CAContacts *contact = arrayContact[indexPath.row];
     
-        cell.labelContactName.text = [NSString stringWithFormat:@"Name : %@ %@",contact.firstName,contact.lastName];
+        cell.labelContactName.text = [NSString stringWithFormat:@"Name : %@",contact.fullName];
         
         cell.labelContactPhoneNumber.text = [NSString stringWithFormat:@"Phone Number : %@",contact.phoneNumber];
         cell.accessoryType =  contact.isContactSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;

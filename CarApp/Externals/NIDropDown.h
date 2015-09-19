@@ -10,7 +10,7 @@
 
 @class NIDropDown;
 @protocol NIDropDownDelegate
-- (void) niDropDownDelegateMethod: (NIDropDown *) sender selectedIndex: (int)index;
+- (void) niDropDownDelegateMethod: (NIDropDown *) sender;
 @end
 
 @interface NIDropDown : UIView <UITableViewDelegate, UITableViewDataSource>
@@ -21,7 +21,5 @@
 @property (nonatomic, retain) id <NIDropDownDelegate> delegate;
 @property (nonatomic, retain) NSString *animationDirection;
 -(void)hideDropDown:(UIButton *)b;
--(void)hideDropDownWithOutAnimation:(UIButton *)b;
 - (id)showDropDown:(UIButton *)b:(CGFloat *)height:(NSArray *)arr:(NSArray *)imgArr:(NSString *)direction;
-- (id)showDropDown:(UIButton *)b :(CGFloat *) height :(NSArray *)arr :(NSArray *)imgArr :(NSString *)direction :(UITableView *)toSubtableview;
 @end

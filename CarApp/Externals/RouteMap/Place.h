@@ -32,5 +32,14 @@
 @property (nonatomic,strong) NSString * carLiceneNumber;
 @property (nonatomic,strong) NSString * rating;
 
+@property (nonatomic,strong) NSString * tripName;
+@property (nonatomic,strong) NSString * startingPlace;
+@property (nonatomic,strong) NSString * endingPlace;
+@property (nonatomic,strong) NSString * cost;
+@property (nonatomic,strong) NSString * availableSeats;
+@property (nonatomic,strong) NSString * tripDate;
+
+
+
 @property NSUInteger tag;
 @end

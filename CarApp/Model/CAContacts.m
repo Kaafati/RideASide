@@ -187,70 +187,84 @@
         // sort by lastName
     }
     for (int i=0;i < nPeople;i++) {
-      //  NSMutableDictionary *dOfPerson=[NSMutableDictionary dictionary];
-         CAContacts *contacts = [CAContacts new];
-        ABRecordRef ref = CFArrayGetValueAtIndex(    CFArrayGetCount(allPeopleWithSortOrder) != 0 ? allPeopleWithSortOrder : allPeople,i);
-         //For username and surname
         
-        CFStringRef firstName, lastName;
-        firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
-        lastName  = ABRecordCopyValue(ref, kABPersonLastNameProperty);
-        contacts.firstName = (__bridge NSString *)(firstName);
-        contacts.lastName =(__bridge NSString *)(lastName);
-      //  [dOfPerson setObject:[NSString stringWithFormat:@"%@ %@", firstName, lastName] forKey:@"name"];
-      
-        //For Email ids
-        ABMutableMultiValueRef eMail  = ABRecordCopyValue(ref, kABPersonEmailProperty);
-        if(ABMultiValueGetCount(eMail) > 0) {
-          //  [dOfPerson setObject:(__bridge NSString *)ABMultiValueCopyValueAtIndex(eMail, 0) forKey:@"email"];
+        @try {
+            //  NSMutableDictionary *dOfPerson=[NSMutableDictionary dictionary];
+            CAContacts *contacts = [CAContacts new];
+            ABRecordRef ref = CFArrayGetValueAtIndex(allPeople,i);
+            //For username and surname
             
-        }
-        //get contacts picture, if pic doesn't exists, show standart one
-        
-                  CFDataRef imgData = ABPersonCopyImageData(ref);
-                  NSData *imageData = (__bridge NSData *)imgData;
-                  contacts.image = [UIImage imageWithData:imageData];
-        
-                  if (imgData != NULL) {
-                      CFRelease(imgData);
-                  }
-        
-                    if (!contacts.image) {
-                        contacts.image = [UIImage imageNamed:@"placeholder"];
-                    }
-
-        //For phone Number
-   
-        ABMultiValueRef phones =(__bridge ABMultiValueRef)((__bridge NSString*)ABRecordCopyValue(ref, kABPersonPhoneProperty));
-         NSCharacterSet *character = [NSCharacterSet characterSetWithCharactersInString:@"() -,"];
-        if (ABMultiValueGetCount(phones) > 0) {
-            contacts.phoneNumber = [[(__bridge NSString *)ABMultiValueCopyValueAtIndex(phones, 0) componentsSeparatedByCharactersInSet:character] componentsJoinedByString:@""];
+            CFStringRef firstName, lastName;
+            firstName = ABRecordCopyValue(ref, kABPersonFirstNameProperty);
+            lastName  = ABRecordCopyValue(ref, kABPersonLastNameProperty);
             
-//            [dOfPerson setObject:[[(__bridge NSString *)ABMultiValueCopyValueAtIndex(phones, 0) componentsSeparatedByCharactersInSet:character] componentsJoinedByString:@""] forKey:@"Phone"];
-        }
-      //  NSLog(@"phone %@",[(__bridge NSString *)ABMultiValueCopyValueAtIndex(phones, 0) componentsSeparatedByCharactersInSet:character]);
-      /*
-        //For Phone number
-        NSString* mobileLabel;
-        
-        for(CFIndex j = 0; j < ABMultiValueGetCount(phones); j++) {
-            mobileLabel = (__bridge NSString*)ABMultiValueCopyLabelAtIndex(phones, j);
-            if([mobileLabel isEqualToString:(NSString *)kABPersonPhoneMobileLabel])
-            {
-                [dOfPerson setObject:(__bridge NSString*)ABMultiValueCopyValueAtIndex(phones, j) forKey:@"Phone"];
+            contacts.firstName = [(__bridge NSString *)(firstName) length] ? (__bridge NSString *)(firstName) : @"";
+            contacts.lastName =[(__bridge NSString *)(lastName) length] ? (__bridge NSString *)(lastName) : @"";
+            
+            contacts.fullName = contacts.firstName.length ? [NSString stringWithFormat:@"%@ %@",contacts.firstName,contacts.lastName] : contacts.lastName;
+            //  [dOfPerson setObject:[NSString stringWithFormat:@"%@ %@", firstName, lastName] forKey:@"name"];
+            
+            //For Email ids
+            ABMutableMultiValueRef eMail  = ABRecordCopyValue(ref, kABPersonEmailProperty);
+            if(ABMultiValueGetCount(eMail) > 0) {
+                //  [dOfPerson setObject:(__bridge NSString *)ABMultiValueCopyValueAtIndex(eMail, 0) forKey:@"email"];
+                
             }
-            else if ([mobileLabel isEqualToString:(NSString*)kABPersonPhoneIPhoneLabel])
-            {
-                [dOfPerson setObject:(__bridge NSString*)ABMultiValueCopyValueAtIndex(phones, j) forKey:@"Phone"];
-                break ;
+            //get contacts picture, if pic doesn't exists, show standart one
+            
+            CFDataRef imgData = ABPersonCopyImageData(ref);
+            NSData *imageData = (__bridge NSData *)imgData;
+            contacts.image = [UIImage imageWithData:imageData];
+            
+            if (imgData != NULL) {
+                CFRelease(imgData);
             }
             
+            if (!contacts.image) {
+                contacts.image = [UIImage imageNamed:@"placeholder"];
+            }
+            
+            //For phone Number
+            
+            ABMultiValueRef phones =(__bridge ABMultiValueRef)((__bridge NSString*)ABRecordCopyValue(ref, kABPersonPhoneProperty));
+            NSCharacterSet *character = [NSCharacterSet characterSetWithCharactersInString:@"() -,"];
+             contacts.phoneNumber = ABMultiValueGetCount(phones) > 0 ? [[(__bridge NSString *)ABMultiValueCopyValueAtIndex(phones, 0) componentsSeparatedByCharactersInSet:character] componentsJoinedByString:@""] : @"";
+//            if (ABMultiValueGetCount(phones) > 0) {
+//               
+//                
+//                //            [dOfPerson setObject:[[(__bridge NSString *)ABMultiValueCopyValueAtIndex(phones, 0) componentsSeparatedByCharactersInSet:character] componentsJoinedByString:@""] forKey:@"Phone"];
+//            }
+            //  NSLog(@"phone %@",[(__bridge NSString *)ABMultiValueCopyValueAtIndex(phones, 0) componentsSeparatedByCharactersInSet:character]);
+            /*
+             //For Phone number
+             NSString* mobileLabel;
+             
+             for(CFIndex j = 0; j < ABMultiValueGetCount(phones); j++) {
+             mobileLabel = (__bridge NSString*)ABMultiValueCopyLabelAtIndex(phones, j);
+             if([mobileLabel isEqualToString:(NSString *)kABPersonPhoneMobileLabel])
+             {
+             [dOfPerson setObject:(__bridge NSString*)ABMultiValueCopyValueAtIndex(phones, j) forKey:@"Phone"];
+             }
+             else if ([mobileLabel isEqualToString:(NSString*)kABPersonPhoneIPhoneLabel])
+             {
+             [dOfPerson setObject:(__bridge NSString*)ABMultiValueCopyValueAtIndex(phones, j) forKey:@"Phone"];
+             break ;
+             }
+             
+             }
+             */
+            [contactList addObject:contacts];
         }
-       */
-        [contactList addObject:contacts];
+        @catch (NSException *exception) {
+            
+        }
+        @finally {
+            
+        }
+     
         
     }
-    NSLog(@"Contacts = %@",contactList);
+   // NSLog(@"Contacts = %@",contactList);
     return contactList;
 }
 @end;

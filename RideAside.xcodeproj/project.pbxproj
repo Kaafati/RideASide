@@ -118,6 +118,7 @@
 		9B6C63281B83526600C4F460 /* CAReviewTripsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6C63271B83526600C4F460 /* CAReviewTripsTableViewController.m */; };
 		9B6C632B1B835AB600C4F460 /* CATripReview.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6C632A1B835AB600C4F460 /* CATripReview.m */; };
 		9B71B0521B4385E000CC926B /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B71B0501B4383ED00CC926B /* iAd.framework */; };
+		9B941A5F1B9DBF450050FDAF /* CATripDetailContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B941A5E1B9DBF450050FDAF /* CATripDetailContainerViewController.m */; };
 		9B996B581B7389B900719586 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9B996B571B7389B900719586 /* MessageView.xib */; };
 		9BA5493A19E008F5006D43B2 /* DYRateView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA5493019E008F5006D43B2 /* DYRateView.m */; };
 		9BA5493B19E008F5006D43B2 /* StarEmpty.png in Resources */ = {isa = PBXBuildFile; fileRef = 9BA5493219E008F5006D43B2 /* StarEmpty.png */; };
@@ -133,9 +134,11 @@
 		9BDDCBA919DFB8290010B66A /* CAProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BDDCBA819DFB8290010B66A /* CAProfileTableViewController.m */; };
 		9BE1A7901A54163F00FCBFB7 /* CAProfileAndRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE1A78F1A54163F00FCBFB7 /* CAProfileAndRatingViewController.m */; };
 		9BE1A7941A542CAA00FCBFB7 /* CARatingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */; };
+		9BE442561B9EDF2100A01561 /* NIDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE442551B9EDF2100A01561 /* NIDropDown.m */; };
 		9BEA8FFC1B786C030016B5CF /* CAMapViewAnnotationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BEA8FFB1B786C030016B5CF /* CAMapViewAnnotationViewController.m */; };
+		9BF146841B9461570003F505 /* CAFacebookPicturesCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF146831B9461570003F505 /* CAFacebookPicturesCollectionViewController.m */; };
+		9BF146871B9461BA0003F505 /* CAFacebookCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BF146861B9461BA0003F505 /* CAFacebookCollectionViewCell.m */; };
 		D86F4F031A63C7E40064C3C4 /* Cars.plist in Resources */ = {isa = PBXBuildFile; fileRef = D86F4F021A63C7E40064C3C4 /* Cars.plist */; };
-		D8CEDD9E1A5ABAE7007FA2F2 /* NIDropDown.m in Sources */ = {isa = PBXBuildFile; fileRef = D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -354,6 +357,9 @@
 		9B6C63291B835AB600C4F460 /* CATripReview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATripReview.h; sourceTree = "<group>"; };
 		9B6C632A1B835AB600C4F460 /* CATripReview.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATripReview.m; sourceTree = "<group>"; };
 		9B71B0501B4383ED00CC926B /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		9B7C9B221BA6D21900BB1AF1 /* CAProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAProtocol.h; sourceTree = "<group>"; };
+		9B941A5D1B9DBF450050FDAF /* CATripDetailContainerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATripDetailContainerViewController.h; sourceTree = "<group>"; };
+		9B941A5E1B9DBF450050FDAF /* CATripDetailContainerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATripDetailContainerViewController.m; sourceTree = "<group>"; };
 		9B996B571B7389B900719586 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		9BA5492F19E008F5006D43B2 /* DYRateView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DYRateView.h; sourceTree = "<group>"; };
 		9BA5493019E008F5006D43B2 /* DYRateView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DYRateView.m; sourceTree = "<group>"; };
@@ -375,11 +381,15 @@
 		9BE1A78F1A54163F00FCBFB7 /* CAProfileAndRatingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAProfileAndRatingViewController.m; sourceTree = "<group>"; };
 		9BE1A7921A542CAA00FCBFB7 /* CARatingTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARatingTableViewCell.h; sourceTree = "<group>"; };
 		9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CARatingTableViewCell.m; sourceTree = "<group>"; };
+		9BE442541B9EDF2100A01561 /* NIDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NIDropDown.h; sourceTree = "<group>"; };
+		9BE442551B9EDF2100A01561 /* NIDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NIDropDown.m; sourceTree = "<group>"; };
 		9BEA8FFA1B786C030016B5CF /* CAMapViewAnnotationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAMapViewAnnotationViewController.h; sourceTree = "<group>"; };
 		9BEA8FFB1B786C030016B5CF /* CAMapViewAnnotationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAMapViewAnnotationViewController.m; sourceTree = "<group>"; };
+		9BF146821B9461570003F505 /* CAFacebookPicturesCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAFacebookPicturesCollectionViewController.h; sourceTree = "<group>"; };
+		9BF146831B9461570003F505 /* CAFacebookPicturesCollectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAFacebookPicturesCollectionViewController.m; sourceTree = "<group>"; };
+		9BF146851B9461BA0003F505 /* CAFacebookCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAFacebookCollectionViewCell.h; sourceTree = "<group>"; };
+		9BF146861B9461BA0003F505 /* CAFacebookCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CAFacebookCollectionViewCell.m; sourceTree = "<group>"; };
 		D86F4F021A63C7E40064C3C4 /* Cars.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Cars.plist; path = "Parsing Classes/Cars.plist"; sourceTree = "<group>"; };
-		D8CEDD9C1A5ABAE7007FA2F2 /* NIDropDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NIDropDown.h; sourceTree = "<group>"; };
-		D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NIDropDown.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -672,10 +682,11 @@
 		12913AC819C989C4000FCE92 /* Externals */ = {
 			isa = PBXGroup;
 			children = (
+				9BE442541B9EDF2100A01561 /* NIDropDown.h */,
+				9BE442551B9EDF2100A01561 /* NIDropDown.m */,
 				9B416A4D1B58BEC000E08757 /* TPKeyBoardAvoiding */,
 				9B4D2F001B2814CA003A399E /* KGModal */,
 				9B1317DA1AF9D7A8002BAC6D /* HPGrowing */,
-				D8CEDD9F1A5ABAEC007FA2F2 /* NIDropDown */,
 				9B603A331A49688A0048DD48 /* SDWebImage */,
 				4D5D935C1A01F9E200187A52 /* PayPalMobile */,
 				4DF53C5719EE285200CCDEBE /* Googlesdk */,
@@ -694,6 +705,8 @@
 			children = (
 				12913AD919C98ACE000FCE92 /* CATabBarController.h */,
 				12913ADA19C98ACE000FCE92 /* CATabBarController.m */,
+				9B941A5D1B9DBF450050FDAF /* CATripDetailContainerViewController.h */,
+				9B941A5E1B9DBF450050FDAF /* CATripDetailContainerViewController.m */,
 			);
 			path = TabBar;
 			sourceTree = "<group>";
@@ -812,6 +825,7 @@
 				12913AC819C989C4000FCE92 /* Externals */,
 				12FEC298199F422700C76A71 /* Images.xcassets */,
 				12FEC28A199F422700C76A71 /* Supporting Files */,
+				9B7C9B221BA6D21900BB1AF1 /* CAProtocol.h */,
 			);
 			name = RoadTrip;
 			path = CarApp;
@@ -1111,6 +1125,10 @@
 				9B6C63271B83526600C4F460 /* CAReviewTripsTableViewController.m */,
 				9B6C631D1B8303C200C4F460 /* CAReviewTableViewController.h */,
 				9B6C631E1B8303C200C4F460 /* CAReviewTableViewController.m */,
+				9BF146821B9461570003F505 /* CAFacebookPicturesCollectionViewController.h */,
+				9BF146831B9461570003F505 /* CAFacebookPicturesCollectionViewController.m */,
+				9BF146851B9461BA0003F505 /* CAFacebookCollectionViewCell.h */,
+				9BF146861B9461BA0003F505 /* CAFacebookCollectionViewCell.m */,
 			);
 			path = ProfileView;
 			sourceTree = "<group>";
@@ -1131,15 +1149,6 @@
 				9BE1A7931A542CAA00FCBFB7 /* CARatingTableViewCell.m */,
 			);
 			name = RatingCell;
-			sourceTree = "<group>";
-		};
-		D8CEDD9F1A5ABAEC007FA2F2 /* NIDropDown */ = {
-			isa = PBXGroup;
-			children = (
-				D8CEDD9C1A5ABAE7007FA2F2 /* NIDropDown.h */,
-				D8CEDD9D1A5ABAE7007FA2F2 /* NIDropDown.m */,
-			);
-			name = NIDropDown;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1259,6 +1268,7 @@
 				12253B7119D02A3500014796 /* SideMenuViewController.m in Sources */,
 				12253B6919D0175D00014796 /* PlaceMark.m in Sources */,
 				9BE1A7901A54163F00FCBFB7 /* CAProfileAndRatingViewController.m in Sources */,
+				9B941A5F1B9DBF450050FDAF /* CATripDetailContainerViewController.m in Sources */,
 				12253B5419D00C2400014796 /* GeoCoder.m in Sources */,
 				121873F219D16484000924EB /* CATripCell.m in Sources */,
 				9B1317CE1AF9D6A0002BAC6D /* CAMessage.m in Sources */,
@@ -1276,7 +1286,6 @@
 				9B0A90C01B6A0CCA007B2307 /* CAIntoPageViewController.m in Sources */,
 				9B4D2F031B282A0A003A399E /* KGModal.m in Sources */,
 				9B603A611A49688A0048DD48 /* UIImage+WebP.m in Sources */,
-				D8CEDD9E1A5ABAE7007FA2F2 /* NIDropDown.m in Sources */,
 				9B367D841B2AE3FC0012F9F7 /* CAFriendsViewController.m in Sources */,
 				9B1317CF1AF9D6A0002BAC6D /* CAChatCell.m in Sources */,
 				9B603A551A49688A0048DD48 /* MKAnnotationView+WebCache.m in Sources */,
@@ -1289,13 +1298,16 @@
 				12913AF419C999C5000FCE92 /* UIViewController+MFSideMenuAdditions.m in Sources */,
 				9B416A4B1B58BEBB00E08757 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
 				9B0A90C61B6A115D007B2307 /* PageContentViewController.m in Sources */,
+				9BF146871B9461BA0003F505 /* CAFacebookCollectionViewCell.m in Sources */,
 				12C321B819D43CDF004382F3 /* UIImage+Utilities.m in Sources */,
 				12FEC290199F422700C76A71 /* main.m in Sources */,
+				9BF146841B9461570003F505 /* CAFacebookPicturesCollectionViewController.m in Sources */,
 				9B6C63281B83526600C4F460 /* CAReviewTripsTableViewController.m in Sources */,
 				9B603A621A49688A0048DD48 /* UIImageView+HighlightedWebCache.m in Sources */,
 				9B603A561A49688A0048DD48 /* NSData+ImageContentType.m in Sources */,
 				121873DD19D137AB000924EB /* CAActivityProvider.m in Sources */,
 				1216663519A303EC001DE9C8 /* CALoginViewController.m in Sources */,
+				9BE442561B9EDF2100A01561 /* NIDropDown.m in Sources */,
 				12253B5719D00ECC00014796 /* NSString+NSStringAdditions.m in Sources */,
 				1216666619A32AC1001DE9C8 /* CATrip.m in Sources */,
 				9B5702F41B574D2500ADAFDD /* CAContactCell.m in Sources */,
@@ -1402,9 +1414,10 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1421,7 +1434,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
+				PROVISIONING_PROFILE = "57d294ce-abae-4204-be6c-fe4aadc60815";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1442,9 +1455,10 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
 				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1454,7 +1468,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
+				PROVISIONING_PROFILE = "57d294ce-abae-4204-be6c-fe4aadc60815";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1466,13 +1480,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/CarApp/SVProgressHUD/Pinterest.embeddedframework",
 					/Users/srishtiinnovative/Documents/FacebookSDK,
-					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/CarApp/RideAside-Prefix.pch";
@@ -1485,7 +1498,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = RideAside;
-				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
+				PROVISIONING_PROFILE = "57d294ce-abae-4204-be6c-fe4aadc60815";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1496,13 +1509,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/CarApp/SVProgressHUD/Pinterest.embeddedframework",
 					/Users/srishtiinnovative/Documents/FacebookSDK,
-					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/CarApp/RideAside-Prefix.pch";
@@ -1515,7 +1527,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = RideAside;
-				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
+				PROVISIONING_PROFILE = "57d294ce-abae-4204-be6c-fe4aadc60815";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1524,12 +1536,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CarApp.app/CarApp";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					/Users/srishtiinnovative/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1540,7 +1551,7 @@
 				);
 				INFOPLIST_FILE = "CarAppTests/CarAppTests-Info.plist";
 				PRODUCT_NAME = RideAsideTests;
-				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
+				PROVISIONING_PROFILE = "57d294ce-abae-4204-be6c-fe4aadc60815";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -1550,19 +1561,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CarApp.app/CarApp";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Keya Afati (D3JYCU4TXJ)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Keya Afati (6C5VW783SE)";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					/Users/srishtiinnovative/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CarApp/CarApp-Prefix.pch";
 				INFOPLIST_FILE = "CarAppTests/CarAppTests-Info.plist";
 				PRODUCT_NAME = RideAsideTests;
-				PROVISIONING_PROFILE = "76fc7b24-ab18-4c53-bce4-4c324c684329";
+				PROVISIONING_PROFILE = "57d294ce-abae-4204-be6c-fe4aadc60815";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};

@@ -15,7 +15,8 @@
 {
     CLLocationManager *locationManager;
    
-    int intialFunctionCallCounter;
+    int initialFunctionCallCounter;
+    NSTimer *timer;
 }
 
 @end
@@ -33,6 +34,7 @@
 
 - (void)viewDidLoad
 {
+    self.delegate =self;
     [super viewDidLoad];
    // [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
 
@@ -41,29 +43,17 @@
     self.navigationBar.translucent = YES;
     self.navigationBar.tintColor=[UIColor whiteColor];
     self.view.backgroundColor=[UIColor blackColor];
-    intialFunctionCallCounter=0;
+    initialFunctionCallCounter=9;
     [self addLocation];
  
-    [NSTimer  scheduledTimerWithTimeInterval:90 target:self selector:@selector(updateLocation) userInfo:nil repeats:YES];
+    
     NSLog(@"new value %f",currentLocation.coordinate.latitude);
     // Do any additional setup after loading the view.
 }
 
--(void)updateLocation{
- 
-    if([CAUser sharedUser].userId.length>0 && currentLocation.coordinate.longitude != _previousLocation.coordinate.longitude && currentLocation.coordinate.latitude != _previousLocation.coordinate.latitude){
-        NSMutableData *body=[NSMutableData postData];
-       [body addValue:[NSString stringWithFormat:@"%f",currentLocation.coordinate.latitude] forKey:@"latitude"];
-       [body addValue:[NSString stringWithFormat:@"%f",currentLocation.coordinate.longitude] forKey:@"longitude"];
-        [body addValue:[CAUser sharedUser].userId forKey:@"id"];
-        [CAUser addUserLocationWithData:body withCompletionBlock:^(BOOL success, NSError *error) {
-            if (success) {
-                [CAUser sharedUser].latitude = [NSString stringWithFormat:@"%f",currentLocation.coordinate.latitude];
-                [CAUser sharedUser].longitude = [NSString stringWithFormat:@"%f",currentLocation.coordinate.longitude];
-            }
-            
-        }];
-    }
+-(void)updateNewlocation {
+    [locationManager startUpdatingLocation];
+
 }
 
 -(void)addLocation{
@@ -72,33 +62,100 @@
     locationManager.desiredAccuracy = kCLLocationAccuracyBest;
     if(IS_OS_8_OR_LATER)
         [locationManager requestAlwaysAuthorization];
+    ![CAUser sharedUser].latitude.length ? [self updateNewlocation] :
+    ({    timer =  [NSTimer  scheduledTimerWithTimeInterval:60 target:self selector:@selector(updateNewlocation) userInfo:nil repeats:YES];
+    [timer fire];
+    });
 
-    [locationManager startUpdatingLocation];
 }
+
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
-    _previousLocation = oldLocation;
-    currentLocation =  newLocation;
-
-    [CAUser sharedUser].latitude = [NSString stringWithFormat:@"%f",newLocation.coordinate.latitude];
-        [CAUser sharedUser].longitude = [NSString stringWithFormat:@"%f",newLocation.coordinate.longitude];
-   // NSLog(@"locationManager value %f",newLocation.coordinate.latitude);
-    if (oldLocation.coordinate.longitude != newLocation.coordinate.longitude && oldLocation.coordinate.latitude != newLocation.coordinate.latitude) {
-        currentLocation =  newLocation;
-        if(intialFunctionCallCounter==0){
-            [self updateLocation];
-            intialFunctionCallCounter=1;
-        }
-    }
     
 }
+
+//- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+//{
+//    _previousLocation = oldLocation;
+//    currentLocation =  newLocation;
+//
+//    [CAUser sharedUser].latitude = [NSString stringWithFormat:@"%f",newLocation.coordinate.latitude];
+//        [CAUser sharedUser].longitude = [NSString stringWithFormat:@"%f",newLocation.coordinate.longitude];
+//   // NSLog(@"locationManager value %f",newLocation.coordinate.latitude);
+//    if (oldLocation.coordinate.longitude != newLocation.coordinate.longitude && oldLocation.coordinate.latitude != newLocation.coordinate.latitude) {
+//        currentLocation =  newLocation;
+//        if(intialFunctionCallCounter==0){
+//            [self updateLocation];
+//            intialFunctionCallCounter=1;
+//        }
+//    }
+//    
+//}
+- (void)locationManager:(CLLocationManager *)manager
+     didUpdateLocations:(NSArray<CLLocation *> *)locations
+{
+    [locationManager stopUpdatingLocation];
+    CLLocation *location = [locations lastObject];
+
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0) , ^{
+//        NSMutableData *body=[NSMutableData postData];
+//        [body addValue:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"latitude"];
+//        [body addValue:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
+//        [body addValue:[CAUser sharedUser].userId forKey:@"id"];
+//        [CAUser addUserLocationWithData:body withCompletionBlock:^(BOOL success, NSError *error) {
+//            if (success) {
+//                [CAUser sharedUser].latitude = [NSString stringWithFormat:@"%f",location.coordinate.latitude];
+//                [CAUser sharedUser].longitude = [NSString stringWithFormat:@"%f",location.coordinate.longitude];
+//                
+//            }
+//            
+//        }];
+//    });
+    NSMutableData *body=[NSMutableData postData];
+    [body addValue:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"latitude"];
+    [body addValue:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
+    [body addValue:[CAUser sharedUser].userId forKey:@"id"];
+    [CAUser addUserLocationWithData:body withCompletionBlock:^(BOOL success, NSError *error) {
+        if (success) {
+            [CAUser sharedUser].latitude = [NSString stringWithFormat:@"%f",location.coordinate.latitude];
+            [CAUser sharedUser].longitude = [NSString stringWithFormat:@"%f",location.coordinate.longitude];
+            
+        }
+        
+    }];
+
+    
+    
+    
+    
+}
+
+
+-(void)updateLocation{
+    
+//    if([CAUser sharedUser].userId.length>0 && currentLocation.coordinate.longitude != _previousLocation.coordinate.longitude && currentLocation.coordinate.latitude != _previousLocation.coordinate.latitude){
+        NSMutableData *body=[NSMutableData postData];
+        [body addValue:[NSString stringWithFormat:@"%f",_previousLocation.coordinate.latitude] forKey:@"latitude"];
+        [body addValue:[NSString stringWithFormat:@"%f",_previousLocation.coordinate.longitude] forKey:@"longitude"];
+        [body addValue:[CAUser sharedUser].userId forKey:@"id"];
+        [CAUser addUserLocationWithData:body withCompletionBlock:^(BOOL success, NSError *error) {
+            if (success) {
+                [CAUser sharedUser].latitude = [NSString stringWithFormat:@"%f",_previousLocation.coordinate.latitude];
+                [CAUser sharedUser].longitude = [NSString stringWithFormat:@"%f",_previousLocation.coordinate.longitude];
+                
+            }
+            
+        }];
+   // }
+}
+
+
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {

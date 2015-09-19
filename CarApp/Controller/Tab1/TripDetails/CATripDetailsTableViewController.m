@@ -24,8 +24,11 @@
 #import "CAChatViewController.h"
 #import "CACarCollectionViewCell.h"
 #import "UIButton+WebCache.h"
+#import "CAContainerViewController.h"
+#import "CATripsViewController.h"
 
 #define kPayPalEnvironment PayPalEnvironmentNoNetwork
+#define alertTripAdd 324
 @interface CATripDetailsTableViewController ()<UITextFieldDelegate,UIAlertViewDelegate,searchLocationDelegate,PayPalPaymentDelegate,UIPickerViewDataSource,UIPickerViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
 {
     IBOutletCollection(UITextField) NSArray *textFieldTripDetails;
@@ -72,15 +75,28 @@
     [self pickerUI];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tap];
-    (_trip.tripPostedById.length>0&&!_isFromRequestPage)?[self leftSideNavigationBar]: [self setupMenuBarButtonItems];
-    [self setUI];
+    
    
 }
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:YES];
-    [collectionCar reloadData];
+   
+      [collectionCar reloadData];
+    (_trip.tripPostedById.length>0&&!_isFromRequestPage)?[self leftSideNavigationBar]: [self setupMenuBarButtonItems];
+    [self setUI];
 
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    UIView *viewRight = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 80, 30)];
+    UIButton *rightbarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    rightbarbutton.frame =CGRectMake(30, 0, 80, 30) ;
+    [rightbarbutton setImage:[UIImage imageNamed:@"map"] forState:UIControlStateNormal];
+    [rightbarbutton addTarget:self action:@selector(goToMapPage) forControlEvents:UIControlEventTouchUpInside];
+    [viewRight addSubview:rightbarbutton];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:viewRight];
 }
 - (IBAction)showView:(UIButton *)sender {
     
@@ -160,6 +176,7 @@
 -(void)setUI{
     /*Removed the fuel field and toll field on 6 jun -15 and modified the textField arrayPositions */
 
+   
     
     
     
@@ -169,7 +186,25 @@
     if(_trip)
     {
         self.title=@"Trip Details";
-        [buttonChatOrEdit setTitle:[_trip.UserId isEqualToString:[CAUser sharedUser].userId]  ? @"Edit Trip Detail" : @"Chat" forState:UIControlStateNormal];
+        if (_trip.UserId.integerValue == [CAUser sharedUser].userId.integerValue) {
+            
+           
+            acceptTrip.frame = CGRectMake(buttonChatOrEdit.frame.origin.x, acceptTrip.frame.origin.y, buttonChatOrEdit.frame.size.width, acceptTrip.frame.size.height);
+            [acceptTrip setTitle:@"Edit Trip Detail" forState:UIControlStateNormal];
+            rejectButton.hidden = YES;
+
+            acceptTrip.autoresizingMask = buttonChatOrEdit.autoresizingMask;
+            
+        }
+        else
+        {
+
+            acceptTrip.hidden = NO;
+            rejectButton.hidden = NO;
+            
+        }
+        
+        [buttonChatOrEdit setTitle:@"Chat" forState:UIControlStateNormal];
         [addTripOrViewJoiness setTitle:@"View Joinees" forState:UIControlStateNormal];
 
 //        if ([_trip.category isEqualToString:@"Passenger"]) {
@@ -236,7 +271,7 @@
         [textFieldTripDetails[5] setText:_trip.vehicleNumber];
         [textFieldTripDetails[6] setText:[NSString stringWithFormat:@"%@ per seat",_trip.cost]];
         [textFieldTripDetails[7] setText:_trip.SeatsAvailable];
-        [textFieldTripDetails[8] setText:_trip.date];
+        [textFieldTripDetails[8] setText:_trip.alertDate.length ? _trip.alertDate : _trip.date];
         [stepper setHidden:YES];
         [segmentControl setHidden:YES];
         [acceptTrip setEnabled:YES];
@@ -255,11 +290,13 @@
             //[cellArray[1] setHidden:YES];
         }
         
+         UIView *viewRight = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 80, 30)];
         UIButton *rightbarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-        rightbarbutton.frame =CGRectMake(0, 0, 80, 30) ;
+        rightbarbutton.frame =CGRectMake(30, 0, 80, 30) ;
         [rightbarbutton setImage:[UIImage imageNamed:@"map"] forState:UIControlStateNormal];
         [rightbarbutton addTarget:self action:@selector(goToMapPage) forControlEvents:UIControlEventTouchUpInside];
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightbarbutton];
+        [viewRight addSubview:rightbarbutton];
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:viewRight];
         
         GeoCoder *geoCoderStartPlace=[[GeoCoder alloc]init];
         [geoCoderStartPlace geoCodeAddress:_trip.StartingPlace inBlock:^(CLLocation *location) {
@@ -357,7 +394,7 @@
     trip.tripStartTimeForNotification=dateForPushNotification;
     trip.tripId = _trip.tripId;
     trip.imageCar = imageCar;
-    [buttonChatOrEdit setTitle:@"Edit Trip Detail" forState:UIControlStateNormal];
+    [acceptTrip setTitle:@"Edit Trip Detail" forState:UIControlStateNormal];
     [CATrip editTrip:trip completion:^(BOOL success, id result, NSError *error) {
         [SVProgressHUD dismiss];
 
@@ -403,7 +440,7 @@
 //        [textFieldTripDetails[10] setText:_trip.date];
         [stepper setHidden:YES];
         [segmentControl setHidden:YES];
-        [acceptTrip setEnabled:YES];
+       // [acceptTrip setEnabled:YES];
         
        
     }
@@ -421,7 +458,7 @@
         textField.delegate=self;
         [stepper setHidden:NO];
         [segmentControl setHidden:NO];
-        [acceptTrip setEnabled:NO];
+      //  [acceptTrip setEnabled:NO];
         
         
     }
@@ -497,6 +534,7 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
     [activeTextField resignFirstResponder];
     CAMapViewController *mapViewController=[self.storyboard instantiateViewControllerWithIdentifier:@"mapView"];
     mapViewController.trips=_trip;
+    mapViewController.isFromTripDetails = YES;
     [self.navigationController pushViewController:mapViewController animated:YES];
 }
 
@@ -531,6 +569,22 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
                   CompletionBlock:^(BOOL success, id result, NSError *error) {
                       [SVProgressHUD dismiss];
                       if(success){
+                         UIAlertView *alertTripAdded =  [[UIAlertView alloc] initWithTitle:@"" message:@"Trip Created Successfully" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] ;
+                          alertTripAdded.tag = alertTripAdd;
+                          [alertTripAdded show];
+                          
+                          
+                          
+                          
+                          [self.tabBarController setSelectedIndex:0];
+                          
+//
+//                          UINavigationController *navigation = (UINavigationController *)self.tabBarController.viewControllers[0];
+//                          
+//                          CAContainerViewController *container = (CAContainerViewController *)[navigation. viewControllers objectAtIndex:0];
+//                          [container performSelector:@selector(SwitchToViewController:) withObject:[NSNumber numberWithInt:1]];
+                         
+                          
                           [textFieldTripDetails enumerateObjectsUsingBlock:^(UITextField *obj, NSUInteger idx, BOOL *stop) {
                               
                               NSMutableAttributedString *text =[[NSMutableAttributedString alloc] initWithString:[obj.placeholder stringByReplacingOccurrencesOfString:@"! " withString:@""]];
@@ -651,9 +705,26 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
             {
                  [self parseAcceptTrip:@"Decline"];
             }
-            else{
-                [_trip.category isEqualToString:@"Passenger"] ? [self parseAcceptDriverOnTrip:@"Added"] :[self parseAcceptTrip:@"Pending"];
+            else if ([acceptTrip.titleLabel.text isEqualToString:@"Edit Trip Detail"])
+            {
+                
+                [self enableInteration:YES];
+                [sender setTitle:@"Update Trip Detail" forState:UIControlStateNormal];
+                
+                
+
+                
+                
             }
+            else if ([acceptTrip.titleLabel.text isEqualToString:@"Update Trip Detail"])
+            {
+                [self enableInteration:NO];
+                [SVProgressHUD show];
+                [self updateTripDetail];
+            }
+        /*    else{
+                [_trip.category isEqualToString:@"Passenger"] ? [self parseAcceptDriverOnTrip:@"Added"] :[self parseAcceptTrip:@"Pending"];
+            }*/
             break;
         case 1002:
             NSLog(@"_trip.category %@",_trip.category);
@@ -715,23 +786,26 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
 
-    switch (buttonIndex) {
-        case 0:
-            [self goToHomePage];
-            
-            break;
-        case 1:{
-            NSString *urlString = [NSString stringWithFormat:@"http://maps.google.com/maps?daddr=%@&saddr=Current+Location",_trip.StartingPlace];
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
-            [self goToHomePage];
-            
+    if (alertView.tag != alertTripAdd) {
+        switch (buttonIndex) {
+            case 0:
+                [self goToHomePage];
+                
+                break;
+            case 1:{
+                NSString *urlString = [NSString stringWithFormat:@"http://maps.google.com/maps?daddr=%@&saddr=Current+Location",_trip.StartingPlace];
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:urlString]];
+                [self goToHomePage];
+                
+            }
+                break;
+                
+            default:
+                break;
         }
-            break;
-            
-        default:
-            break;
+
     }
-}
+    }
 
 -(void)goToHomePage{
     

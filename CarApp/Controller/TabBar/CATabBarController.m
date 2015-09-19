@@ -12,7 +12,8 @@
 #import "CATripDetailsTableViewController.h"
 #import "CAContainerViewController.h"
 #import "CAFriendsViewController.h"
-@interface CATabBarController ()<UITabBarControllerDelegate>
+#import "CAMapViewController.h"
+@interface CATabBarController ()<UITabBarControllerDelegate,UINavigationControllerDelegate>
 
 @end
 
@@ -30,10 +31,9 @@
     self = [super init];
     if (self) {
         self.view.backgroundColor=[UIColor clearColor];
-        
+        self.delegate = self;
         [self.tabBar setBackgroundImage:[UIImage imageNamed:@"tabBarBg"]];
 //        [self.tabBar setBarTintColor:[UIColor blueColor]];
-        
         
         UIStoryboard*  storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
         CAContainerViewController *meViewController= [storyboard instantiateViewControllerWithIdentifier:kContainerView];
@@ -76,20 +76,77 @@
         friendsViewController.tabBarItem.tag=4;
         friendsViewController.tabBarItem.title=@"Friends";
         
-        self.viewControllers = @[meNavigationController,ridesNavigationController,postTripNavigationController,passengersNavigationController,friendsNavigationController];
+        CAMapViewController *mapViewController=[storyboard instantiateViewControllerWithIdentifier:@"mapView"];
+        mapViewController.tabBarItem.image=[[UIImage
+                                             imageNamed:@"Pendingtrips"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] ;
+        NSLog(@"mapViewController.tabBarItem.image.superclass  %@",mapViewController.tabBarItem.image.superclass );
+      
+        [mapViewController.tabBarItem setSelectedImage:[[UIImage imageNamed:@"Pendingtrips"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
+        mapViewController.tabBarItem.title=@"Pending Trips";
+        mapViewController.tabBarItem.tag=5;
+
+         CANavigationController *mapNavigationController = [[CANavigationController alloc]initWithRootViewController:mapViewController];
+        
+        UITableView *table = (UITableView *)[self.moreNavigationController.viewControllers[0] valueForKey:@"view"];
+        table.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]];
+        table.separatorStyle = UITableViewCellSeparatorStyleNone;
+       
+
+       
+
+        self.viewControllers = @[meNavigationController,ridesNavigationController,postTripNavigationController,passengersNavigationController,friendsNavigationController,mapNavigationController];
+        
+        self.moreNavigationController.delegate = self;
+
     }
     return self;
 }
 -(void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
-   
+
+    
 }
 
 
+
+- (void)navigationController:(UINavigationController *)navigationController
+      willShowViewController:(UIViewController *)viewController
+                    animated:(BOOL)animated
+{
+    navigationController.navigationBar.topItem.rightBarButtonItem = Nil;
+    
+    [navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+    navigationController.navigationBar.shadowImage = [UIImage new];
+    navigationController.navigationBar.translucent = YES;
+   navigationController.navigationBar.tintColor=[UIColor whiteColor];
+    [self performSelector:@selector(setMoreNavigationViewControllerUI) withObject:nil afterDelay:0.0];
+}
+- (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+     [self performSelector:@selector(setMoreNavigationViewControllerUI) withObject:nil afterDelay:0.0];
+}
+-(void)setMoreNavigationViewControllerUI
+{
+    
+    UITableView *table = (UITableView *)[self.moreNavigationController.viewControllers[0] valueForKey:@"view"];
+    [[table visibleCells] enumerateObjectsUsingBlock:^(UITableViewCell * obj, NSUInteger idx, BOOL *stop) {
+        [obj setBackgroundColor:[UIColor clearColor]];
+        [obj.textLabel setTextColor:[UIColor whiteColor]];
+        UIImageView *imageview = obj.imageView;
+        imageview.tintColor = [UIColor whiteColor];
+        
+    }];
+
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
 }
 
 - (void)didReceiveMemoryWarning

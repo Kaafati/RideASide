@@ -23,6 +23,8 @@
 @property(nonatomic,strong)NSString *date;
 @property(nonatomic,strong)CLLocation *startPlaceLocation;
 @property(nonatomic,strong)CLLocation *endPlaceLocation;
+@property(nonatomic,strong)NSString *alertDate;
+@property(nonatomic,strong)NSDate *dateTripAlert;
 @property(nonatomic,strong)NSString *name;
 @property(nonatomic,strong)NSString *imageName;
 @property(nonatomic,strong)NSString *tripId;
@@ -56,6 +58,7 @@
 +(void)inviteTripWithTripId:(NSString *)tripId andAppuserId:(NSString *)userId completion:(void(^)(BOOL,id result, NSError *))completion;
 +(void)submitReviewWithRatedUserId:(NSString *)ratedUserId withtripId:(NSString *)tripId answer:(NSString *)answer completion:(void (^)(BOOL, id, NSError *))completion;
 +(void)fetchReviewWithUserId:(NSString *)userId completion:(void (^)(BOOL, id, NSError *))completion;
+-(void)fetchPendingTripwithCompletionBlock:(void (^)(BOOL,id,id, NSError*))completionBlock;
 
 //http://sicsglobal.com/projects/App_projects/rideaside/PendingTrip.php?UserId=25-Pending Requests
 //http://sicsglobal.com/projects/App_projects/rideaside/view_all_trip.php?index=0&search=&userid=25 //Passenger Tab
@@ -73,4 +76,6 @@
 //http://sicsglobal.com/projects/App_projects/rideaside/inviite_frnds.php?trip_id=1&phone_num=123456789 Invite 
 //http://sicsglobal.com/projects/App_projects/rideaside/review.php?userId=1&rateduserId=2&tripId=1&questionId=1,2,3,4&answer=Always,No,Not%20at%20al,Amazing
 //http://sicsglobal.com/projects/App_projects/rideaside/view_reviews.php?userId=2
+
+//http://sicsglobal.com/projects/App_projects/rideaside/available_seats.php?userId=1&date=2015-09-01%2010:20:01
 @end
