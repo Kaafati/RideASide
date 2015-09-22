@@ -158,6 +158,7 @@
         default:
             break;
     }
+//    http://sicsglobal.com/projects/App_projects/rideaside/trip_details.php?userid=25&status=2&index=0&search= 
     CATrip *trip=[[CATrip alloc]init];
     NSLog(@"PathName =%@",pathName);
     [SVProgressHUD showWithStatus:@"Fetching Posts..." maskType:SVProgressHUDMaskTypeBlack];
@@ -358,6 +359,7 @@
 #pragma mark-Creating Header View
 
 -(UIView *)setUpSecondTabBarHeaderView{
+    
   headerViewSecond = [[UIView alloc] initWithFrame:CGRectMake(0, 50,self.view.frame.size.width, 130)];
     NSArray *itemArray = [NSArray arrayWithObjects: @"Rides Near Me",  @"Finished Rides", nil];
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:itemArray];
@@ -391,6 +393,7 @@
 }
 
 -(UIView *)setUpThirdTabBarHeaderView{
+    
       headerViewThird = [[UIView alloc] initWithFrame:CGRectMake(0, 65,self.view.frame.size.width, 70)];
     UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"10 Miles",@"20 Miles",@"30 Miles",@"40 Miles"]];
     segmentedControl.frame = CGRectMake(10, 0, headerViewThird.frame.size.width-20, 30);

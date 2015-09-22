@@ -523,7 +523,7 @@
     
     
     
-    CAActivityProvider *ActivityProvider = [CAActivityProvider new];
+    CAActivityProvider *ActivityProvider = [[CAActivityProvider alloc] initWithPlaceholderItem:@""];
     NSArray *Items = @[ActivityProvider, screenShotImage,@"Map Detail Posted"];
     UIActivityViewController *ActivityView = [[UIActivityViewController alloc]
                                               initWithActivityItems:Items
@@ -536,20 +536,36 @@
        UIActivityTypePostToWeibo]];
     
     [self presentViewController:ActivityView animated:YES completion:nil];
-    [ActivityView setCompletionHandler:^(NSString *act, BOOL done)
-     {
-         NSString *ServiceMsg = nil;
-         if ( [act isEqualToString:UIActivityTypeMail] )           ServiceMsg = @"Mail sent succesfully";
-         if ( [act isEqualToString:UIActivityTypePostToTwitter] )  ServiceMsg = @"Posted on twitter succesfully";
-         if ( [act isEqualToString:UIActivityTypePostToFacebook] ) ServiceMsg = @"Post on facebook succesfully";
-         if ( [act isEqualToString:UIActivityTypeMessage] )        ServiceMsg = @"SMS sent succesfully";
-         if ( done )
-         {
-             UIAlertView *Alert = [[UIAlertView alloc] initWithTitle:ServiceMsg message:@"" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
-             [Alert show];
-             
-         }
-     }];
+    
+    [ActivityView setCompletionWithItemsHandler:^(NSString * __nullable act, BOOL done, NSArray * __nullable returnedItems, NSError * __nullable activityError){
+        NSString *ServiceMsg = nil;
+        if ( [act isEqualToString:UIActivityTypeMail] )           ServiceMsg = @"Mail sent succesfully";
+        if ( [act isEqualToString:UIActivityTypePostToTwitter] )  ServiceMsg = @"Posted on twitter succesfully";
+        if ( [act isEqualToString:UIActivityTypePostToFacebook] ) ServiceMsg = @"Post on facebook succesfully";
+        if ( [act isEqualToString:UIActivityTypeMessage] )        ServiceMsg = @"SMS sent succesfully";
+        if ( done )
+        {
+            UIAlertView *Alert = [[UIAlertView alloc] initWithTitle:ServiceMsg message:@"" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+            [Alert show];
+            
+        }
+
+    }];
+    
+//    [ActivityView setCompletionHandler:^(NSString *act, BOOL done)
+//     {
+//         NSString *ServiceMsg = nil;
+//         if ( [act isEqualToString:UIActivityTypeMail] )           ServiceMsg = @"Mail sent succesfully";
+//         if ( [act isEqualToString:UIActivityTypePostToTwitter] )  ServiceMsg = @"Posted on twitter succesfully";
+//         if ( [act isEqualToString:UIActivityTypePostToFacebook] ) ServiceMsg = @"Post on facebook succesfully";
+//         if ( [act isEqualToString:UIActivityTypeMessage] )        ServiceMsg = @"SMS sent succesfully";
+//         if ( done )
+//         {
+//             UIAlertView *Alert = [[UIAlertView alloc] initWithTitle:ServiceMsg message:@"" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+//             [Alert show];
+//             
+//         }
+//     }];
 }
 
 - (void)didReceiveMemoryWarning

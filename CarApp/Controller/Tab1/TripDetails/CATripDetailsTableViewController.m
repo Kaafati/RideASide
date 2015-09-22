@@ -175,11 +175,6 @@
 
 -(void)setUI{
     /*Removed the fuel field and toll field on 6 jun -15 and modified the textField arrayPositions */
-
-   
-    
-    
-    
     milegae=0;
     self.tableView.backgroundView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background"]];
     NSArray *images=@[@"tripName",@"startingplace",@"end",@"distance",@"vehicle",@"vehicleNumber",@"cost",@"seats",@"date"];
@@ -187,23 +182,16 @@
     {
         self.title=@"Trip Details";
         if (_trip.UserId.integerValue == [CAUser sharedUser].userId.integerValue) {
-            
-           
             acceptTrip.frame = CGRectMake(buttonChatOrEdit.frame.origin.x, acceptTrip.frame.origin.y, buttonChatOrEdit.frame.size.width, acceptTrip.frame.size.height);
             [acceptTrip setTitle:@"Edit Trip Detail" forState:UIControlStateNormal];
             rejectButton.hidden = YES;
-
             acceptTrip.autoresizingMask = buttonChatOrEdit.autoresizingMask;
-            
         }
         else
         {
-
             acceptTrip.hidden = NO;
             rejectButton.hidden = NO;
-            
         }
-        
         [buttonChatOrEdit setTitle:@"Chat" forState:UIControlStateNormal];
         [addTripOrViewJoiness setTitle:@"View Joinees" forState:UIControlStateNormal];
 
@@ -309,8 +297,6 @@
     }
     else//Add Trip
     {
-        
-
         [textFieldTripDetails[3] setInputAccessoryView:toolBar];
         [textFieldTripDetails[4] setInputAccessoryView:toolBar];
         [textFieldTripDetails[6] setInputAccessoryView:toolBar];
@@ -325,7 +311,6 @@
         datePicker.minimumDate=[NSDate date];
         [cellArray[1] setHidden:YES];
     }
-    
 }
 
 -(void)leftSideNavigationBar{
@@ -387,11 +372,12 @@
     trip.TotalKilometer=[textFieldTripDetails[3] text];
     trip.Vehicle=[textFieldTripDetails[4] text];
     trip.vehicleNumber=[textFieldTripDetails[5] text];
-    trip.cost=[NSString stringWithFormat:@"%.02f",costPerHead];
+    NSString *strCost = [[textFieldTripDetails[6] text] stringByReplacingOccurrencesOfString:@" per seat" withString:@""];
+    trip.cost=[NSString stringWithFormat:@"%@",strCost];
     trip.SeatsAvailable=[textFieldTripDetails[7] text];
     trip.date=[textFieldTripDetails[8] text];
     [self performSelector:@selector(doneSelectingDate:) withObject:nil];
-    trip.tripStartTimeForNotification=dateForPushNotification;
+    trip.tripStartTimeForNotification = [textFieldTripDetails[8] text];
     trip.tripId = _trip.tripId;
     trip.imageCar = imageCar;
     [acceptTrip setTitle:@"Edit Trip Detail" forState:UIControlStateNormal];
@@ -481,9 +467,9 @@
 -(IBAction)doneSelectingDate:(id)sender{
     [activeTextField resignFirstResponder];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateStyle = NSDateFormatterMediumStyle;
+   // dateFormatter.dateStyle = NSDateFormatterMediumStyle;
     
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd hh:mm a"];
     [textFieldTripDetails[8] setText:[NSString stringWithFormat:@"%@",
                                        [dateFormatter stringFromDate:datePicker.date]]];
     dateOfTrip=[[NSDate alloc]changeLocalTimeZoneToServerForDate:[NSString stringWithFormat:@"%@",
@@ -560,11 +546,29 @@ if( [textFieldTripDetails[0] text].length>0&&[textFieldTripDetails[1] text].leng
   //  trip.cost=[NSString stringWithFormat:@"%.02f",costPerHead];
    trip.cost= [textFieldTripDetails[6] text]; 
     trip.SeatsAvailable=[textFieldTripDetails[7] text];
-    trip.date=dateOfTrip;
+    trip.date=[textFieldTripDetails[8] text];
     trip.tripStartTimeForNotification=dateForPushNotification;
     trip.addedBy = [CAUser sharedUser].category;
     trip.imageCar = imageCar;
+/*
+ trip.tripName=[textFieldTripDetails[0] text];
+ trip.StartingPlace=[textFieldTripDetails[1] text];
+ trip.EndPlace=[textFieldTripDetails[2] text];
+ //   trip.FuelExpenses=[NSString stringWithFormat:@"%d",milegae];
+ //    trip.FuelExpenses=[textFieldTripDetails[3] text];
+ //    trip.TollBooth=[textFieldTripDetails[4] text];
+ trip.TotalKilometer=[textFieldTripDetails[3] text];
+ trip.Vehicle=[textFieldTripDetails[4] text];
+ trip.vehicleNumber=[textFieldTripDetails[5] text];
+ //  trip.cost=[NSString stringWithFormat:@"%.02f",costPerHead];
+ trip.cost= [textFieldTripDetails[6] text];
+ trip.SeatsAvailable=[textFieldTripDetails[7] text];
+ trip.date=[textFieldTripDetails[8] text];
+ trip.tripStartTimeForNotification=dateForPushNotification;
+ trip.addedBy = [CAUser sharedUser].category;
+ trip.imageCar = imageCar;
 
+ */
     [trip addTripWithDataWithTrip:trip
                   CompletionBlock:^(BOOL success, id result, NSError *error) {
                       [SVProgressHUD dismiss];

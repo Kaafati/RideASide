@@ -1575,9 +1575,22 @@
                     <connections>
                         <outlet property="imageViewBackGround" destination="pba-MP-RO9" id="yLV-Zg-Pjg"/>
                         <outlet property="tableViewFriends" destination="Eh4-CO-i3v" id="ocD-uh-xBb"/>
+                        <outlet property="toolBarDone" destination="xsv-JT-boJ" id="1o4-oQ-EWN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oMC-Dg-dSN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="xsv-JT-boJ">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <items>
+                        <barButtonItem title="Done" id="5be-eT-QIF">
+                            <color key="tintColor" red="0.090196078430000007" green="0.40000000000000002" blue="0.75294117650000003" alpha="1" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <action selector="doneSearchAction:" destination="mcb-Kd-pCD" id="f2G-fu-iSH"/>
+                            </connections>
+                        </barButtonItem>
+                    </items>
+                </toolbar>
             </objects>
             <point key="canvasLocation" x="1069" y="485"/>
         </scene>
@@ -2168,7 +2181,7 @@
                 </tableViewCell>
                 <tapGestureRecognizer id="I8B-4K-UbM"/>
             </objects>
-            <point key="canvasLocation" x="1124" y="-1386.5"/>
+            <point key="canvasLocation" x="1161" y="-1461.5"/>
         </scene>
         <!--Initial Map View Controller-->
         <scene sceneID="dai-ni-gCu">
@@ -2192,7 +2205,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="V7D-A6-Xl2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1089" y="-1004"/>
+            <point key="canvasLocation" x="1161" y="-878"/>
         </scene>
         <!--Chat View Controller-->
         <scene sceneID="R0X-jW-FRL">

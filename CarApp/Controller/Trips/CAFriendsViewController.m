@@ -20,14 +20,17 @@
 #import "CATabBarController.h"
 @import MessageUI;
 
-@interface CAFriendsViewController ()<MFMessageComposeViewControllerDelegate>
+@interface CAFriendsViewController ()<MFMessageComposeViewControllerDelegate,UISearchBarDelegate>
 {
-    NSArray *arrayContact;
+    NSArray *arrayContact,*arrSearchContacts;
     __weak IBOutlet UITableView *tableViewFriends;
     NSMutableArray *arraySelectedFriends;
     NSMutableArray *arrayTrip,*arrayAppUsers;
     IBOutlet UIImageView *imageViewBackGround;
-
+    BOOL searchStatus;
+    NSString *searchTxt;
+    IBOutlet UIToolbar *toolBarDone;
+    
 }
 @end
 
@@ -37,6 +40,7 @@
     [super viewDidLoad];
        // Do any additional setup after loading the view.
 }
+
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:YES];
@@ -50,16 +54,13 @@
     NSSortDescriptor *sort = [[NSSortDescriptor alloc] initWithKey:@"fullName" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
     arrayContact = [[CAContacts getcontact] sortedArrayUsingDescriptors:@[sort]];
     
-    
-    
     [tableViewFriends reloadData];
     [self fetchtrip];
     // NSLog(@"%@",[CAContacts getcontact]);
     [self setupMenuBarButtonItems];
-   
-
 
 }
+
 -(void)fetchtrip
 {
     CATrip *trip=[[CATrip alloc]init];
@@ -77,8 +78,8 @@
         [tableViewFriends reloadData];
         
     }];
-
 }
+
 -(void)fetchAppUsers
 {
        [CAUser listTheAppUserwithCompletionBlock:^(bool success, id result, NSError * error) {
@@ -198,11 +199,9 @@
        [[[UIAlertView alloc] initWithTitle:@"" message:@"Can not send invites to multiple groups" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
        return;
    }
-    
-   
-    
   
 }
+
 -(void)inviteAppUserWithTripId:(NSString *)tripId andAppUserId:(NSString *)appsuerId
 {
     [SVProgressHUD show];
@@ -212,6 +211,7 @@
         }
     }];
 }
+
 - (void)backButtonPressed:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -232,72 +232,64 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return section == 0 ? arrayContact.count : section==1 ? arrayTrip.count : arrayAppUsers.count;
+    return section == 0 ? arrayTrip.count : section==1 ? arrayAppUsers.count : (searchStatus == true) ? arrSearchContacts.count : arrayContact.count;
 }
+
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 50;
+    if (section == 2){
+        return 100;
+    }else{
+        return 50;
+    }
 }
-
-
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//        return section == 0 ? @"Contacts" : @"Rides";
-//}
 
 -(UIView*)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    UILabel *label = [[UILabel alloc] init];
-    label.text=section == 0 ?  @"Contacts" : section ==1 ? @"Rides" : @"App User";
+    UIView *headerVw = [[UIView alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 100)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 50)];
+    label.text=section == 0 ?  @"Rides" : section ==1 ? @"App User" : @"Contacts";
     label.backgroundColor=[UIColor clearColor];
     label.textColor=[UIColor whiteColor];
     label.textAlignment= NSTextAlignmentCenter;
+    [headerVw addSubview:label];
     [label setBackgroundColor:[UIColor colorWithRed:25.0/255 green:124.0/255 blue:204.0/255 alpha:1]];
-    return label;
+    if (section == 2){
+        UISearchBar *searchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, label.frame.size.height,CGRectGetWidth(self.view.frame), 40)];
+        searchBar.delegate = self;
+        
+//        if (![searchTxt isEqualToString:@""] && searchTxt != nil){
+//            [searchBar becomeFirstResponder];
+//        }
+        [searchBar setText:searchTxt];
+        [searchBar setInputAccessoryView:toolBarDone];
+        [headerVw addSubview:searchBar];
+    }
+    return headerVw;
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.section==0) {
-        CAContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CAContactCell"];
-//        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
-        CAContacts *contact = arrayContact[indexPath.row];
-    
-        cell.labelContactName.text = [NSString stringWithFormat:@"Name : %@",contact.fullName];
-        
-        cell.labelContactPhoneNumber.text = [NSString stringWithFormat:@"Phone Number : %@",contact.phoneNumber];
-        cell.accessoryType =  contact.isContactSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-        // Configure the cell...
-       
-        cell.imageViewContact.image = (UIImage *)contact.image;
-        cell.imageViewContact.layer.cornerRadius = cell.imageViewContact.frame.size.height / 2;
-        cell.imageViewContact.clipsToBounds = YES;
-        [cell.imageViewContact.layer setBorderColor:[UIColor whiteColor].CGColor];
-        cell.imageViewContact.layer.borderWidth=2;
-
-        
-        return cell;
-    }
-    else if(indexPath.section ==1)
-    {
         CATrip *trip = arrayTrip[indexPath.row];
         CATripSelectionCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CATripSelectionCell"];
-
+        
         cell.labelTrip.text = trip.tripName;
-         [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"] ];
+        [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,trip.imageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"] ];
         cell.backgroundColor = [UIColor clearColor];
         cell.imageUserPicture.layer.cornerRadius = cell.imageUserPicture.frame.size.height / 2;
         cell.imageUserPicture.clipsToBounds=YES;
         [cell.imageUserPicture.layer setBorderColor:[UIColor whiteColor].CGColor];
         cell.imageUserPicture.layer.borderWidth=2;
-         cell.accessoryType =  trip.isSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-
+        cell.accessoryType =  trip.isSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+        
         return cell;
     }
-    else
+    else if(indexPath.section ==1)
     {
         CATripCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellAppUser"];
         CAUser *appUsers = arrayAppUsers[indexPath.row];
-
+        
         cell.labelTrip.text = appUsers.userName;
         [cell.imageUserPicture sd_setBackgroundImageWithURL:[NSURL  URLWithString:[NSString stringWithFormat:@"%@%@",baseUrl,appUsers.profile_ImageName]] forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"placeholder"] ];
         cell.imageUserPicture.layer.cornerRadius = cell.imageUserPicture.frame.size.height / 2;
@@ -305,8 +297,34 @@
         [cell.imageUserPicture.layer setBorderColor:[UIColor whiteColor].CGColor];
         cell.imageUserPicture.layer.borderWidth=2;
         cell.accessoryType =  appUsers.isSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-
+        
         return cell;
+       
+    }
+    else
+    {
+        CAContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CAContactCell"];
+        CAContacts *contact;
+        if (searchStatus == true){
+            contact = arrSearchContacts[indexPath.row];
+        }else{
+            contact = arrayContact[indexPath.row];
+        }
+        
+        cell.labelContactName.text = [NSString stringWithFormat:@"Name : %@",contact.fullName];
+        
+        cell.labelContactPhoneNumber.text = [NSString stringWithFormat:@"Phone Number : %@",contact.phoneNumber];
+        cell.accessoryType =  contact.isContactSelected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+        // Configure the cell...
+        
+        cell.imageViewContact.image = (UIImage *)contact.image;
+        cell.imageViewContact.layer.cornerRadius = cell.imageViewContact.frame.size.height / 2;
+        cell.imageViewContact.clipsToBounds = YES;
+        [cell.imageViewContact.layer setBorderColor:[UIColor whiteColor].CGColor];
+        cell.imageViewContact.layer.borderWidth=2;
+        
+        return cell;
+
     }
    
 }
@@ -314,50 +332,45 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section==0) {
-
-        CAContactCell *cell = (CAContactCell *)[tableView cellForRowAtIndexPath:indexPath];
-        cell.accessoryType =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? UITableViewCellAccessoryNone : UITableViewCellAccessoryCheckmark;
-        CAContacts *contact = arrayContact[indexPath.row];
-        contact.isContactSelected =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? YES : NO;
         
-
-    }
-    else if(indexPath.section==1)
-    {
         CATripSelectionCell *cell = (CATripSelectionCell *)[tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryType =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? UITableViewCellAccessoryNone : UITableViewCellAccessoryCheckmark;
-
         CATrip *trip = arrayTrip[indexPath.row];
-
+        
         trip.isSelected =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? YES : NO;
-
-       
         
         NSPredicate *predicateAppUser = [NSPredicate predicateWithFormat:@"isSelected == YES"];
         ;
         [[arrayTrip filteredArrayUsingPredicate:predicateAppUser] count] ? [[arrayTrip filteredArrayUsingPredicate:predicateAppUser] enumerateObjectsUsingBlock:^(CATrip * obj, NSUInteger idx, BOOL *stop) {
-            
             cell.accessoryType = obj == trip ?  UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
             if (obj !=trip) {
-                
                 obj.isSelected = false;
-                
             }
             
         }] : nil;
         
-       
-            [tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
-    
-
+        [tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
     }
-    else
+    else if(indexPath.section==1)
     {
         CATripCell *cell = (CATripCell *)[tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryType =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? UITableViewCellAccessoryNone : UITableViewCellAccessoryCheckmark;
         CAUser *trip = arrayAppUsers[indexPath.row];
         
         trip.isSelected =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? YES : NO;
+
+    }
+    else
+    {
+        CAContactCell *cell = (CAContactCell *)[tableView cellForRowAtIndexPath:indexPath];
+        cell.accessoryType =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? UITableViewCellAccessoryNone : UITableViewCellAccessoryCheckmark;
+        CAContacts *contact;
+        if (searchStatus == true){
+            contact = arrSearchContacts[indexPath.row];
+        }else{
+            contact = arrayContact[indexPath.row];
+        }
+        contact.isContactSelected =  cell.accessoryType == UITableViewCellAccessoryCheckmark  ? YES : NO;
     }
     
 }
@@ -417,6 +430,42 @@
     
     // Present message view controller on screen
     [self presentViewController:messageController animated:YES completion:nil];
+}
+
+#pragma mark - SearchBarDelegate and Methods
+
+-(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
+    searchStatus = true;
+    searchTxt = searchText;
+    [self searchContactsAction:searchText];
+    if ([searchText length] == 0)
+    {
+        [self performSelector:@selector(doneSearchAction:) withObject:nil afterDelay:0];
+    }
+}
+
+-(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+    [searchBar resignFirstResponder];
+}
+
+-(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
+    
+}
+
+-(void)searchContactsAction:(NSString *)searchText{
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K CONTAINS [c] %@",@"fullName",searchText];
+    arrSearchContacts = [arrayContact filteredArrayUsingPredicate:predicate];
+    [tableViewFriends reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationNone];
+
+
+}
+
+- (IBAction)doneSearchAction:(UIBarButtonItem *)sender {
+    searchStatus = false;
+    searchTxt = @"";
+    [tableViewFriends reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationNone];
+    
 }
 /*
 #pragma mark - Navigation

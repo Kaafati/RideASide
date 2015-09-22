@@ -103,4 +103,7 @@
     // Dispose of any resources that can be recreated.
 }
 
+//latitude = "8.560702";
+//longitude = "76.880771";
+
 @end

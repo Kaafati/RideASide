@@ -252,6 +252,7 @@ return  [formatter dateFromString:stringDate];
 
      }];
 }
+
 +(void)editTrip:(CATrip *)trip completion:(void (^)(BOOL,id result, NSError *))completion
 {
 //http://sicsglobal.com/projects/WebT1/rideaside/edit_trip.php?id=1&startingPlace=trivandrum&endingPlace=kochi&datetime=2014-08-20%2017:21:13&fuelExp=500&tollbooth=no&kilometer=200&vehicle=car&seats=5&trip_name=Longdrive&vehicle_number=123&cost=1 Edit Trip
@@ -281,6 +282,7 @@ return  [formatter dateFromString:stringDate];
      }];
 
 }
+
 +(NSString *)makeFileName
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -295,6 +297,7 @@ return  [formatter dateFromString:stringDate];
     
     return fileName;
 }
+
 -(void)addTripWithDataWithTrip:(CATrip*)trip  CompletionBlock:(void (^)(BOOL,id, NSError*))completionBlock;{
     NSMutableData *body=[NSMutableData postData];
     [body addValue:[CAUser sharedUser].userId forKey:@"userid"];
@@ -309,10 +312,27 @@ return  [formatter dateFromString:stringDate];
     [body addValue:trip.tripName forKey:@"trip_name"];
     [body addValue:trip.vehicleNumber forKey:@"vehicle_number"];
     [body addValue:trip.cost forKey:@"cost"];
-    [body addValue:trip.tripStartTimeForNotification forKey:@"alert_date"];
+    [body addValue:trip.date forKey:@"alert_date"];
     [body addValue:trip.addedBy forKey:@"addedBy"];
     NSString *fileName = [CATrip makeFileName];
-    
+    /*
+     trip.tripName=[textFieldTripDetails[0] text];
+     trip.StartingPlace=[textFieldTripDetails[1] text];
+     trip.EndPlace=[textFieldTripDetails[2] text];
+     //   trip.FuelExpenses=[NSString stringWithFormat:@"%d",milegae];
+     //    trip.FuelExpenses=[textFieldTripDetails[3] text];
+     //    trip.TollBooth=[textFieldTripDetails[4] text];
+     trip.TotalKilometer=[textFieldTripDetails[3] text];
+     trip.Vehicle=[textFieldTripDetails[4] text];
+     trip.vehicleNumber=[textFieldTripDetails[5] text];
+     //  trip.cost=[NSString stringWithFormat:@"%.02f",costPerHead];
+     trip.cost= [textFieldTripDetails[6] text];
+     trip.SeatsAvailable=[textFieldTripDetails[7] text];
+     trip.date=[textFieldTripDetails[8] text];
+     trip.tripStartTimeForNotification=dateForPushNotification;
+     trip.addedBy = [CAUser sharedUser].category;
+     trip.imageCar = imageCar;
+    */
     [body addValue:UIImageJPEGRepresentation(trip.imageCar, 0.5) forKey:@"vehicle_image" withFileName:fileName];
     [CAServiceManager fetchDataFromService:@"addtripyy.php?" withParameters:body withCompletionBlock:^(BOOL success,id result, NSError *error)
      {
